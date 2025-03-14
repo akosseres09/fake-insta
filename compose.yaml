@@ -7,3 +7,14 @@ services:
     volumes:
       - ./frontend:/usr/src/app
       - ./frontend/node_modules:/usr/src/app/node_modules
+    depends_on:
+      - backend
+  backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/usr/src/app
+      - ./backend/node_modules:/usr/src/app/node_modules
