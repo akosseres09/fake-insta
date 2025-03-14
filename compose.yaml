@@ -1,0 +1,9 @@
+services:
+  frontend:
+    build: 
+      context: .
+    ports:
+      - "4200:4200"
+    volumes:
+      - .:/usr/src/app
+    command: ["/bin/sh"]
