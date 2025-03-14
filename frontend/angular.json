@@ -68,6 +68,9 @@
             },
             "development": {
               "buildTarget": "frontend:build:development"
+            },
+            "options": {
+              "hmr": true
             }
           },
           "defaultConfiguration": "development"
