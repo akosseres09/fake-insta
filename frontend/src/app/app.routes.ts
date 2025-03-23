@@ -45,7 +45,7 @@ export const routes: Routes = [
             },
             {
                 path: 'register',
-                loadChildren: () =>
+                loadComponent: () =>
                     import('./pages/signup/signup.component').then(
                         (c) => c.SignupComponent
                     ),
