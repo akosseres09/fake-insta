@@ -1,0 +1,32 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: #121212;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    z-index: 10;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.instagram-text {
+    font-family: "Billabong", cursive;
+    font-size: 28px;
+    color: white;
+}
+
+.actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
