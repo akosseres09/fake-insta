@@ -1,0 +1,38 @@
+<div class="sidebar">
+    <div class="logo">
+        <span class="instagram-text">Instagram</span>
+    </div>
+
+    <mat-nav-list class="sidebar-nav">
+        <div class="nav-links">
+            <a mat-list-item class="nav-item active">
+                <mat-icon matListItemIcon>home</mat-icon>
+                <span matListItemTitle>Home</span>
+            </a>
+
+            <a mat-list-item class="nav-item">
+                <mat-icon matListItemIcon>search</mat-icon>
+                <span matListItemTitle>Search</span>
+            </a>
+
+            <a mat-list-item class="nav-item">
+                <mat-icon matListItemIcon>add_box</mat-icon>
+                <span matListItemTitle>Create</span>
+            </a>
+
+            <a mat-list-item class="nav-item" routerLink="/profile">
+                <div class="profile-icon" matListItemIcon>
+                    <img
+                        src="https://i.pravatar.cc/150?img=1"
+                        alt="Your profile"
+                    />
+                </div>
+                <span matListItemTitle>Profile</span>
+            </a>
+        </div>
+        <a mat-list-item class="nav-item">
+            <mat-icon matListItemIcon>menu</mat-icon>
+            <span matListItemTitle>More</span>
+        </a>
+    </mat-nav-list>
+</div>
