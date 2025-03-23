@@ -1,0 +1,29 @@
+.mini-profile {
+    padding-top: 25px;
+    display: flex;
+}
+
+.mini-profile-avatar {
+    border-radius: 50%;
+    height: 100%;
+    width: 100%;
+}
+
+.mini-profile-avatar img {
+    height: 44px;
+    width: 44px;
+    border-radius: 50%;
+}
+
+.mini-profile-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    margin-left: 15px;
+}
+
+.mini-profile-info .mini-profile-info-name {
+    font-weight: lighter;
+    color: darkgray;
+}
