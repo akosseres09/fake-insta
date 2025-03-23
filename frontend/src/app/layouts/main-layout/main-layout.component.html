@@ -1,0 +1,21 @@
+<div class="instagram-app mat-app-background">
+    <!-- Mobile Header - Only visible on small screens -->
+    <div class="mobile-only">
+        <app-header></app-header>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar - Hidden on mobile -->
+        <div class="desktop-only sidebar-container">
+            <app-sidebar></app-sidebar>
+        </div>
+
+        <main class="main-content">
+            <router-outlet></router-outlet>
+        </main>
+    </div>
+
+    <div class="mobile-only">
+        <app-footer-nav (viewChange)="currentView = $event"></app-footer-nav>
+    </div>
+</div>
