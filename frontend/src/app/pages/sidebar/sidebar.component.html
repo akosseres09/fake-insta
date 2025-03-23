@@ -5,7 +5,12 @@
 
     <mat-nav-list class="sidebar-nav">
         <div class="nav-links">
-            <a mat-list-item class="nav-item active">
+            <a
+                routerLink="/feed"
+                routerLinkActive="active"
+                mat-list-item
+                class="nav-item"
+            >
                 <mat-icon matListItemIcon>home</mat-icon>
                 <span matListItemTitle>Home</span>
             </a>
@@ -20,7 +25,12 @@
                 <span matListItemTitle>Create</span>
             </a>
 
-            <a mat-list-item class="nav-item" routerLink="/profile">
+            <a
+                mat-list-item
+                routerLinkActive="active"
+                class="nav-item"
+                routerLink="/profile"
+            >
                 <div class="profile-icon" matListItemIcon>
                     <img
                         src="https://i.pravatar.cc/150?img=1"
@@ -30,9 +40,19 @@
                 <span matListItemTitle>Profile</span>
             </a>
         </div>
-        <a mat-list-item class="nav-item">
+        <a mat-list-item [mat-menu-trigger-for]="menu" class="nav-item">
             <mat-icon matListItemIcon>menu</mat-icon>
             <span matListItemTitle>More</span>
+            <mat-menu class="menu" #menu="matMenu">
+                <a routerLink="/settings" mat-menu-item>
+                    <mat-icon>settings</mat-icon>
+                    Settings
+                </a>
+                <button mat-menu-item>
+                    <mat-icon>logout</mat-icon>
+                    Logout
+                </button>
+            </mat-menu>
         </a>
     </mat-nav-list>
 </div>
