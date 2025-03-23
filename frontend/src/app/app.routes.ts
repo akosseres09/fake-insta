@@ -4,15 +4,20 @@ export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'app/feed',
+        redirectTo: '/feed',
     },
     {
-        path: 'app',
+        path: '',
         loadComponent: () =>
             import('./layouts/main-layout/main-layout.component').then(
                 (c) => c.MainLayoutComponent
             ),
         children: [
+            {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: 'feed',
+            },
             {
                 path: 'feed',
                 loadComponent: () =>
@@ -37,6 +42,11 @@ export const routes: Routes = [
             ),
         children: [
             {
+                path: '',
+                redirectTo: 'login',
+                pathMatch: 'full',
+            },
+            {
                 path: 'login',
                 loadComponent: () =>
                     import('./pages/login/login.component').then(
@@ -44,7 +54,7 @@ export const routes: Routes = [
                     ),
             },
             {
-                path: 'register',
+                path: 'signup',
                 loadComponent: () =>
                     import('./pages/signup/signup.component').then(
                         (c) => c.SignupComponent
@@ -53,10 +63,28 @@ export const routes: Routes = [
         ],
     },
     {
-        path: '**',
+        path: '',
         loadComponent: () =>
-            import('./pages/not-found/not-found.component').then(
-                (c) => c.NotFoundComponent
+            import('./layouts/auth-layout/auth-layout.component').then(
+                (c) => c.AuthLayoutComponent
             ),
+        children: [
+            {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: 'not-found',
+            },
+            {
+                path: 'not-found',
+                loadComponent: () =>
+                    import('./pages/not-found/not-found.component').then(
+                        (c) => c.NotFoundComponent
+                    ),
+            },
+        ],
+    },
+    {
+        path: '**',
+        redirectTo: 'not-found',
     },
 ];
