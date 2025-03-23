@@ -1,0 +1,65 @@
+<mat-card class="post">
+    <mat-card-header>
+        <img mat-card-avatar [src]="post.userAvatar" [alt]="post.username" />
+        <mat-card-title>{{ post.username }}</mat-card-title>
+        <mat-card-subtitle *ngIf="post.location">{{
+            post.location
+        }}</mat-card-subtitle>
+        <button mat-icon-button class="more-button">
+            <mat-icon>more_horiz</mat-icon>
+        </button>
+    </mat-card-header>
+
+    <img
+        mat-card-image
+        [src]="post.imageUrl"
+        alt="Post image"
+        class="post-image"
+    />
+
+    <mat-card-actions>
+        <div class="post-actions-left">
+            <button mat-icon-button>
+                <mat-icon>favorite_outline</mat-icon>
+            </button>
+            <button mat-icon-button>
+                <mat-icon>chat_bubble_outline</mat-icon>
+            </button>
+            <button mat-icon-button>
+                <mat-icon>send</mat-icon>
+            </button>
+        </div>
+        <button mat-icon-button>
+            <mat-icon>bookmark_border</mat-icon>
+        </button>
+    </mat-card-actions>
+
+    <mat-card-content>
+        <div class="post-likes">{{ post.likes }} likes</div>
+
+        <div class="post-caption">
+            <span class="post-username">{{ post.username }}</span>
+            {{ post.caption }}
+        </div>
+
+        <div
+            class="post-comments"
+            *ngIf="post.comments && post.comments.length > 0"
+        >
+            <div *ngIf="post.comments.length > 2" class="view-comments">
+                View all {{ post.comments.length }} comments
+            </div>
+            <div
+                *ngFor="let comment of post.comments.slice(0, 2)"
+                class="post-comment"
+            >
+                <span class="post-username">{{ comment.username }}</span>
+                {{ comment.text }}
+            </div>
+        </div>
+
+        <div class="post-time">
+            {{ post.time }}
+        </div>
+    </mat-card-content>
+</mat-card>

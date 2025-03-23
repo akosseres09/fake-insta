@@ -1,0 +1,29 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    gap: 50px;
+    width: 100%;
+    padding-top: 20px;
+}
+
+.feed {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.posts {
+    max-width: 600px;
+}
+
+.mini-profile {
+    flex-basis: 20%;
+}
+
+@media screen and (max-width: 1300px) {
+    .mini-profile {
+        display: none;
+    }
+}
