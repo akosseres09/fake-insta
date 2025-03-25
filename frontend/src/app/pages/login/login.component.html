@@ -1,1 +1,72 @@
-<p>login works!</p>
+<div class="auth-container">
+    <div class="login-card">
+        <div class="logo-container">
+            <span class="instagram-text">Instagram</span>
+        </div>
+
+        <div>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Username or Email</mat-label>
+                    <input matInput formControlName="username" required />
+                    <mat-error
+                        *ngIf="loginForm.get('username')?.hasError('required')"
+                    >
+                        Username or email is required
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Password</mat-label>
+                    <input
+                        matInput
+                        [type]="hidePassword ? 'password' : 'text'"
+                        formControlName="password"
+                        required
+                    />
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        (click)="hidePassword = !hidePassword"
+                        [attr.aria-label]="'Hide password'"
+                        [attr.aria-pressed]="hidePassword"
+                        type="button"
+                    >
+                        <mat-icon>{{
+                            hidePassword ? "visibility_off" : "visibility"
+                        }}</mat-icon>
+                    </button>
+                    <mat-error
+                        *ngIf="loginForm.get('password')?.hasError('required')"
+                    >
+                        Password is required
+                    </mat-error>
+                </mat-form-field>
+
+                <button
+                    mat-flat-button
+                    color="primary"
+                    class="full-width login-button"
+                    type="submit"
+                    [disabled]="loginForm.invalid || isLoading"
+                >
+                    <span *ngIf="!isLoading">Log In</span>
+                    <mat-spinner
+                        *ngIf="isLoading"
+                        diameter="24"
+                        class="spinner"
+                    ></mat-spinner>
+                </button>
+            </form>
+        </div>
+
+        <mat-divider class="divider"></mat-divider>
+
+        <div class="card-actions">
+            <p class="signup-text">
+                Don't have an account?
+                <a routerLink="/auth/signup" class="signup-link">Sign up</a>
+            </p>
+        </div>
+    </div>
+</div>

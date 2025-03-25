@@ -1,0 +1,97 @@
+.auth-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background-color: #121212;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 50%;
+    padding: 30px 40px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    background-color: #1e1e1e;
+    color: white;
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.instagram-text {
+    font-family: "Billabong", cursive;
+    font-size: 42px;
+    color: white;
+}
+
+.full-width {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 12px;
+}
+
+.forgot-link {
+    color: #bb86fc;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.login-button {
+    margin-top: 10px;
+    height: 44px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.spinner {
+    margin: 0 auto;
+}
+
+.divider {
+    margin: 20px 0;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+}
+
+.signup-text {
+    font-size: 14px;
+    text-align: center;
+}
+
+.signup-link {
+    color: #bb86fc;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+@media screen and (max-width: 1150px) {
+    .login-card {
+        max-width: 80%;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .login-card {
+        max-width: 90%;
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 400px) {
+    .login-card {
+        padding: 20px;
+    }
+}
