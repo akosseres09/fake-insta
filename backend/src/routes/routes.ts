@@ -6,12 +6,21 @@ export const configureRoutes = (
     passport: PassportStatic,
     router: Router
 ): Router => {
-    router.get('/user', (req: Request, res: Response) => {
-        const query = User.find();
+    router.get('/user/:id', (req: Request, res: Response) => {
+        const userId = req.params.id;
+        const query = User.findOne({ _id: userId }).select([
+            'username',
+            'name',
+            'followers',
+            'following',
+            'isAdmin',
+            'bio',
+            'profilePictureUrl',
+            'email',
+        ]);
         query
-            .then((users) => {
-                console.log(users);
-                res.status(200).send(users);
+            .then((user) => {
+                res.status(200).send(user);
             })
             .catch((error) => {
                 res.status(500).send(error);
@@ -45,8 +54,8 @@ export const configureRoutes = (
         const email = req.body.email;
         const username = req.body.username;
         const password = req.body.password;
-        const first = req.body.name.first;
-        const last = req.body.name.last;
+        const first = req.body.first;
+        const last = req.body.last;
 
         const user = new User({
             email: email,
@@ -60,13 +69,40 @@ export const configureRoutes = (
             following: [],
         });
 
+        const response = {
+            success: false,
+            error: null,
+        };
         user.save()
             .then((user) => {
-                res.status(200).send(user);
+                response.success = true;
+                res.status(200).send(response);
             })
             .catch((error) => {
-                res.status(500).send(error);
+                response.error = error;
+                res.status(500).send(response);
             });
+    });
+
+    router.post('/logout', (req: Request, res: Response) => {
+        if (req.isAuthenticated()) {
+            req.logout((logoutError) => {
+                if (logoutError) {
+                    res.status(500).send('Internal server error');
+                }
+                res.status(200).send('Logged out');
+            });
+        } else {
+            res.status(400).send('Not logged in');
+        }
+    });
+
+    router.get('/checkauth', (req: Request, res: Response) => {
+        if (req.isAuthenticated()) {
+            res.status(200).send(true);
+        } else {
+            res.status(200).send(false);
+        }
     });
 
     return router;
