@@ -1,1 +1,184 @@
-<p>signup works!</p>
+<div class="auth-container">
+    <div class="signup-card">
+        <div class="logo-container">
+            <span class="instagram-text">Instagram</span>
+        </div>
+
+        <div class="signup-intro">
+            <h2 class="signup-title">
+                Sign up to see photos and videos from your friends.
+            </h2>
+        </div>
+
+        <div>
+            <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Email</mat-label>
+                    <input
+                        matInput
+                        formControlName="email"
+                        type="email"
+                        required
+                    />
+                    <mat-error
+                        *ngIf="signupForm.get('email')?.hasError('required')"
+                    >
+                        Email is required
+                    </mat-error>
+                    <mat-error
+                        *ngIf="signupForm.get('email')?.hasError('email')"
+                    >
+                        Please enter a valid email address
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Username</mat-label>
+                    <input matInput formControlName="username" required />
+                    <mat-error
+                        *ngIf="signupForm.get('username')?.hasError('required')"
+                    >
+                        Username is required
+                    </mat-error>
+                </mat-form-field>
+
+                <div formGroupName="name" class="form-group-container">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>First Name</mat-label>
+                        <input matInput formControlName="first" />
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Last Name</mat-label>
+                        <input matInput formControlName="last" />
+                    </mat-form-field>
+                </div>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Password</mat-label>
+                    <input
+                        matInput
+                        [type]="hidePassword ? 'password' : 'text'"
+                        formControlName="password"
+                        required
+                    />
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        (click)="hidePassword = !hidePassword"
+                        [attr.aria-label]="'Hide password'"
+                        [attr.aria-pressed]="hidePassword"
+                        type="button"
+                    >
+                        <mat-icon>{{
+                            hidePassword ? "visibility_off" : "visibility"
+                        }}</mat-icon>
+                    </button>
+                    <mat-error
+                        *ngIf="signupForm.get('password')?.hasError('required')"
+                    >
+                        Password is required
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            signupForm.get('password')?.hasError('minlength')
+                        "
+                    >
+                        Password must be at least 6 characters
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            signupForm.get('password')?.hasError('mustMatch')
+                        "
+                    >
+                        Passwords do not match
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Confirm password</mat-label>
+                    <input
+                        matInput
+                        [type]="hidePasswordConfirm ? 'password' : 'text'"
+                        formControlName="passwordConfirm"
+                        required
+                    />
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        (click)="hidePasswordConfirm = !hidePasswordConfirm"
+                        [attr.aria-label]="'Hide password'"
+                        [attr.aria-pressed]="hidePassword"
+                        type="button"
+                    >
+                        <mat-icon>{{
+                            hidePasswordConfirm
+                                ? "visibility_off"
+                                : "visibility"
+                        }}</mat-icon>
+                    </button>
+                    <mat-error
+                        *ngIf="
+                            signupForm
+                                .get('passwordConfirm')
+                                ?.hasError('required')
+                        "
+                    >
+                        Password is required
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            signupForm
+                                .get('passwordConfirm')
+                                ?.hasError('minlength')
+                        "
+                    >
+                        Password must be at least 6 characters
+                    </mat-error>
+                    <mat-error
+                        *ngIf="
+                            signupForm
+                                .get('passwordConfirm')
+                                ?.hasError('mustMatch')
+                        "
+                    >
+                        Passwords do not match
+                    </mat-error>
+                </mat-form-field>
+
+                <div class="terms-container">
+                    <p class="terms-text">
+                        By signing up, you agree to our
+                        <span class="terms-link">Terms</span>,
+                        <span class="terms-link">Privacy Policy</span>
+                        and
+                        <span class="terms-link">Cookies Policy</span>.
+                    </p>
+                </div>
+
+                <button
+                    mat-flat-button
+                    color="primary"
+                    class="full-width signup-button"
+                    type="submit"
+                    [disabled]="signupForm.invalid || isLoading"
+                >
+                    <span *ngIf="!isLoading">Sign Up</span>
+                    <mat-spinner
+                        *ngIf="isLoading"
+                        diameter="24"
+                        class="spinner"
+                    ></mat-spinner>
+                </button>
+            </form>
+
+            <mat-divider class="divider"></mat-divider>
+
+            <div class="login-card">
+                <p class="login-text">
+                    Have an account?
+                    <a routerLink="/auth/login" class="login-link">Log in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
