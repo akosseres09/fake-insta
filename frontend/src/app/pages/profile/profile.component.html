@@ -7,7 +7,7 @@
 
         <div class="profile-info">
             <div class="profile-username-section">
-                <h2 class="profile-username">your_username</h2>
+                <h2 class="profile-username">{{ user?.username }}</h2>
                 <button
                     mat-stroked-button
                     color="primary"
@@ -22,17 +22,20 @@
 
             <div class="profile-stats">
                 <div class="stat-item"><strong>12</strong> posts</div>
-                <div class="stat-item"><strong>458</strong> followers</div>
-                <div class="stat-item"><strong>326</strong> following</div>
+                <div class="stat-item">
+                    <strong> {{ user?.followers?.length }} </strong> followers
+                </div>
+                <div class="stat-item">
+                    <strong> {{ user?.following?.length }} </strong> following
+                </div>
             </div>
 
             <div class="profile-bio">
-                <div class="profile-name">Your Full Name</div>
-                <div class="bio-text">
-                    📸 Photography enthusiast<br />
-                    🌍 Travel lover<br />
-                    🏠 Based in New York<br />
-                    🔗 www.yourwebsite.com
+                <div class="profile-name">
+                    {{ user?.name?.first }} {{ user?.name?.last }}
+                </div>
+                <div class="bio-text" *ngIf="user?.bio">
+                    {{ user?.bio }}
                 </div>
             </div>
         </div>
@@ -69,30 +72,6 @@
                     </div>
                 </div>
             </div>
-        </mat-tab>
-
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon class="tab-icon">videocam</mat-icon>
-                <span class="tab-text">REELS</span>
-            </ng-template>
-            <div class="empty-tab">No reels yet</div>
-        </mat-tab>
-
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon class="tab-icon">bookmark</mat-icon>
-                <span class="tab-text">SAVED</span>
-            </ng-template>
-            <div class="empty-tab">No saved posts</div>
-        </mat-tab>
-
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon class="tab-icon">person_pin</mat-icon>
-                <span class="tab-text">TAGGED</span>
-            </ng-template>
-            <div class="empty-tab">No tagged posts</div>
         </mat-tab>
     </mat-tab-group>
 </div>

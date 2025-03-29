@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../material.module';
+import { AuthService } from '../../shared/services/auth/auth.service';
+import { User } from '../../shared/model/User';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-profile',
@@ -9,7 +12,20 @@ import { MaterialModule } from '../../material.module';
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.scss',
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
+    user: User | null = null;
+    userSub: Subscription | null = null;
+
+    constructor(private authService: AuthService) {}
+
+    ngOnInit(): void {
+        this.userSub = this.authService.user$.subscribe((user) => {
+            console.log(user);
+
+            this.user = user;
+        });
+    }
+
     userPosts = [
         {
             imageUrl:
