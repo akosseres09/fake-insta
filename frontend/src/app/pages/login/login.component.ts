@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AuthService } from '../../shared/services/auth/auth.service';
 
 @Component({
     selector: 'app-login',
@@ -36,7 +37,11 @@ export class LoginComponent {
     hidePassword = true;
     isLoading = false;
 
-    constructor(private fb: FormBuilder, private router: Router) {
+    constructor(
+        private fb: FormBuilder,
+        private router: Router,
+        private auth: AuthService
+    ) {
         this.loginForm = this.fb.group({
             username: ['', Validators.required],
             password: ['', Validators.required],
@@ -48,14 +53,20 @@ export class LoginComponent {
         if (this.loginForm.valid) {
             this.isLoading = true;
 
-            // Simulate API call
-            setTimeout(() => {
-                this.isLoading = false;
-                console.log('Login form submitted', this.loginForm.value);
+            const username = this.loginForm.get('username')?.value;
+            const password = this.loginForm.get('password')?.value;
 
-                // Navigate to the main app after successful login
-                this.router.navigate(['/app/feed']);
-            }, 1500);
+            this.auth.login(username, password).subscribe({
+                next: (id) => {
+                    localStorage.setItem('user', id as string);
+                    this.isLoading = false;
+                    this.router.navigateByUrl('/feed');
+                },
+                error: (error) => {
+                    console.log(error);
+                    this.isLoading = false;
+                },
+            });
         }
     }
 }
