@@ -30,18 +30,18 @@ export const configureRoutes = (
     router.post('/login', (req: Request, res: Response, next: NextFunction) => {
         passport.authenticate(
             'local',
-            (authError: string | null, user: typeof User) => {
+            (authError: string | null, userId: string) => {
                 if (authError) {
                     res.status(500).send(authError);
                 } else {
-                    if (!user) {
+                    if (!userId) {
                         res.status(400).send('User not found!');
                     } else {
-                        req.login(user, (loginError: string | null) => {
+                        req.login(userId, (loginError: string | null) => {
                             if (loginError) {
                                 res.status(500).send('Internal server error');
                             } else {
-                                res.status(200).send(user);
+                                res.status(200).send(userId);
                             }
                         });
                     }
@@ -69,19 +69,22 @@ export const configureRoutes = (
             following: [],
         });
 
-        const response = {
-            success: false,
-            error: null,
-        };
         user.save()
             .then((user) => {
-                response.success = true;
-                res.status(200).send(response);
+                res.status(200).send(true);
             })
             .catch((error) => {
-                response.error = error;
-                res.status(500).send(response);
+                console.log(error);
+                res.status(500).send(false);
             });
+    });
+
+    router.get('/checkId', (req: Request, res: Response) => {
+        if (req.isAuthenticated()) {
+            res.status(200).send(req.user);
+        } else {
+            res.status(400).send(null);
+        }
     });
 
     router.post('/logout', (req: Request, res: Response) => {
