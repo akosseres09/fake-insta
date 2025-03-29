@@ -1,19 +1,19 @@
 <mat-toolbar class="footer-nav">
-    <button mat-icon-button (click)="changeView('feed')">
+    <a routerLink="/feed" mat-icon-button>
         <mat-icon>home</mat-icon>
-    </button>
-    <button mat-icon-button>
+    </a>
+    <a routerLink="/search" mat-icon-button>
         <mat-icon>search</mat-icon>
-    </button>
-    <button mat-icon-button>
+    </a>
+    <a routerLink="/create" mat-icon-button>
         <mat-icon>add_box</mat-icon>
-    </button>
-    <button mat-icon-button>
-        <mat-icon>favorite_border</mat-icon>
-    </button>
-    <button mat-icon-button (click)="changeView('profile')">
+    </a>
+    <a routerLink="/settings" mat-icon-button>
+        <mat-icon>settings</mat-icon>
+    </a>
+    <a routerLink="/profile" mat-icon-button>
         <div class="profile-avatar">
             <img src="https://i.pravatar.cc/150?img=1" alt="Your profile" />
         </div>
-    </button>
+    </a>
 </mat-toolbar>

@@ -15,12 +15,22 @@
                 <span matListItemTitle>Home</span>
             </a>
 
-            <a mat-list-item class="nav-item">
+            <a
+                routerLink="/search"
+                routerLinkActive="active"
+                mat-list-item
+                class="nav-item"
+            >
                 <mat-icon matListItemIcon>search</mat-icon>
                 <span matListItemTitle>Search</span>
             </a>
 
-            <a mat-list-item class="nav-item">
+            <a
+                routerLink="/create"
+                routerLinkActive="active"
+                mat-list-item
+                class="nav-item"
+            >
                 <mat-icon matListItemIcon>add_box</mat-icon>
                 <span matListItemTitle>Create</span>
             </a>
@@ -40,19 +50,20 @@
                 <span matListItemTitle>Profile</span>
             </a>
         </div>
-        <a mat-list-item [mat-menu-trigger-for]="menu" class="nav-item">
-            <mat-icon matListItemIcon>menu</mat-icon>
-            <span matListItemTitle>More</span>
-            <mat-menu class="menu" #menu="matMenu">
-                <a routerLink="/settings" mat-menu-item>
-                    <mat-icon>settings</mat-icon>
-                    Settings
-                </a>
-                <button mat-menu-item>
-                    <mat-icon>logout</mat-icon>
-                    Logout
-                </button>
-            </mat-menu>
-        </a>
+        <div>
+            <a
+                mat-list-item
+                class="nav-item"
+                routerLink="/settings"
+                routerLinkActive="active"
+            >
+                <mat-icon matListItemIcon>settings</mat-icon>
+                <span matListItemTitle>Settings</span>
+            </a>
+            <a mat-list-item class="nav-item" (click)="logout($event)">
+                <mat-icon matListItemIcon>logout</mat-icon>
+                <span matListItemTitle>Log out</span>
+            </a>
+        </div>
     </mat-nav-list>
 </div>
