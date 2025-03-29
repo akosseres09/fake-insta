@@ -1,15 +1,26 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { User } from '../model/User';
+import { User } from '../../model/User';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AuthService {
+    private userSubject: BehaviorSubject<User | null> =
+        new BehaviorSubject<User | null>(null);
+    user$ = this.userSubject.asObservable();
+
     constructor(private http: HttpClient) {}
 
     getUser(id: string) {
-        return this.http.get(`http://localhost:3000/user/${id}`);
+        return this.http
+            .get(`http://localhost:3000/user/${id}`)
+            .pipe(tap((user) => this.userSubject.next(user as User)));
+    }
+
+    checkId() {
+        return this.http.get('http://localhost:3000/checkId');
     }
 
     login(username: string, password: string) {
@@ -24,6 +35,7 @@ export class AuthService {
         return this.http.post('http://localhost:3000/login', body, {
             headers: headers,
             withCredentials: true,
+            responseType: 'text',
         });
     }
 
