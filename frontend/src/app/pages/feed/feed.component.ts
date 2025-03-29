@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StoriesComponent } from '../stories/stories.component';
 import { PostComponent } from '../post/post.component';
 import { MaterialModule } from '../../material.module';
 import { MiniProfileComponent } from '../mini-profile/mini-profile.component';
@@ -10,7 +9,6 @@ import { MiniProfileComponent } from '../mini-profile/mini-profile.component';
     standalone: true,
     imports: [
         CommonModule,
-        StoriesComponent,
         PostComponent,
         MaterialModule,
         MiniProfileComponent,

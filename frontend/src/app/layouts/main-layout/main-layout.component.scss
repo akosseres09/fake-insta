@@ -24,6 +24,8 @@
     flex: 1 1 auto;
     padding: 20px;
     position: relative;
+    width: 100%;
+    max-width: 750px;
 }
 
 .mobile-only {
@@ -54,7 +56,7 @@
     .main-content {
         align-items: center;
         justify-content: center;
-        flex-shrink: 1;
+        max-width: 100%;
     }
 }
 
