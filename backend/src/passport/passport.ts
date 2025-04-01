@@ -13,25 +13,24 @@ export const configurePassport = (passport: PassportStatic): PassportStatic => {
 
     passport.use(
         'local',
-        new Strategy((username, password, done) => {
-            const query = User.findOne({ username: username });
-            query
-                .then((user) => {
-                    if (user) {
-                        user.comparePassword(password, (compareError, _) => {
-                            if (compareError) {
-                                done('Incorrect username or password!');
-                            } else {
-                                done(null, user.id);
-                            }
-                        });
+        new Strategy(async (username, password, done) => {
+            try {
+                const user = await User.findOne({ username: username });
+
+                if (!user) {
+                    done(null, undefined);
+                }
+
+                user?.comparePassword(password, (compareError, isMatch) => {
+                    if (compareError || !isMatch) {
+                        done('Incorrect username or password!');
                     } else {
-                        done(null, undefined);
+                        done(null, user.id);
                     }
-                })
-                .catch((queryError) => {
-                    done(queryError);
                 });
+            } catch (error) {
+                done(error);
+            }
         })
     );
 
