@@ -1,0 +1,32 @@
+<mat-tab-group
+    mat-stretch-tabs="false"
+    mat-align-tabs="center"
+    animationDuration="0ms"
+    class="profile-tabs"
+>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">grid_on</mat-icon>
+            <span class="tab-text">POSTS</span>
+        </ng-template>
+
+        <!-- Profile Posts Grid -->
+        <div class="posts-grid">
+            <div class="post-item" *ngFor="let post of userPosts" matRipple>
+                <img [src]="post.imageUrl" alt="Post" />
+                <div class="post-overlay">
+                    <div class="post-stats">
+                        <div class="stat">
+                            <mat-icon>favorite</mat-icon>
+                            {{ post.likes }}
+                        </div>
+                        <div class="stat">
+                            <mat-icon>chat_bubble</mat-icon>
+                            {{ post.comments }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+</mat-tab-group>

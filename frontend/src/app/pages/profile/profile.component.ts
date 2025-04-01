@@ -1,14 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MaterialModule } from '../../material.module';
 import { AuthService } from '../../shared/services/auth/auth.service';
 import { User } from '../../shared/model/User';
 import { Subscription } from 'rxjs';
+import { ProfileHeaderComponent } from './profile-header/profile-header.component';
+import { ProfileTabsComponent } from './profile-tabs/profile-tabs.component';
 
 @Component({
     selector: 'app-profile',
     standalone: true,
-    imports: [CommonModule, MaterialModule],
+    imports: [
+        CommonModule,
+        ProfileHeaderComponent,
+        ProfileTabsComponent,
+    ],
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.scss',
 })
