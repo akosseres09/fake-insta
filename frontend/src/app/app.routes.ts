@@ -42,6 +42,20 @@ export const routes: Routes = [
                         (c) => c.SettingsComponent
                     ),
             },
+            {
+                path: 'edit',
+                loadComponent: () =>
+                    import('./pages/edit/edit.component').then(
+                        (c) => c.EditComponent
+                    ),
+            },
+            {
+                path: 'create',
+                loadComponent: () =>
+                    import('./pages/create/create.component').then(
+                        (c) => c.CreateComponent
+                    ),
+            },
         ],
     },
     {
