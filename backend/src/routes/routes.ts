@@ -6,25 +6,28 @@ export const configureRoutes = (
     passport: PassportStatic,
     router: Router
 ): Router => {
-    router.get('/user/:id', (req: Request, res: Response) => {
-        const userId = req.params.id;
-        const query = User.findOne({ _id: userId }).select([
-            'username',
-            'name',
-            'followers',
-            'following',
-            'isAdmin',
-            'bio',
-            'profilePictureUrl',
-            'email',
-        ]);
-        query
-            .then((user) => {
+    router.get('/user/:id', async (req: Request, res: Response) => {
+        try {
+            const userId = req.params.id;
+            const user = await User.findOne({ _id: userId }).select([
+                'username',
+                'name',
+                'followers',
+                'following',
+                'isAdmin',
+                'bio',
+                'profilePictureUrl',
+                'email',
+            ]);
+
+            if (user) {
                 res.status(200).send(user);
-            })
-            .catch((error) => {
-                res.status(500).send(error);
-            });
+            } else {
+                res.status(404).send('User not found');
+            }
+        } catch (error) {
+            res.status(500).send(error);
+        }
     });
 
     router.post('/login', (req: Request, res: Response, next: NextFunction) => {
@@ -50,7 +53,7 @@ export const configureRoutes = (
         )(req, res, next);
     });
 
-    router.post('/register', (req: Request, res: Response) => {
+    router.post('/register', async (req: Request, res: Response) => {
         const email = req.body.email;
         const username = req.body.username;
         const password = req.body.password;
@@ -69,14 +72,18 @@ export const configureRoutes = (
             following: [],
         });
 
-        user.save()
-            .then((user) => {
+        try {
+            const result = await user.save();
+
+            if (result) {
                 res.status(200).send(true);
-            })
-            .catch((error) => {
-                console.log(error);
-                res.status(500).send(false);
-            });
+            } else {
+                res.status(400).send(false);
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).send(false);
+        }
     });
 
     router.get('/checkId', (req: Request, res: Response) => {
