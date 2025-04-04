@@ -24,6 +24,8 @@
 }
 
 .mini-profile-info .mini-profile-info-name {
+    display: flex;
+    gap: 5px;
     font-weight: lighter;
     color: darkgray;
 }

@@ -1,9 +1,16 @@
 <div class="mini-profile">
     <div class="mini-profile-avatar">
-        <img [src]="user.avatar" alt="avatar" />
+        <img [src]="avatar" alt="avatar" />
     </div>
     <div class="mini-profile-info">
-        <div class="mini-profile-info-username">{{ user.username }}</div>
-        <div class="mini-profile-info-name">{{ user.name }}</div>
+        <div class="mini-profile-info-username">{{ user?.username }}</div>
+        <div class="mini-profile-info-name">
+            <span class="first-name">
+                {{ user?.name?.first }}
+            </span>
+            <span class="last-name">
+                {{ user?.name?.last }}
+            </span>
+        </div>
     </div>
 </div>
