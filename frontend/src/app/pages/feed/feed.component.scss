@@ -27,8 +27,32 @@
     flex-basis: 20%;
 }
 
+.container .feed .no-posts {
+    margin-top: 25px;
+}
+
+.container .feed .no-posts h2 {
+    font-size: 2rem;
+}
+
+.no-posts .options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.no-posts .options a {
+    width: 100%;
+    max-width: 250px;
+}
+
 @media screen and (max-width: 1300px) {
     .mini-profile {
         display: none;
+    }
+
+    .container .feed .no-posts {
+        margin-top: 0;
     }
 }

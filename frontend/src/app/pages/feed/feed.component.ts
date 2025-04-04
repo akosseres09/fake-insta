@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PostComponent } from '../post/post.component';
 import { MaterialModule } from '../../material.module';
 import { MiniProfileComponent } from '../mini-profile/mini-profile.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-feed',
@@ -12,12 +13,13 @@ import { MiniProfileComponent } from '../mini-profile/mini-profile.component';
         PostComponent,
         MaterialModule,
         MiniProfileComponent,
+        RouterModule,
     ],
     templateUrl: './feed.component.html',
     styleUrl: './feed.component.scss',
 })
 export class FeedComponent {
-    posts = [
+    posts = []; /*= [
         {
             username: 'travel_guy',
             userAvatar: 'https://i.pravatar.cc/150?img=8',
@@ -72,5 +74,5 @@ export class FeedComponent {
             ],
             time: '8 hours ago',
         },
-    ];
+    ];*/
 }

@@ -1,7 +1,19 @@
 <div class="container">
     <div class="feed">
-        <div class="posts">
+        <div *ngIf="posts && posts.length > 0" class="posts">
             <app-post *ngFor="let post of posts" [post]="post"></app-post>
+        </div>
+        <div *ngIf="!posts || posts.length === 0">
+            <div class="no-posts">
+                <h2>No posts yet. Be the first to post something!</h2>
+                <div class="options">
+                    <a routerLink="/create" mat-raised-button>CREATE POST </a>
+                    OR
+                    <a routerLink="/search" mat-raised-button
+                        >SEARCH FOR USERS</a
+                    >
+                </div>
+            </div>
         </div>
     </div>
     <app-mini-profile class="mini-profile"></app-mini-profile>
