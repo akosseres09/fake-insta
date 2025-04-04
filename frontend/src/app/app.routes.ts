@@ -36,13 +36,6 @@ export const routes: Routes = [
                     ),
             },
             {
-                path: 'settings',
-                loadComponent: () =>
-                    import('./pages/settings/settings.component').then(
-                        (c) => c.SettingsComponent
-                    ),
-            },
-            {
                 path: 'edit',
                 loadComponent: () =>
                     import('./pages/edit/edit.component').then(
