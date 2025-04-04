@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../shared/services/auth/auth.service';
+import { SnackbarService } from '../../shared/snackbar/snackbar.service';
 
 @Component({
     selector: 'app-login',
@@ -40,7 +41,8 @@ export class LoginComponent {
     constructor(
         private fb: FormBuilder,
         private router: Router,
-        private auth: AuthService
+        private auth: AuthService,
+        private snackBar: SnackbarService
     ) {
         this.loginForm = this.fb.group({
             username: ['', Validators.required],
@@ -64,6 +66,7 @@ export class LoginComponent {
                 },
                 error: (error) => {
                     console.log(error);
+                    this.snackBar.openSnackBar(error.error, ['snackbar-error']);
                     this.isLoading = false;
                 },
             });

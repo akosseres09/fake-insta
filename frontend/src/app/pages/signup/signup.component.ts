@@ -99,7 +99,7 @@ export class SignupComponent {
                     console.log(error);
                     this.isLoading = false;
                     this.snackBar.openSnackBar('Error creating account', [
-                        'Error',
+                        'snackbar-error',
                     ]);
                 },
             });
