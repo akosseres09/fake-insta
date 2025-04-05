@@ -86,6 +86,68 @@ export const configureRoutes = (
         }
     });
 
+    router.post('/update/:id', async (req: Request, res: Response) => {
+        if (!req.isAuthenticated()) {
+            res.status(400).send({
+                error: 'User not authenticated',
+            });
+        }
+
+        const userId = req.params.id;
+
+        if (userId !== req.user) {
+            res.status(403).send({
+                success: false,
+                result: 'Not authorized',
+            });
+        }
+
+        try {
+            const user = await User.findById(userId).select([
+                'username',
+                'name',
+                'followers',
+                'following',
+                'isAdmin',
+                'bio',
+                'profilePictureUrl',
+                'email',
+            ]);
+
+            if (user) {
+                user.name.first = req.body.first;
+                user.name.last = req.body.last;
+                user.username = req.body.username;
+                user.email = req.body.email;
+                user.bio = req.body.bio;
+                user.profilePictureUrl = req.body.profilePictureUrl;
+                const response = await user.updateOne(user);
+
+                if (response) {
+                    res.status(200).send({
+                        success: true,
+                        result: user,
+                    });
+                } else {
+                    res.status(400).send({
+                        success: false,
+                        result: 'Error updating user',
+                    });
+                }
+            } else {
+                res.status(404).send({
+                    success: false,
+                    result: 'User not found',
+                });
+            }
+        } catch (error) {
+            res.status(500).send({
+                success: false,
+                result: 'Internal server error',
+            });
+        }
+    });
+
     router.get('/checkId', (req: Request, res: Response) => {
         if (req.isAuthenticated()) {
             res.status(200).send(req.user);
