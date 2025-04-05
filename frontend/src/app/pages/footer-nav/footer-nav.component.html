@@ -8,12 +8,12 @@
     <a routerLink="/create" mat-icon-button>
         <mat-icon>add_box</mat-icon>
     </a>
-    <a routerLink="/settings" mat-icon-button>
-        <mat-icon>settings</mat-icon>
-    </a>
     <a routerLink="/profile" mat-icon-button>
         <div class="profile-avatar">
             <img src="https://i.pravatar.cc/150?img=1" alt="Your profile" />
         </div>
     </a>
+    <button (click)="logout($event)" mat-icon-button>
+        <mat-icon>logout</mat-icon>
+    </button>
 </mat-toolbar>

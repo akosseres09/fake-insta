@@ -25,6 +25,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     userSubscription: Subscription | null = null;
     idSubscription: Subscription | null = null;
     id: string | null = null;
+    logoutSubscription: Subscription | null = null;
 
     constructor(private authService: AuthService, private router: Router) {}
 
@@ -56,6 +57,18 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
                     this.router.navigateByUrl('/not-found');
                 },
             });
+    }
+
+    logout(): void {
+        this.logoutSubscription = this.authService.logout().subscribe({
+            next: (response) => {
+                localStorage.removeItem('user');
+                this.router.navigateByUrl('/auth/login');
+            },
+            error: (error) => {
+                console.log(error);
+            },
+        });
     }
 
     ngOnDestroy(): void {

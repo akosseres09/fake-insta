@@ -12,8 +12,13 @@ import { RouterModule } from '@angular/router';
 })
 export class FooterNavComponent {
     @Output() viewChange = new EventEmitter<string>();
+    @Output() logoutEvent: EventEmitter<void> = new EventEmitter<void>();
 
     changeView(view: string) {
         this.viewChange.emit(view);
+    }
+
+    logout(event: Event) {
+        this.logoutEvent.emit();
     }
 }

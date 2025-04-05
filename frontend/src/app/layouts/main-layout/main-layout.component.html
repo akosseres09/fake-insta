@@ -7,7 +7,7 @@
     <div class="app-container">
         <!-- Sidebar - Hidden on mobile -->
         <div class="desktop-only sidebar-container">
-            <app-sidebar></app-sidebar>
+            <app-sidebar (logoutEvent)="logout()"></app-sidebar>
         </div>
 
         <main class="main-content">
@@ -16,6 +16,9 @@
     </div>
 
     <div class="mobile-only">
-        <app-footer-nav (viewChange)="currentView = $event"></app-footer-nav>
+        <app-footer-nav
+            (logoutEvent)="logout()"
+            (viewChange)="currentView = $event"
+        ></app-footer-nav>
     </div>
 </div>

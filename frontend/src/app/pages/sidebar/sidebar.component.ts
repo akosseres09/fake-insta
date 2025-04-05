@@ -1,9 +1,8 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../material.module';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../shared/services/auth/auth.service';
-import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-sidebar',
@@ -12,24 +11,12 @@ import { Subscription } from 'rxjs';
     templateUrl: './sidebar.component.html',
     styleUrl: './sidebar.component.scss',
 })
-export class SidebarComponent implements OnDestroy {
-    logoutSubscription: Subscription | null = null;
+export class SidebarComponent {
+    @Output() logoutEvent: EventEmitter<void> = new EventEmitter<void>();
 
     constructor(private authService: AuthService, private router: Router) {}
 
-    logout(event: Event): void {
-        this.logoutSubscription = this.authService.logout().subscribe({
-            next: (response) => {
-                localStorage.removeItem('user');
-                this.router.navigateByUrl('/auth/login');
-            },
-            error: (error) => {
-                console.log(error);
-            },
-        });
-    }
-
-    ngOnDestroy(): void {
-        this.logoutSubscription?.unsubscribe();
+    logout(event: Event) {
+        this.logoutEvent.emit();
     }
 }
