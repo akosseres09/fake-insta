@@ -6,6 +6,8 @@ import { SidebarComponent } from '../../pages/sidebar/sidebar.component';
 import { AuthService } from '../../shared/services/auth/auth.service';
 import { User } from '../../shared/model/User';
 import { Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-main-layout',
@@ -14,6 +16,8 @@ import { Subscription } from 'rxjs';
         HeaderComponent,
         FooterNavComponent,
         SidebarComponent,
+        CommonModule,
+        MatProgressSpinnerModule,
     ],
     templateUrl: './main-layout.component.html',
     styleUrl: './main-layout.component.scss',

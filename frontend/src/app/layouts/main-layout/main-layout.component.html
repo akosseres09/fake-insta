@@ -4,10 +4,15 @@
         <app-header></app-header>
     </div>
 
-    <div class="app-container">
+    <mat-spinner
+        *ngIf="!user"
+        style="width: 100%; margin: auto auto"
+    ></mat-spinner>
+
+    <div *ngIf="user" class="app-container">
         <!-- Sidebar - Hidden on mobile -->
         <div class="desktop-only sidebar-container">
-            <app-sidebar (logoutEvent)="logout()"></app-sidebar>
+            <app-sidebar [user]="user" (logoutEvent)="logout()"></app-sidebar>
         </div>
 
         <main class="main-content">
