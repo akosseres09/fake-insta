@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     ReactiveFormsModule,
@@ -14,11 +14,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { SnackbarService } from '../../shared/snackbar/snackbar.service';
+import { AuthService } from '../../shared/services/auth/auth.service';
+import { Subscription } from 'rxjs';
+import { PostService } from '../../shared/services/post/post.service';
+import { IBodyPost } from '../../shared/model/Post';
 
 @Component({
     selector: 'app-create',
@@ -46,7 +50,7 @@ import { SnackbarService } from '../../shared/snackbar/snackbar.service';
     templateUrl: './create.component.html',
     styleUrl: './create.component.scss',
 })
-export class CreateComponent implements OnInit {
+export class CreateComponent implements OnInit, OnDestroy {
     uploadForm: FormGroup;
     detailsForm: FormGroup;
 
@@ -56,10 +60,15 @@ export class CreateComponent implements OnInit {
     isDragging = false;
     isSubmitting = false;
 
+    userSubscription: Subscription | null = null;
+    userId: string | null = null;
+
     constructor(
         private fb: FormBuilder,
         private router: Router,
-        private snackBar: SnackbarService
+        private snackBar: SnackbarService,
+        private authService: AuthService,
+        private postService: PostService
     ) {
         this.uploadForm = this.fb.group({
             file: [null, Validators.required],
@@ -71,7 +80,20 @@ export class CreateComponent implements OnInit {
         });
     }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.userSubscription = this.authService.user$.subscribe({
+            next: (user) => {
+                this.userId = user?._id as string;
+            },
+            error: (error) => {
+                console.error('Error fetching user data:');
+            },
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.userSubscription?.unsubscribe();
+    }
 
     onDragOver(event: DragEvent): void {
         event.preventDefault();
@@ -140,33 +162,27 @@ export class CreateComponent implements OnInit {
             this.isSubmitting = true;
 
             // Combine form data
-            const formData = new FormData();
-            formData.append('file', this.selectedFile);
-            formData.append('caption', this.detailsForm.get('caption')?.value);
-            formData.append(
-                'location',
-                this.detailsForm.get('location')?.value
-            );
-            formData.append(
-                'taggedUsers',
-                this.detailsForm.get('taggedUsers')?.value
-            );
-            formData.append('altText', this.detailsForm.get('altText')?.value);
+            const post: IBodyPost = {
+                userId: this.userId as string,
+                media: this.selectedFile,
+                caption: this.detailsForm.get('caption')?.value,
+                altText: this.detailsForm.get('altText')?.value,
+            };
 
-            // Simulate API call
-            setTimeout(() => {
-                this.isSubmitting = false;
-                console.log('Post created with data:', {
-                    file: this.selectedFile?.name,
-                    caption: this.detailsForm.get('caption')?.value,
-                    altText: this.detailsForm.get('altText')?.value,
-                });
-
-                this.snackBar.openSnackBar('Your post has been shared!');
-
-                // Navigate to feed after successful post
-                //this.router.navigate(['/app/feed']);
-            }, 2000);
+            this.postService.createPost(post).subscribe({
+                next: (response) => {
+                    this.isSubmitting = false;
+                    console.log(response);
+                    this.snackBar.openSnackBar('Your post has been shared!');
+                },
+                error: (error) => {
+                    console.log(error);
+                    this.isSubmitting = false;
+                    this.snackBar.openSnackBar('Failed to share post', [
+                        'snackbar-error',
+                    ]);
+                },
+            });
         }
     }
 }
