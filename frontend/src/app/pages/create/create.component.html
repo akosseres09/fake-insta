@@ -1,1 +1,168 @@
-<p>create works!</p>
+<div class="create-container">
+    <div class="create-card">
+        <div>
+            <mat-stepper [linear]="true" #stepper>
+                <mat-step [stepControl]="uploadForm">
+                    <ng-template matStepLabel>Upload</ng-template>
+                    <div class="step-content">
+                        <form [formGroup]="uploadForm">
+                            <div
+                                class="upload-area"
+                                [class.has-file]="filePreview"
+                                (dragover)="onDragOver($event)"
+                                (dragleave)="onDragLeave($event)"
+                                (drop)="onDrop($event)"
+                                [class.drag-over]="isDragging"
+                            >
+                                <ng-container
+                                    *ngIf="!filePreview; else previewTemplate"
+                                >
+                                    <mat-icon class="upload-icon"
+                                        >cloud_upload</mat-icon
+                                    >
+                                    <p class="upload-text">
+                                        Drag photos and videos here
+                                    </p>
+                                    <button
+                                        mat-flat-button
+                                        color="primary"
+                                        type="button"
+                                        (click)="fileInput.click()"
+                                    >
+                                        Select from computer
+                                    </button>
+                                    <input
+                                        #fileInput
+                                        type="file"
+                                        hidden
+                                        accept="image/*,video/*"
+                                        (change)="onFileSelected($event)"
+                                    />
+                                </ng-container>
+
+                                <ng-template #previewTemplate>
+                                    <div class="preview-container">
+                                        <div class="media-preview">
+                                            <img
+                                                *ngIf="fileType === 'image'"
+                                                [src]="filePreview"
+                                                alt="Preview"
+                                                class="preview-image"
+                                            />
+                                            <video
+                                                *ngIf="fileType === 'video'"
+                                                [src]="filePreview"
+                                                controls
+                                                class="preview-video"
+                                            ></video>
+                                        </div>
+                                        <div class="preview-actions">
+                                            <button
+                                                mat-mini-fab
+                                                color="warn"
+                                                (click)="removeFile()"
+                                                matTooltip="Remove"
+                                            >
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </div>
+
+                            <div *ngIf="filePreview" class="step-actions">
+                                <button
+                                    mat-flat-button
+                                    color="primary"
+                                    matStepperNext
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </mat-step>
+
+                <mat-step [stepControl]="detailsForm">
+                    <ng-template matStepLabel>Details</ng-template>
+                    <div class="step-content details-step">
+                        <div class="details-preview">
+                            <img
+                                *ngIf="fileType === 'image'"
+                                [src]="filePreview"
+                                alt="Preview"
+                                class="details-image"
+                            />
+                            <video
+                                *ngIf="fileType === 'video'"
+                                [src]="filePreview"
+                                controls
+                                class="details-video"
+                            ></video>
+                        </div>
+
+                        <div class="details-form">
+                            <form [formGroup]="detailsForm">
+                                <mat-form-field
+                                    appearance="outline"
+                                    class="full-width"
+                                >
+                                    <mat-label>Write a caption...</mat-label>
+                                    <textarea
+                                        matInput
+                                        formControlName="caption"
+                                        rows="5"
+                                        placeholder="What's on your mind?"
+                                    ></textarea>
+                                    <mat-hint align="end"
+                                        >{{
+                                            detailsForm.get("caption")?.value
+                                                ?.length || 0
+                                        }}/2200</mat-hint
+                                    >
+                                </mat-form-field>
+
+                                <div class="accessibility-section">
+                                    <h3 class="section-title">Accessibility</h3>
+                                    <mat-form-field
+                                        appearance="outline"
+                                        class="full-width"
+                                    >
+                                        <mat-label>Alt text</mat-label>
+                                        <textarea
+                                            matInput
+                                            formControlName="altText"
+                                            rows="2"
+                                            placeholder="Describe this photo for people with visual impairments"
+                                        ></textarea>
+                                        <mat-hint
+                                            >Alt text helps people with visual
+                                            impairments</mat-hint
+                                        >
+                                    </mat-form-field>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <button mat-button matStepperPrevious>Back</button>
+                        <button
+                            mat-flat-button
+                            color="primary"
+                            (click)="onSubmit()"
+                            [disabled]="isSubmitting"
+                        >
+                            <span *ngIf="!isSubmitting">Share</span>
+                            <mat-spinner
+                                *ngIf="isSubmitting"
+                                diameter="20"
+                                class="spinner"
+                            ></mat-spinner>
+                        </button>
+                    </div>
+                </mat-step>
+            </mat-stepper>
+        </div>
+    </div>
+</div>
