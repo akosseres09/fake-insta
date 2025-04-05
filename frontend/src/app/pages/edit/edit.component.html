@@ -1,1 +1,133 @@
-<p>edit works!</p>
+<div class="edit-profile-container">
+    <div class="edit-profile-card">
+        <div class="profile-layout">
+            <!-- Sidebar with profile picture -->
+            <div class="profile-sidebar">
+                <div class="profile-picture-container">
+                    <div
+                        class="profile-picture"
+                        [style.background-image]="profilePicturePreview"
+                    >
+                        <div
+                            class="profile-picture-overlay"
+                            (click)="fileInput.click()"
+                        >
+                            <mat-icon>photo_camera</mat-icon>
+                            <span>Change Profile Photo</span>
+                        </div>
+                    </div>
+                    <input
+                        #fileInput
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        (change)="onProfilePictureSelected($event)"
+                    />
+                </div>
+                <h3 class="username-display">
+                    {{ profileForm?.get("username")?.value || "username" }}
+                </h3>
+            </div>
+
+            <!-- Main form content -->
+            <div class="profile-content">
+                <form [formGroup]="profileForm!" (ngSubmit)="onSubmit()">
+                    <input hidden formControlName="_id" />
+                    <div class="form-row" formGroupName="name">
+                        <mat-form-field appearance="outline" class="form-field">
+                            <mat-label>First Name</mat-label>
+                            <input matInput formControlName="first" />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="form-field">
+                            <mat-label>Last Name</mat-label>
+                            <input matInput formControlName="last" />
+                        </mat-form-field>
+                    </div>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label
+                            matTooltip="You can only change your username once within 14
+                            days."
+                            matTooltipPosition="above"
+                        >
+                            Username
+                        </mat-label>
+                        <input matInput formControlName="username" />
+
+                        <mat-error
+                            *ngIf="
+                                profileForm
+                                    ?.get('username')
+                                    ?.hasError('required')
+                            "
+                        >
+                            Username is required
+                        </mat-error>
+                        <mat-error
+                            *ngIf="
+                                profileForm
+                                    ?.get('username')
+                                    ?.hasError('pattern')
+                            "
+                        >
+                            Username can only use letters, numbers, underscores
+                            and periods
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Email</mat-label>
+                        <input matInput formControlName="email" type="email" />
+                        <mat-error
+                            *ngIf="
+                                profileForm?.get('email')?.hasError('required')
+                            "
+                        >
+                            Email is required
+                        </mat-error>
+                        <mat-error
+                            *ngIf="profileForm?.get('email')?.hasError('email')"
+                        >
+                            Please enter a valid email address
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Bio</mat-label>
+                        <textarea
+                            matInput
+                            formControlName="bio"
+                            rows="4"
+                            placeholder="Tell people about yourself..."
+                        ></textarea>
+                        <mat-hint
+                            >{{
+                                profileForm?.get("bio")?.value?.length || 0
+                            }}/150</mat-hint
+                        >
+                    </mat-form-field>
+
+                    <div class="form-actions">
+                        <button mat-button type="button" (click)="cancel()">
+                            Cancel
+                        </button>
+                        <button
+                            mat-flat-button
+                            color="primary"
+                            type="submit"
+                            [disabled]="profileForm?.invalid || isSubmitting"
+                        >
+                            <span *ngIf="!isSubmitting">Save Changes</span>
+                            <mat-spinner
+                                *ngIf="isSubmitting"
+                                diameter="20"
+                                class="spinner"
+                            ></mat-spinner>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

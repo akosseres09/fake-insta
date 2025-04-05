@@ -1,0 +1,159 @@
+:host {
+    width: 100%;
+}
+
+.edit-profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.edit-profile-card,
+.settings-card {
+    width: 100%;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.edit-profile-card {
+    padding: 16px;
+}
+
+.profile-layout {
+    display: flex;
+    padding: 20px 0;
+}
+
+.profile-sidebar {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-right: 40px;
+}
+
+.profile-picture-container {
+    margin-bottom: 16px;
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    cursor: pointer;
+    background-color: #424242;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-picture-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    color: white;
+}
+
+.profile-picture:hover .profile-picture-overlay {
+    opacity: 1;
+}
+
+.profile-picture-overlay mat-icon {
+    margin-bottom: 8px;
+}
+
+.profile-picture-overlay span {
+    font-size: 12px;
+    text-align: center;
+    padding: 0 10px;
+}
+
+.username-display {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.profile-content {
+    flex: 1;
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.form-field {
+    flex: 1;
+}
+
+.full-width {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.spinner {
+    margin: 0 auto;
+}
+
+.privacy-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.privacy-text h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.privacy-text p {
+    margin: 0;
+    font-size: 14px;
+    color: #a8a8a8;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .profile-layout {
+        flex-direction: column;
+    }
+
+    .profile-sidebar {
+        width: 100%;
+        padding-right: 0;
+        padding-bottom: 24px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
