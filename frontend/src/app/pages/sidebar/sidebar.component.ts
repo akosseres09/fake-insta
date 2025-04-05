@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../material.module';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../shared/services/auth/auth.service';
+import { User } from '../../shared/model/User';
 
 @Component({
     selector: 'app-sidebar',
@@ -13,6 +14,7 @@ import { AuthService } from '../../shared/services/auth/auth.service';
 })
 export class SidebarComponent {
     @Output() logoutEvent: EventEmitter<void> = new EventEmitter<void>();
+    @Input() user: User | null = null;
 
     constructor(private authService: AuthService, private router: Router) {}
 
