@@ -39,7 +39,7 @@ const UserSchema = new mongoose.Schema<IUser>({
         first: { type: String, required: true },
         last: { type: String, required: true },
     },
-    bio: { type: String },
+    bio: { type: String, default: '' },
     isAdmin: { type: Boolean, default: false },
     profilePictureUrl: { type: String, default: '' },
     followers: [{ id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } }],
