@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { PassportStatic } from 'passport';
 import { User } from '../model/User';
+import upload from '../middlewares/multer';
+import { Post } from '../model/Post';
 
 export const configureRoutes = (
     passport: PassportStatic,
@@ -198,6 +200,51 @@ export const configureRoutes = (
             res.status(400).send(false);
         }
     });
+
+    router.post(
+        '/createPost',
+        upload.single('media'),
+        async (req: Request, res: Response) => {
+            try {
+                const { caption, altText, userId } = req.body;
+                if (!req.file || !req.file.path) {
+                    res.status(400).send('No file uploaded');
+                    return;
+                }
+
+                const newPost = new Post({
+                    userId: userId,
+                    caption: caption,
+                    altText: altText,
+                    mediaUrl: req.file.path,
+                    mediaType: req.file.mimetype.startsWith('video')
+                        ? 'video'
+                        : 'image',
+                    likes: [],
+                    comments: [],
+                });
+
+                const response = await newPost.save();
+
+                if (response) {
+                    res.status(200).send({
+                        success: true,
+                        result: newPost,
+                    });
+                } else {
+                    res.status(400).send({
+                        success: false,
+                        result: 'Error creating post',
+                    });
+                }
+            } catch (error) {
+                res.status(500).send({
+                    success: false,
+                    result: 'Internal server error',
+                });
+            }
+        }
+    );
 
     return router;
 };
