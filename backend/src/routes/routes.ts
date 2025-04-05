@@ -6,30 +6,7 @@ export const configureRoutes = (
     passport: PassportStatic,
     router: Router
 ): Router => {
-    router.get('/user/:id', async (req: Request, res: Response) => {
-        try {
-            const userId = req.params.id;
-            const user = await User.findOne({ _id: userId }).select([
-                'username',
-                'name',
-                'followers',
-                'following',
-                'isAdmin',
-                'bio',
-                'profilePictureUrl',
-                'email',
-            ]);
-
-            if (user) {
-                res.status(200).send(user);
-            } else {
-                res.status(404).send('User not found');
-            }
-        } catch (error) {
-            res.status(500).send(error);
-        }
-    });
-
+    // Authentication routes
     router.post('/login', (req: Request, res: Response, next: NextFunction) => {
         passport.authenticate(
             'local',
@@ -83,6 +60,47 @@ export const configureRoutes = (
         } catch (error) {
             console.log(error);
             res.status(500).send(false);
+        }
+    });
+
+    router.post('/logout', (req: Request, res: Response) => {
+        if (req.isAuthenticated()) {
+            req.logout((logoutError) => {
+                if (logoutError) {
+                    res.status(500).send('Internal server error');
+                }
+                res.status(200).send('Logged out');
+            });
+        } else {
+            res.status(400).send('Not logged in');
+        }
+    });
+
+    //Authentication routes end
+
+    // User routes
+
+    router.get('/user/:id', async (req: Request, res: Response) => {
+        try {
+            const userId = req.params.id;
+            const user = await User.findOne({ _id: userId }).select([
+                'username',
+                'name',
+                'followers',
+                'following',
+                'isAdmin',
+                'bio',
+                'profilePictureUrl',
+                'email',
+            ]);
+
+            if (user) {
+                res.status(200).send(user);
+            } else {
+                res.status(404).send('User not found');
+            }
+        } catch (error) {
+            res.status(500).send(error);
         }
     });
 
@@ -156,24 +174,28 @@ export const configureRoutes = (
         }
     });
 
-    router.post('/logout', (req: Request, res: Response) => {
-        if (req.isAuthenticated()) {
-            req.logout((logoutError) => {
-                if (logoutError) {
-                    res.status(500).send('Internal server error');
-                }
-                res.status(200).send('Logged out');
-            });
-        } else {
-            res.status(400).send('Not logged in');
-        }
-    });
-
     router.get('/checkauth', (req: Request, res: Response) => {
         if (req.isAuthenticated()) {
             res.status(200).send(true);
         } else {
             res.status(200).send(false);
+        }
+    });
+
+    router.get('/checkAdmin', async (req: Request, res: Response) => {
+        if (req.isAuthenticated()) {
+            try {
+                const user = await User.findById(req.user);
+                if (user) {
+                    res.status(200).send(user.isAdmin);
+                } else {
+                    res.status(404).send(false);
+                }
+            } catch (error) {
+                res.status(500).send(false);
+            }
+        } else {
+            res.status(400).send(false);
         }
     });
 
