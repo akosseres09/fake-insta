@@ -48,10 +48,6 @@ export class AuthService {
         );
     }
 
-    checkId() {
-        return this.http.get('http://localhost:3000/checkId');
-    }
-
     login(username: string, password: string) {
         const body = new URLSearchParams();
         body.set('username', username);
@@ -93,8 +89,18 @@ export class AuthService {
         );
     }
 
+    checkId() {
+        return this.http.get('http://localhost:3000/checkId');
+    }
+
     checkauth() {
         return this.http.get<boolean>('http://localhost:3000/checkauth', {
+            withCredentials: true,
+        });
+    }
+
+    checkAdmin() {
+        return this.http.get<boolean>('http://localhost:3000/checkAdmin', {
             withCredentials: true,
         });
     }
