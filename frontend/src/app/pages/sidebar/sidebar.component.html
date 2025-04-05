@@ -49,6 +49,26 @@
                 </div>
                 <span matListItemTitle>Profile</span>
             </a>
+            <a
+                *ngIf="user?.isAdmin"
+                mat-list-item
+                routerLink="/admin/users"
+                routerLinkActive="active"
+                class="nav-item"
+            >
+                <mat-icon matListItemIcon>person</mat-icon>
+                <span matListItemTitle>Users</span>
+            </a>
+            <a
+                *ngIf="user?.isAdmin"
+                mat-list-item
+                routerLink="/admin/posts"
+                routerLinkActive="active"
+                class="nav-item"
+            >
+                <mat-icon matListItemIcon>public</mat-icon>
+                <span matListItemTitle>Posts</span>
+            </a>
         </div>
         <div>
             <a mat-list-item class="nav-item" (click)="logout($event)">
