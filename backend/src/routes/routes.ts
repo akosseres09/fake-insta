@@ -106,6 +106,54 @@ export const configureRoutes = (
         }
     });
 
+    router.get('/userProfile/:id', async (req: Request, res: Response) => {
+        if (!req.isAuthenticated()) {
+            res.status(400).send({
+                success: false,
+                result: 'User not authenticated',
+            });
+            return;
+        }
+        try {
+            const userId = req.params.id;
+
+            const user = await User.findById(userId).select([
+                'username',
+                'name',
+                'followers',
+                'following',
+                'isAdmin',
+                'bio',
+                'profilePictureUrl',
+                'email',
+            ]);
+
+            if (!user) {
+                res.status(404).send({
+                    success: false,
+                    result: 'User not found',
+                });
+                return;
+            }
+
+            const posts = await Post.find({ userId: userId }).sort({
+                createdAt: -1,
+            });
+            res.status(200).send({
+                success: true,
+                result: {
+                    user: user,
+                    posts: posts,
+                },
+            });
+        } catch (error) {
+            res.status(500).send({
+                success: false,
+                result: 'Internal server error',
+            });
+        }
+    });
+
     router.post('/update/:id', async (req: Request, res: Response) => {
         if (!req.isAuthenticated()) {
             res.status(400).send({
