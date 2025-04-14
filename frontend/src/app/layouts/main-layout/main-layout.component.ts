@@ -54,7 +54,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: (user) => {
                     this.user = user as User;
-                    console.log(this.user);
                 },
                 error: (error) => {
                     console.log(error);
