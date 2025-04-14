@@ -154,67 +154,77 @@ export const configureRoutes = (
         }
     });
 
-    router.post('/update/:id', async (req: Request, res: Response) => {
-        if (!req.isAuthenticated()) {
-            res.status(400).send({
-                error: 'User not authenticated',
-            });
-        }
+    router.post(
+        '/update/:id',
+        upload.single('media'),
+        async (req: Request, res: Response) => {
+            if (!req.isAuthenticated()) {
+                res.status(400).send({
+                    error: 'User not authenticated',
+                });
+                return;
+            }
 
-        const userId = req.params.id;
+            const userId = req.params.id;
 
-        if (userId !== req.user) {
-            res.status(403).send({
-                success: false,
-                result: 'Not authorized',
-            });
-        }
+            if (userId !== req.user) {
+                res.status(403).send({
+                    success: false,
+                    result: 'Not authorized',
+                });
+                return;
+            }
 
-        try {
-            const user = await User.findById(userId).select([
-                'username',
-                'name',
-                'followers',
-                'following',
-                'isAdmin',
-                'bio',
-                'profilePictureUrl',
-                'email',
-            ]);
+            try {
+                const user = await User.findById(userId).select([
+                    'username',
+                    'name',
+                    'followers',
+                    'following',
+                    'isAdmin',
+                    'bio',
+                    'profilePictureUrl',
+                    'email',
+                ]);
 
-            if (user) {
-                user.name.first = req.body.first;
-                user.name.last = req.body.last;
-                user.username = req.body.username;
-                user.email = req.body.email;
-                user.bio = req.body.bio;
-                user.profilePictureUrl = req.body.profilePictureUrl;
-                const response = await user.updateOne(user);
+                if (user) {
+                    if (req.file && req.file.path) {
+                        user.profilePictureUrl = req.file.path;
+                    }
 
-                if (response) {
-                    res.status(200).send({
-                        success: true,
-                        result: user,
-                    });
+                    user.name.first = req.body.first;
+                    user.name.last = req.body.last;
+                    user.username = req.body.username;
+                    user.email = req.body.email;
+                    user.bio = req.body.bio;
+
+                    const response = await user.updateOne(user);
+
+                    if (response) {
+                        res.status(200).send({
+                            success: true,
+                            result: user,
+                        });
+                    } else {
+                        res.status(400).send({
+                            success: false,
+                            result: 'Error updating user',
+                        });
+                    }
                 } else {
-                    res.status(400).send({
+                    res.status(404).send({
                         success: false,
-                        result: 'Error updating user',
+                        result: 'User not found',
                     });
                 }
-            } else {
-                res.status(404).send({
+            } catch (error) {
+                res.status(500).send({
                     success: false,
-                    result: 'User not found',
+                    result: 'Internal server error',
                 });
             }
-        } catch (error) {
-            res.status(500).send({
-                success: false,
-                result: 'Internal server error',
-            });
         }
-    });
+    );
 
     router.get('/checkId', (req: Request, res: Response) => {
         if (req.isAuthenticated()) {
@@ -246,6 +256,54 @@ export const configureRoutes = (
             }
         } else {
             res.status(400).send(false);
+        }
+    });
+
+    // User routes end
+
+    // Post routes
+
+    router.get('/posts', async (req: Request, res: Response) => {
+        if (!req.isAuthenticated()) {
+            res.status(400).send({
+                success: false,
+                result: 'User not authenticated',
+            });
+            return;
+        }
+
+        try {
+            const user = await User.findById(req.user);
+            if (!user) {
+                res.status(404).send({
+                    success: false,
+                    result: 'User not found',
+                });
+                return;
+            }
+            const following = user.following.map((user) => user.id);
+            following.push(user.id);
+
+            const posts = await Post.find({ userId: { $in: following } })
+                .sort({ createdAt: -1 })
+                .populate('userId', ['username', 'profilePictureUrl']);
+
+            if (posts) {
+                res.status(200).send({
+                    success: true,
+                    result: posts,
+                });
+            } else {
+                res.status(404).send({
+                    success: false,
+                    result: null,
+                });
+            }
+        } catch (error) {
+            res.status(500).send({
+                success: false,
+                result: 'Internal server error',
+            });
         }
     });
 
