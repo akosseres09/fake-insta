@@ -24,6 +24,7 @@
         <app-footer-nav
             (logoutEvent)="logout()"
             (viewChange)="currentView = $event"
+            [user]="user"
         ></app-footer-nav>
     </div>
 </div>

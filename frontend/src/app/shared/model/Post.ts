@@ -1,4 +1,4 @@
-export interface IPost {
+export interface Post {
     userId: string;
     mediaUrl: string;
     mediaType: string;
