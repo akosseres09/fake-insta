@@ -1,9 +1,23 @@
 <div class="mini-profile">
     <div class="mini-profile-avatar">
-        <img [src]="avatar" alt="avatar" />
+        <img
+            *ngIf="user?.profilePictureUrl !== ''"
+            [src]="user?.profilePictureUrl"
+            alt="avatar"
+        />
+
+        <img
+            *ngIf="user?.profilePictureUrl == ''"
+            src="assets/avatar.jpg"
+            alt="avatar"
+        />
     </div>
     <div class="mini-profile-info">
-        <div class="mini-profile-info-username">{{ user?.username }}</div>
+        <a
+            [href]="'/profile/' + user?._id"
+            class="mini-profile-info-username"
+            >{{ user?.username }}</a
+        >
         <div class="mini-profile-info-name">
             <span class="first-name">
                 {{ user?.name?.first }}

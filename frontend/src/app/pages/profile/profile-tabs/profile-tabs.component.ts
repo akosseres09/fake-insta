@@ -3,6 +3,7 @@ import { Component, Input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatRippleModule } from '@angular/material/core';
+import { Post } from '../../../shared/model/Post';
 
 @Component({
     selector: 'app-profile-tabs',
@@ -11,5 +12,5 @@ import { MatRippleModule } from '@angular/material/core';
     styleUrl: './profile-tabs.component.scss',
 })
 export class ProfileTabsComponent {
-    @Input() userPosts: any;
+    @Input() userPosts: Array<Post> | null = null;
 }

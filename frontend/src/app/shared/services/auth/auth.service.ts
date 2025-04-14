@@ -3,6 +3,14 @@ import { Injectable } from '@angular/core';
 import { User } from '../../model/User';
 import { BehaviorSubject, tap } from 'rxjs';
 import { IResponse } from '../../model/Response';
+import { Post } from '../../model/Post';
+
+interface Result {
+    user: User;
+    posts: Post[];
+}
+
+type PostResponse = IResponse<Result>;
 
 @Injectable({
     providedIn: 'root',
@@ -21,28 +29,34 @@ export class AuthService {
     getUser(id: string) {
         return this.http
             .get(`http://localhost:3000/user/${id}`)
-            .pipe(tap((user) => this.userSubject.next(user as User)));
+            .pipe(tap((user) => this.setUser(user as User)));
     }
 
-    updateUser(user: User) {
-        const body = new URLSearchParams();
-        body.set('_id', user._id);
-        body.set('email', user.email);
-        body.set('first', user.name.first);
-        body.set('last', user.name.last);
-        body.set('username', user.username);
-        body.set('bio', user.bio ?? '');
-        body.set('profilePictureUrl', user.profilePictureUrl ?? '');
+    getUserProfile(id: string) {
+        return this.http.get<PostResponse>(
+            `http://localhost:3000/userProfile/${id}`,
+            {
+                withCredentials: true,
+            }
+        );
+    }
 
-        const headers = new HttpHeaders({
-            'Content-Type': 'application/x-www-form-urlencoded',
+    updateUser(data: any, userId: string) {
+        const form: FormData = new FormData();
+
+        Object.keys(data).forEach((key) => {
+            if (key === 'name') {
+                form.append('first', data[key].first);
+                form.append('last', data[key].last);
+            } else {
+                form.append(key, data[key]);
+            }
         });
 
         return this.http.post<IResponse<User | string>>(
-            `http://localhost:3000/update/${user._id}`,
-            body,
+            `http://localhost:3000/update/${userId}`,
+            form,
             {
-                headers: headers,
                 withCredentials: true,
             }
         );

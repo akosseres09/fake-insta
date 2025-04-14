@@ -13,7 +13,6 @@ import { CommonModule } from '@angular/common';
 export class MiniProfileComponent implements OnInit, OnDestroy {
     userSubscription: Subscription | null = null;
     user: User | null = null;
-    avatar: string | null = 'https://i.pravatar.cc/150?img=1';
     constructor(private authService: AuthService) {}
 
     ngOnInit(): void {

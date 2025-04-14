@@ -13,16 +13,24 @@
         <!-- Profile Posts Grid -->
         <div class="posts-grid">
             <div class="post-item" *ngFor="let post of userPosts" matRipple>
-                <img [src]="post.imageUrl" alt="Post" />
+                <img
+                    *ngIf="post.mediaType === 'image'"
+                    [src]="post.mediaUrl"
+                    alt="Post"
+                />
+                <video *ngIf="post.mediaType === 'video'">
+                    <source [src]="post.mediaUrl" type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
                 <div class="post-overlay">
                     <div class="post-stats">
                         <div class="stat">
                             <mat-icon>favorite</mat-icon>
-                            {{ post.likes }}
+                            {{ post.likes.length }}
                         </div>
                         <div class="stat">
                             <mat-icon>chat_bubble</mat-icon>
-                            {{ post.comments }}
+                            {{ post.comments.length }}
                         </div>
                     </div>
                 </div>

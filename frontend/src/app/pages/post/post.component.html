@@ -1,32 +1,39 @@
 <mat-card class="post">
     <mat-card-header>
-        <img mat-card-avatar [src]="post.userAvatar" [alt]="post.username" />
-        <mat-card-title>{{ post.username }}</mat-card-title>
-        <mat-card-subtitle *ngIf="post.location">{{
-            post.location
-        }}</mat-card-subtitle>
-        <button mat-icon-button class="more-button">
-            <mat-icon>more_horiz</mat-icon>
-        </button>
+        <img
+            mat-card-avatar
+            *ngIf="post.userId.profilePictureUrl !== ''"
+            [src]="post.userId.profilePictureUrl"
+            [alt]="post.userId.username"
+        />
+
+        <img
+            mat-card-avatar
+            *ngIf="post.userId.profilePictureUrl === ''"
+            src="assets/avatar.jpg"
+            [alt]="post.userId.username"
+        />
+        <mat-card-title
+            ><a [href]="'/profile/' + post.userId._id">{{
+                post.userId.username
+            }}</a></mat-card-title
+        >
     </mat-card-header>
 
     <img
         mat-card-image
-        [src]="post.imageUrl"
-        alt="Post image"
+        [src]="post.mediaUrl"
+        alt="{{ post.altText }}"
         class="post-image"
     />
 
     <mat-card-actions>
         <div class="post-actions-left">
-            <button mat-icon-button>
+            <button mat-icon-button (click)="likePost()">
                 <mat-icon>favorite_outline</mat-icon>
             </button>
             <button mat-icon-button>
                 <mat-icon>chat_bubble_outline</mat-icon>
-            </button>
-            <button mat-icon-button>
-                <mat-icon>send</mat-icon>
             </button>
         </div>
         <button mat-icon-button>
@@ -35,12 +42,12 @@
     </mat-card-actions>
 
     <mat-card-content>
-        <div class="post-likes">{{ post.likes }} likes</div>
+        <div class="post-likes">{{ post.likes.length }} likes</div>
 
-        <div class="post-caption">
-            <span class="post-username">{{ post.username }}</span>
-            {{ post.caption }}
-        </div>
+        <a [href]="'/profile/' + post.userId._id" class="post-caption">
+            <span class="post-username">{{ post.userId.username }}</span>
+        </a>
+        {{ post.caption }}
 
         <div
             class="post-comments"
@@ -59,7 +66,7 @@
         </div>
 
         <div class="post-time">
-            {{ post.time }}
+            {{ post.createdAt | date : "short" }}
         </div>
     </mat-card-content>
 </mat-card>

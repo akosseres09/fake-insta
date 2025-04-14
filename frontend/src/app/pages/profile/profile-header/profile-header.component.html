@@ -1,6 +1,15 @@
 <div class="profile-header">
     <div class="profile-avatar">
-        <img src="https://i.pravatar.cc/150?img=1" alt="Your profile" />
+        <img
+            *ngIf="user?.profilePictureUrl !== ''"
+            [src]="user?.profilePictureUrl"
+            alt="Your profile"
+        />
+        <img
+            *ngIf="user?.profilePictureUrl === ''"
+            src="assets/avatar.jpg"
+            alt="Default profile"
+        />
     </div>
 
     <div class="profile-info">
@@ -10,7 +19,9 @@
         </div>
 
         <div class="profile-stats">
-            <div class="stat-item"><strong>12</strong> posts</div>
+            <div class="stat-item">
+                <strong>{{ postsCount }}</strong> posts
+            </div>
             <div class="stat-item">
                 <strong> {{ user?.followers?.length }} </strong> followers
             </div>

@@ -43,8 +43,14 @@
             >
                 <div class="profile-icon" matListItemIcon>
                     <img
-                        src="https://i.pravatar.cc/150?img=1"
-                        alt="Your profile"
+                        *ngIf="user?.profilePictureUrl !== ''"
+                        src="{{ user?.profilePictureUrl }}"
+                        alt="Profile picture"
+                    />
+                    <img
+                        *ngIf="user?.profilePictureUrl === ''"
+                        src="assets/avatar.jpg"
+                        alt="Profile picture"
                     />
                 </div>
                 <span matListItemTitle>Profile</span>

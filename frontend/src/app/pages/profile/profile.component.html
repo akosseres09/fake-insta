@@ -1,6 +1,9 @@
-<div class="profile-container">
+<div *ngIf="user && posts" class="profile-container">
     <!-- Profile Header -->
-    <app-profile-header [user]="user"></app-profile-header>
+    <app-profile-header
+        [user]="user"
+        [postsCount]="postsCount"
+    ></app-profile-header>
     <!-- Profile Tabs -->
-    <app-profile-tabs [userPosts]="userPosts"></app-profile-tabs>
+    <app-profile-tabs [userPosts]="posts"></app-profile-tabs>
 </div>

@@ -10,14 +10,7 @@ import { MaterialModule } from '../../material.module';
     styleUrl: './post.component.scss',
 })
 export class PostComponent {
-    @Input() post: any = {
-        username: '',
-        userAvatar: '',
-        location: '',
-        imageUrl: '',
-        likes: 0,
-        caption: '',
-        comments: [],
-        time: '',
-    };
+    @Input() post: any;
+
+    likePost() {}
 }

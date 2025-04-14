@@ -45,7 +45,7 @@ import { IResponse } from '../../shared/model/Response';
 })
 export class EditComponent implements OnInit, OnDestroy {
     profileForm: FormGroup | null = null;
-    profilePicturePreview = 'url(https://i.pravatar.cc/150?img=1)';
+    profilePicturePreview = 'url(http://localhost:4200/assets/avatar.jpg)';
     selectedProfilePicture: File | null = null;
     isSubmitting = false;
     userSubscription: Subscription | null = null;
@@ -74,6 +74,10 @@ export class EditComponent implements OnInit, OnDestroy {
                     ],
                     bio: [user?.bio, [Validators.maxLength(150)]],
                 });
+                this.user = user;
+                if (user?.profilePictureUrl) {
+                    this.profilePicturePreview = `url(${user?.profilePictureUrl})`;
+                }
             },
             error: (error) => {
                 this.snackBar.openSnackBar('Error fetching user data', [
@@ -118,22 +122,25 @@ export class EditComponent implements OnInit, OnDestroy {
 
         this.isSubmitting = true;
 
-        // Combine form data
-        const formData = new FormData();
-        if (this.selectedProfilePicture) {
-            formData.append('profilePictureUrl', this.selectedProfilePicture);
-        }
+        const data = {
+            _id: this.profileForm?.get('_id')?.value,
+            media: this.selectedProfilePicture,
+            email: this.profileForm?.get('email')?.value,
+            username: this.profileForm?.get('username')?.value,
+            bio: this.profileForm?.get('bio')?.value,
+            name: {
+                first: this.profileForm?.get('name.first')?.value,
+                last: this.profileForm?.get('name.last')?.value,
+            },
+        };
 
-        Object.keys(this.profileForm.value).forEach((key) => {
-            formData.append(key, this.profileForm?.value[key]);
-        });
-
-        this.authService.updateUser(this.profileForm.value).subscribe({
+        this.authService.updateUser(data, this.user?._id as string).subscribe({
             next: (res: IResponse<User | string>) => {
-                console.log(res);
                 this.isSubmitting = false;
                 this.snackBar.openSnackBar('Profile updated successfully!');
-                this.authService.setUser(res.result as User);
+                const user: User = res.result as User;
+                this.authService.setUser(user);
+                this.router.navigateByUrl('/profile/' + user._id);
             },
             error: (error) => {
                 console.log(error);

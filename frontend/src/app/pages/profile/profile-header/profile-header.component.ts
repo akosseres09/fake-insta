@@ -13,4 +13,5 @@ import { RouterModule } from '@angular/router';
 })
 export class ProfileHeaderComponent {
     @Input() user: User | null = null;
+    @Input() postsCount: number = 0;
 }
