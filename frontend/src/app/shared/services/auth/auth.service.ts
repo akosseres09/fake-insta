@@ -18,12 +18,15 @@ type PostResponse = IResponse<Result>;
 export class AuthService {
     private userSubject: BehaviorSubject<User | null> =
         new BehaviorSubject<User | null>(null);
-    user$ = this.userSubject.asObservable();
 
     constructor(private http: HttpClient) {}
 
     setUser(user: User) {
         this.userSubject.next(user);
+    }
+
+    getCurrentUser(): User {
+        return this.userSubject.value as User;
     }
 
     getUser(id: string) {

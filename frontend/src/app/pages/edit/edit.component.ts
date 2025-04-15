@@ -1,4 +1,4 @@
-import { Component, OnDestroy, type OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     ReactiveFormsModule,
@@ -16,7 +16,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { Subscription } from 'rxjs';
 import { AuthService } from '../../shared/services/auth/auth.service';
 import { SnackbarService } from '../../shared/snackbar/snackbar.service';
 import { User } from '../../shared/model/User';
@@ -43,13 +42,12 @@ import { IResponse } from '../../shared/model/Response';
     templateUrl: './edit.component.html',
     styleUrl: './edit.component.scss',
 })
-export class EditComponent implements OnInit, OnDestroy {
-    profileForm: FormGroup | null = null;
+export class EditComponent implements OnInit {
+    profileForm?: FormGroup;
     profilePicturePreview = 'url(http://localhost:4200/assets/avatar.jpg)';
-    selectedProfilePicture: File | null = null;
+    selectedProfilePicture?: File;
     isSubmitting = false;
-    userSubscription: Subscription | null = null;
-    user: User | null = null;
+    user?: User;
 
     constructor(
         private authService: AuthService,
@@ -59,36 +57,17 @@ export class EditComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
-        this.userSubscription = this.authService.user$.subscribe({
-            next: (user) => {
-                this.profileForm = this.fb.group({
-                    _id: [user?._id, [Validators.required]],
-                    name: this.fb.group({
-                        first: [user?.name.first],
-                        last: [user?.name.last],
-                    }),
-                    username: [user?.username, [Validators.required]],
-                    email: [
-                        user?.email,
-                        [Validators.required, Validators.email],
-                    ],
-                    bio: [user?.bio, [Validators.maxLength(150)]],
-                });
-                this.user = user;
-                if (user?.profilePictureUrl) {
-                    this.profilePicturePreview = `url(${user?.profilePictureUrl})`;
-                }
-            },
-            error: (error) => {
-                this.snackBar.openSnackBar('Error fetching user data', [
-                    'snackbar-error',
-                ]);
-            },
+        this.user = this.authService.getCurrentUser();
+        this.profileForm = this.fb.group({
+            _id: [this.user?._id, [Validators.required]],
+            name: this.fb.group({
+                first: [this.user?.name.first],
+                last: [this.user?.name.last],
+            }),
+            username: [this.user?.username, [Validators.required]],
+            email: [this.user?.email, [Validators.required, Validators.email]],
+            bio: [this.user?.bio, [Validators.maxLength(150)]],
         });
-    }
-
-    ngOnDestroy(): void {
-        this.userSubscription?.unsubscribe();
     }
 
     onProfilePictureSelected(event: Event): void {

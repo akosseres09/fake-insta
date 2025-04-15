@@ -1,5 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../shared/services/auth/auth.service';
 import { User } from '../../shared/model/User';
 import { CommonModule } from '@angular/common';
@@ -10,23 +9,11 @@ import { CommonModule } from '@angular/common';
     templateUrl: './mini-profile.component.html',
     styleUrl: './mini-profile.component.scss',
 })
-export class MiniProfileComponent implements OnInit, OnDestroy {
-    userSubscription: Subscription | null = null;
-    user: User | null = null;
+export class MiniProfileComponent implements OnInit {
+    user?: User;
     constructor(private authService: AuthService) {}
 
     ngOnInit(): void {
-        this.userSubscription = this.authService.user$.subscribe({
-            next: (user) => {
-                this.user = user;
-            },
-            error: (err) => {
-                console.error(err);
-            },
-        });
-    }
-
-    ngOnDestroy(): void {
-        this.userSubscription?.unsubscribe();
+        this.user = this.authService.getCurrentUser();
     }
 }

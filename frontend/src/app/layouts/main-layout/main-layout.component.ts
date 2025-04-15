@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../../pages/header/header.component';
 import { FooterNavComponent } from '../../pages/footer-nav/footer-nav.component';
-import { SidebarComponent } from '../../pages/sidebar/sidebar.component';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 import { AuthService } from '../../shared/services/auth/auth.service';
 import { User } from '../../shared/model/User';
 import { Subscription } from 'rxjs';
@@ -25,17 +25,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class MainLayoutComponent implements OnInit, OnDestroy {
     currentView = 'feed';
 
-    user: User | null = null;
-    userSubscription: Subscription | null = null;
-    idSubscription: Subscription | null = null;
+    user?: User;
+    userSubscription?: Subscription;
+    idSubscription?: Subscription;
+    logoutSubscription?: Subscription;
     id: string | null = null;
-    logoutSubscription: Subscription | null = null;
 
     constructor(private authService: AuthService, private router: Router) {}
 
     ngOnInit(): void {
         this.id = localStorage.getItem('user');
-        console.log(this.id);
 
         if (!this.id) {
             this.idSubscription = this.authService.checkId().subscribe({

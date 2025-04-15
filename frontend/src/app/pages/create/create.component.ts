@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     ReactiveFormsModule,
@@ -20,7 +20,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { SnackbarService } from '../../shared/snackbar/snackbar.service';
 import { AuthService } from '../../shared/services/auth/auth.service';
-import { Subscription } from 'rxjs';
 import { PostService } from '../../shared/services/post/post.service';
 import { IBodyPost } from '../../shared/model/Post';
 
@@ -50,7 +49,7 @@ import { IBodyPost } from '../../shared/model/Post';
     templateUrl: './create.component.html',
     styleUrl: './create.component.scss',
 })
-export class CreateComponent implements OnInit, OnDestroy {
+export class CreateComponent implements OnInit {
     uploadForm: FormGroup;
     detailsForm: FormGroup;
 
@@ -60,7 +59,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     isDragging = false;
     isSubmitting = false;
 
-    userSubscription: Subscription | null = null;
     userId: string | null = null;
 
     constructor(
@@ -81,18 +79,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.userSubscription = this.authService.user$.subscribe({
-            next: (user) => {
-                this.userId = user?._id as string;
-            },
-            error: (error) => {
-                console.error('Error fetching user data:');
-            },
-        });
-    }
-
-    ngOnDestroy(): void {
-        this.userSubscription?.unsubscribe();
+        this.userId = this.authService.getCurrentUser()._id;
     }
 
     onDragOver(event: DragEvent): void {
