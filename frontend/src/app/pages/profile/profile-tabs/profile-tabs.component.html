@@ -16,12 +16,14 @@
                 <img
                     *ngIf="post.mediaType === 'image'"
                     [src]="post.mediaUrl"
-                    alt="Post"
+                    [alt]="post.altText"
                 />
-                <video *ngIf="post.mediaType === 'video'">
-                    <source [src]="post.mediaUrl" type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
+                <img
+                    *ngIf="post.mediaType === 'video'"
+                    [src]="getThumbnail(post.mediaUrl)"
+                    [alt]="post.altText"
+                />
+
                 <div class="post-overlay">
                     <div class="post-stats">
                         <div class="stat">
