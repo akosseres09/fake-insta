@@ -7,7 +7,7 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: async (req: Request, file: Express.Multer.File) => ({
         folder: 'fake-instagram/posts',
-        resourcre_type: file.mimetype.startsWith('video') ? 'video' : 'image',
+        resource_type: file.mimetype.startsWith('video') ? 'video' : 'image',
         public_id: `${Date.now()}-${file.originalname}`,
     }),
 });

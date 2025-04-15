@@ -21,11 +21,15 @@
     </mat-card-header>
 
     <img
+        *ngIf="post.mediaType === 'image'"
         mat-card-image
         [src]="post.mediaUrl"
         alt="{{ post.altText }}"
         class="post-image"
     />
+    <video *ngIf="post.mediaType === 'video'" controls class="post-video">
+        <source src="{{ post.mediaUrl }}" />
+    </video>
 
     <mat-card-actions>
         <div class="post-actions-left">
