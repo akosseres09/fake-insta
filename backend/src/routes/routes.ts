@@ -17,13 +17,34 @@ export const configureRoutes = (
                     res.status(500).send(authError);
                 } else {
                     if (!userId) {
-                        res.status(400).send('User not found!');
+                        res.status(400).send({
+                            success: false,
+                            result: 'User not found!',
+                        });
                     } else {
-                        req.login(userId, (loginError: string | null) => {
+                        req.login(userId, async (loginError: string | null) => {
                             if (loginError) {
-                                res.status(500).send('Internal server error');
+                                res.status(500).send({
+                                    success: false,
+                                    result: 'Internal server error',
+                                });
                             } else {
-                                res.status(200).send(userId);
+                                const user = await User.findById(userId).select(
+                                    [
+                                        'username',
+                                        'name',
+                                        'followers',
+                                        'following',
+                                        'isAdmin',
+                                        'bio',
+                                        'profilePictureUrl',
+                                        'email',
+                                    ]
+                                );
+                                res.status(200).send({
+                                    success: true,
+                                    result: user,
+                                });
                             }
                         });
                     }
@@ -103,6 +124,41 @@ export const configureRoutes = (
             }
         } catch (error) {
             res.status(500).send(error);
+        }
+    });
+
+    router.get('/user', async (req: Request, res: Response) => {
+        try {
+            const userId = req.user;
+            console.log(req.user);
+
+            const user = await User.findById(userId).select([
+                'username',
+                'name',
+                'followers',
+                'following',
+                'isAdmin',
+                'bio',
+                'profilePictureUrl',
+                'email',
+            ]);
+
+            if (user) {
+                res.status(200).send({
+                    success: true,
+                    result: user,
+                });
+            } else {
+                res.status(404).send({
+                    success: false,
+                    result: 'User not found',
+                });
+            }
+        } catch (error) {
+            res.status(500).send({
+                success: false,
+                result: 'Internal server error',
+            });
         }
     });
 
