@@ -1,13 +1,12 @@
 :host {
     display: block;
     width: 100%;
-    max-width: 900px;
+    max-width: clamp(1000px, 90vw, 1500px);
 }
 
 .container {
     display: flex;
     justify-content: space-between;
-    gap: 50px;
     padding-top: 20px;
 }
 
@@ -16,7 +15,6 @@
     flex: 1 1 auto;
     flex-direction: column;
     align-items: center;
-    width: 100%;
 }
 
 .posts {

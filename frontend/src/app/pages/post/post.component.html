@@ -2,6 +2,7 @@
     <mat-card-header>
         <img
             mat-card-avatar
+            class="post-avatar"
             *ngIf="post.userId.profilePictureUrl !== ''"
             [src]="post.userId.profilePictureUrl"
             [alt]="post.userId.username"

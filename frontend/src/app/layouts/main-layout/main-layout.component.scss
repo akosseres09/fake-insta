@@ -22,8 +22,9 @@
 .main-content {
     display: flex;
     flex: 1 1 auto;
-    padding: 20px;
+    justify-content: center;
     position: relative;
+    padding: 20px;
     width: 100%;
 }
 
@@ -53,7 +54,6 @@
 
 @media screen and (max-width: 1300px) {
     .main-content {
-        align-items: center;
         justify-content: center;
         max-width: 100%;
     }
