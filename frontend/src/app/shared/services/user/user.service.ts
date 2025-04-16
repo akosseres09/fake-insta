@@ -36,7 +36,15 @@ export class UserService {
     }
 
     getUser(id: string) {
-        return this.http.get(`http://localhost:3000/user/${id}`);
+        return this.http.get(`http://localhost:3000/user`, {
+            params: { id },
+        });
+    }
+
+    getUsersBySearch(name: string) {
+        return this.http.get<IResponse<Array<User>>>(
+            'http://localhost:3000/user'
+        );
     }
 
     getUserProfile(id: string) {

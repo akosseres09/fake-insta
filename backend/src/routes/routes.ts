@@ -103,36 +103,27 @@ export const configureRoutes = (
 
     // User routes
 
-    router.get('/user/:id', async (req: Request, res: Response) => {
-        try {
-            const userId = req.params.id;
-            const user = await User.findOne({ _id: userId }).select([
-                'username',
-                'name',
-                'followers',
-                'following',
-                'isAdmin',
-                'bio',
-                'profilePictureUrl',
-                'email',
-            ]);
-
-            if (user) {
-                res.status(200).send(user);
-            } else {
-                res.status(404).send('User not found');
-            }
-        } catch (error) {
-            res.status(500).send(error);
-        }
-    });
-
     router.get('/user', async (req: Request, res: Response) => {
-        try {
-            const userId = req.user;
-            console.log(req.user);
+        if (!req.isAuthenticated()) {
+            res.status(400).send({
+                success: false,
+                result: 'User not authenticated',
+            });
+            return;
+        }
 
-            const user = await User.findById(userId).select([
+        try {
+            const { id, username, email } = req.query;
+
+            const filter: any = {};
+
+            if (id) filter._id = id;
+            if (username) filter.username = username;
+            if (email) filter.email = email;
+
+            let users;
+
+            users = await User.find(filter).select([
                 'username',
                 'name',
                 'followers',
@@ -143,21 +134,25 @@ export const configureRoutes = (
                 'email',
             ]);
 
-            if (user) {
+            if (users) {
+                if (users.length === 1) {
+                    users = users[0];
+                }
+
                 res.status(200).send({
                     success: true,
-                    result: user,
+                    result: users,
                 });
             } else {
-                res.status(404).send({
+                res.status(400).send({
                     success: false,
-                    result: 'User not found',
+                    result: 'No User found!',
                 });
             }
         } catch (error) {
             res.status(500).send({
                 success: false,
-                result: 'Internal server error',
+                result: 'Internal server error!',
             });
         }
     });
