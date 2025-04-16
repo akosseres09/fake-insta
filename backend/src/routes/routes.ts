@@ -549,7 +549,9 @@ export const configureRoutes = (
                 return;
             }
             const following = user.following;
-            following.push(user.id);
+            if (following.length === 0) {
+                following.push(user.id);
+            }
 
             const posts = await Post.find({ userId: { $in: following } })
                 .sort({ createdAt: -1 })

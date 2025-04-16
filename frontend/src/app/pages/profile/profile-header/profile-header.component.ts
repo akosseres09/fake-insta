@@ -20,7 +20,8 @@ export class ProfileHeaderComponent implements OnInit {
     @Input() postsCount?: number;
     @Input() isSameUser?: boolean;
     @Input() currentUser?: User;
-    isFollowing?: boolean;
+    isFollowing?: boolean; // does the currently logged in user follow the queried user
+    isUserFollowing?: boolean; // does the queried user follow the currently logged in user
 
     constructor(private authService: AuthService) {}
 
@@ -28,6 +29,13 @@ export class ProfileHeaderComponent implements OnInit {
         this.isFollowing = this.user?.followers.includes(
             this.currentUser?._id as string
         );
+
+        this.isUserFollowing = this.user?.following.includes(
+            this.currentUser?._id as string
+        );
+
+        console.log(this.isFollowing);
+        console.log(this.isUserFollowing);
     }
 
     follow() {

@@ -19,7 +19,15 @@
                 Edit Profile
             </a>
             <button
-                *ngIf="!isSameUser && !isFollowing"
+                *ngIf="!isSameUser && !isFollowing && isUserFollowing"
+                (click)="follow()"
+                mat-raised-button
+                color="primary"
+            >
+                Follow Back
+            </button>
+            <button
+                *ngIf="!isSameUser && !isFollowing && !isUserFollowing"
                 (click)="follow()"
                 mat-raised-button
                 color="primary"
