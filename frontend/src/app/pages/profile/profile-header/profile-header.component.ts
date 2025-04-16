@@ -5,9 +5,9 @@ import { User } from '../../../shared/model/User';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import {
-    AuthService,
+    UserService,
     FollowResponse,
-} from '../../../shared/services/auth/auth.service';
+} from '../../../shared/services/user/user.service';
 
 @Component({
     selector: 'app-profile-header',
@@ -23,7 +23,7 @@ export class ProfileHeaderComponent implements OnInit {
     isFollowing?: boolean; // does the currently logged in user follow the queried user
     isUserFollowing?: boolean; // does the queried user follow the currently logged in user
 
-    constructor(private authService: AuthService) {}
+    constructor(private userService: UserService) {}
 
     ngOnInit(): void {
         this.isFollowing = this.user?.followers.includes(
@@ -44,11 +44,11 @@ export class ProfileHeaderComponent implements OnInit {
             otherUser: this.user?._id,
         };
 
-        this.authService.follow(data).subscribe({
+        this.userService.follow(data).subscribe({
             next: (data: FollowResponse) => {
                 const currentUser: User = data.result.user; //logged in user
                 const queriedUser: User = data.result.otherUser; //queried user
-                this.authService.setUser(currentUser); //setting user in authservice
+                this.userService.setUser(currentUser); //setting user in authservice
                 this.user = queriedUser; //setting user so ui updates
                 this.isFollowing = true;
             },
@@ -63,11 +63,11 @@ export class ProfileHeaderComponent implements OnInit {
             otherUser: this.user?._id,
             user: this.currentUser?._id,
         };
-        this.authService.unfollow(data).subscribe({
+        this.userService.unfollow(data).subscribe({
             next: (data: FollowResponse) => {
                 const currentUser: User = data.result.user;
                 const queriedUser: User = data.result.otherUser;
-                this.authService.setUser(currentUser);
+                this.userService.setUser(currentUser);
                 this.user = queriedUser;
                 this.isFollowing = false;
             },

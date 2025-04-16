@@ -16,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../shared/services/auth/auth.service';
 import { SnackbarService } from '../../shared/snackbar/snackbar.service';
 import { User } from '../../shared/model/User';
+import { UserService } from '../../shared/services/user/user.service';
 
 @Component({
     selector: 'app-login',
@@ -42,7 +43,8 @@ export class LoginComponent {
     constructor(
         private fb: FormBuilder,
         private router: Router,
-        private auth: AuthService,
+        private authService: AuthService,
+        private userService: UserService,
         private snackBar: SnackbarService
     ) {
         this.loginForm = this.fb.group({
@@ -59,12 +61,12 @@ export class LoginComponent {
             const username = this.loginForm.get('username')?.value;
             const password = this.loginForm.get('password')?.value;
 
-            this.auth.login(username, password).subscribe({
+            this.authService.login(username, password).subscribe({
                 next: (response) => {
                     const user: User = response.result as User;
                     localStorage.setItem('user', user._id as string);
                     this.isLoading = false;
-                    this.auth.setUser(user);
+                    this.userService.setUser(user);
                     this.router.navigateByUrl('/feed');
                 },
                 error: (error) => {

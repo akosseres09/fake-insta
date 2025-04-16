@@ -16,11 +16,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { AuthService } from '../../shared/services/auth/auth.service';
 import { SnackbarService } from '../../shared/snackbar/snackbar.service';
 import { User } from '../../shared/model/User';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IResponse } from '../../shared/model/Response';
+import { UserService } from '../../shared/services/user/user.service';
 
 @Component({
     selector: 'app-edit',
@@ -50,14 +50,14 @@ export class EditComponent implements OnInit {
     user?: User;
 
     constructor(
-        private authService: AuthService,
+        private userService: UserService,
         private fb: FormBuilder,
         private router: Router,
         private snackBar: SnackbarService
     ) {}
 
     ngOnInit(): void {
-        this.user = this.authService.getCurrentUser();
+        this.user = this.userService.getCurrentUser();
         this.profileForm = this.fb.group({
             _id: [this.user?._id, [Validators.required]],
             name: this.fb.group({
@@ -117,12 +117,12 @@ export class EditComponent implements OnInit {
             },
         };
 
-        this.authService.updateUser(data, this.user?._id as string).subscribe({
+        this.userService.updateUser(data, this.user?._id as string).subscribe({
             next: (res: IResponse<User | string>) => {
                 this.isSubmitting = false;
                 this.snackBar.openSnackBar('Profile updated successfully!');
                 const user: User = res.result as User;
-                this.authService.setUser(user);
+                this.userService.setUser(user);
                 this.router.navigateByUrl('/profile/' + user._id);
             },
             error: (error) => {

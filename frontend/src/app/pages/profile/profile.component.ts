@@ -7,6 +7,7 @@ import { ProfileHeaderComponent } from './profile-header/profile-header.componen
 import { ProfileTabsComponent } from './profile-tabs/profile-tabs.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Post } from '../../shared/model/Post';
+import { UserService } from '../../shared/services/user/user.service';
 
 @Component({
     selector: 'app-profile',
@@ -25,14 +26,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     isLoading: boolean = true;
 
     constructor(
-        private authService: AuthService,
+        private userService: UserService,
         private activatedRoute: ActivatedRoute,
         private router: Router
     ) {}
 
     ngOnInit(): void {
         const userId = this.activatedRoute.snapshot.paramMap.get('id');
-        this.userSub = this.authService
+        this.userSub = this.userService
             .getUserProfile(userId as string)
             .subscribe({
                 next: (data) => {
@@ -46,7 +47,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 },
             });
 
-        this.currentUser = this.authService.getCurrentUser();
+        this.currentUser = this.userService.getCurrentUser();
     }
 
     ngOnDestroy(): void {

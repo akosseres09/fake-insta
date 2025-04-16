@@ -6,7 +6,6 @@ import {
     FormGroup,
     Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,9 +18,9 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { SnackbarService } from '../../shared/snackbar/snackbar.service';
-import { AuthService } from '../../shared/services/auth/auth.service';
 import { PostService } from '../../shared/services/post/post.service';
 import { IBodyPost } from '../../shared/model/Post';
+import { UserService } from '../../shared/services/user/user.service';
 
 @Component({
     selector: 'app-create',
@@ -63,9 +62,8 @@ export class CreateComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
-        private router: Router,
         private snackBar: SnackbarService,
-        private authService: AuthService,
+        private userService: UserService,
         private postService: PostService
     ) {
         this.uploadForm = this.fb.group({
@@ -79,7 +77,7 @@ export class CreateComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.userId = this.authService.getCurrentUser()._id;
+        this.userId = this.userService.getCurrentUser()._id;
     }
 
     onDragOver(event: DragEvent): void {

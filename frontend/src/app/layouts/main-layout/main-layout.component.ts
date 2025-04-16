@@ -8,6 +8,7 @@ import { User } from '../../shared/model/User';
 import { Observable, of, Subscription, switchMap, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { UserService } from '../../shared/services/user/user.service';
 
 @Component({
     selector: 'app-main-layout',
@@ -32,7 +33,11 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     id: string | null = null;
     idObservable: Observable<string> = new Observable<string>();
 
-    constructor(private authService: AuthService, private router: Router) {}
+    constructor(
+        private authService: AuthService,
+        private userService: UserService,
+        private router: Router
+    ) {}
 
     ngOnInit(): void {
         this.id = localStorage.getItem('user');
@@ -51,18 +56,18 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         this.idSubscription = this.idObservable
             .pipe(
                 switchMap((id) => {
-                    const currentUser = this.authService.getCurrentUser();
+                    const currentUser = this.userService.getCurrentUser();
                     if (currentUser) {
                         return of(currentUser);
                     } else {
-                        return this.authService.getUser(id as string);
+                        return this.userService.getUser(id as string);
                     }
                 })
             )
             .subscribe({
                 next: (user) => {
                     this.user = user as User;
-                    this.authService.setUser(this.user);
+                    this.userService.setUser(this.user);
                 },
                 error: (error) => {
                     console.log(error);
