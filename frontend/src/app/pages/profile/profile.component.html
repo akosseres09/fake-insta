@@ -2,7 +2,9 @@
     <!-- Profile Header -->
     <app-profile-header
         [user]="queriedUser"
+        [currentUser]="currentUser"
         [postsCount]="postsCount"
+        [isSameUser]="isSameUser()"
     ></app-profile-header>
     <!-- Profile Tabs -->
     <app-profile-tabs [userPosts]="posts"></app-profile-tabs>

@@ -5,7 +5,7 @@ import { User } from '../../shared/model/User';
 import { Subscription } from 'rxjs';
 import { ProfileHeaderComponent } from './profile-header/profile-header.component';
 import { ProfileTabsComponent } from './profile-tabs/profile-tabs.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Post } from '../../shared/model/Post';
 
 @Component({
@@ -16,7 +16,8 @@ import { Post } from '../../shared/model/Post';
     styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-    user: User | null = null;
+    queriedUser?: User; //queried user via query param
+    currentUser?: User; //logged in user
     posts: Array<Post> | null = null;
     postsCount: number = 0;
     userSub: Subscription | null = null;
@@ -25,7 +26,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     constructor(
         private authService: AuthService,
-        private activatedRoute: ActivatedRoute
+        private activatedRoute: ActivatedRoute,
+        private router: Router
     ) {}
 
     ngOnInit(): void {
@@ -34,17 +36,27 @@ export class ProfileComponent implements OnInit, OnDestroy {
             .getUserProfile(userId as string)
             .subscribe({
                 next: (data) => {
-                    this.user = data.result.user as User;
+                    this.queriedUser = data.result.user as User;
                     this.posts = data.result.posts as Array<Post>;
                     this.postsCount = this.posts.length;
                 },
                 error: (err) => {
                     console.error(err);
+                    this.router.navigateByUrl('/feed');
                 },
             });
+
+        this.currentUser = this.authService.getCurrentUser();
     }
 
     ngOnDestroy(): void {
         this.userSub?.unsubscribe();
+    }
+
+    isSameUser(): boolean {
+        if (this.currentUser && this.queriedUser) {
+            return this.currentUser._id === this.queriedUser._id;
+        }
+        return false;
     }
 }

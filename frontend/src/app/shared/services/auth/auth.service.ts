@@ -1,16 +1,22 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from '../../model/User';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { IResponse } from '../../model/Response';
 import { Post } from '../../model/Post';
 
-interface Result {
-    user: User;
-    posts: Post[];
+interface Result<T, Z> {
+    user: T;
+    posts: Z;
 }
 
-type PostResponse = IResponse<Result>;
+interface FRes<T> {
+    user: T;
+    otherUser: T;
+}
+
+type PostResponse = IResponse<Result<User, Post[]>>;
+export type FollowResponse = IResponse<FRes<User>>;
 
 @Injectable({
     providedIn: 'root',
@@ -30,9 +36,7 @@ export class AuthService {
     }
 
     getUser(id: string) {
-        return this.http
-            .get(`http://localhost:3000/user/${id}`)
-            .pipe(tap((user) => this.setUser(user as User)));
+        return this.http.get(`http://localhost:3000/user/${id}`);
     }
 
     getUserProfile(id: string) {
@@ -65,6 +69,36 @@ export class AuthService {
         );
     }
 
+    follow(data: any) {
+        const form: FormData = new FormData();
+        Object.keys(data).forEach((key) => {
+            form.append(key, data[key]);
+        });
+
+        return this.http.post<FollowResponse>(
+            'http://localhost:3000/follow',
+            data,
+            {
+                withCredentials: true,
+            }
+        );
+    }
+
+    unfollow(data: any) {
+        const form: FormData = new FormData();
+        Object.keys(data).forEach((key) => {
+            form.append(key, data[key]);
+        });
+
+        return this.http.post<FollowResponse>(
+            'http://localhost:3000/unfollow',
+            data,
+            {
+                withCredentials: true,
+            }
+        );
+    }
+
     login(username: string, password: string) {
         const body = new URLSearchParams();
         body.set('username', username);
@@ -74,11 +108,14 @@ export class AuthService {
             'Content-Type': 'application/x-www-form-urlencoded',
         });
 
-        return this.http.post('http://localhost:3000/login', body, {
-            headers: headers,
-            withCredentials: true,
-            responseType: 'text',
-        });
+        return this.http.post<IResponse<User | string>>(
+            'http://localhost:3000/login',
+            body,
+            {
+                headers: headers,
+                withCredentials: true,
+            }
+        );
     }
 
     register(user: User) {
@@ -107,7 +144,10 @@ export class AuthService {
     }
 
     checkId() {
-        return this.http.get('http://localhost:3000/checkId');
+        return this.http.get('http://localhost:3000/checkId', {
+            withCredentials: true,
+            responseType: 'text',
+        });
     }
 
     checkauth() {

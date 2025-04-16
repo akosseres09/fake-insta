@@ -10,14 +10,6 @@ export interface User {
     bio?: string;
     profilePictureUrl?: string;
     isAdmin: boolean;
-    followers: [
-        {
-            id: string;
-        }
-    ];
-    following: [
-        {
-            id: string;
-        }
-    ];
+    followers: Array<string>;
+    following: Array<string>;
 }

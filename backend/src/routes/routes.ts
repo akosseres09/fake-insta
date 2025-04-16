@@ -248,10 +248,16 @@ export const configureRoutes = (
                         user.profilePictureUrl = req.file.path;
                     }
 
+                    if (req.body.username) {
+                        user.username = req.body.username;
+                    }
+
+                    if (req.body.email) {
+                        user.email = req.body.email;
+                    }
+
                     user.name.first = req.body.first;
                     user.name.last = req.body.last;
-                    user.username = req.body.username;
-                    user.email = req.body.email;
                     user.bio = req.body.bio;
 
                     const response = await user.updateOne(user);
@@ -281,6 +287,211 @@ export const configureRoutes = (
             }
         }
     );
+
+    router.post('/follow', async (req: Request, res: Response) => {
+        if (!req.isAuthenticated()) {
+            res.status(400).send({
+                success: false,
+                result: 'User not authenticated',
+            });
+            return;
+        }
+
+        try {
+            const userId = req.user as string;
+            const otherUserId = req.body.otherUser;
+
+            if (otherUserId === userId) {
+                res.status(400).send({
+                    success: false,
+                    result: 'Can not follow user!',
+                });
+                return;
+            }
+
+            const user = await User.findById(userId).select([
+                'username',
+                'name',
+                'followers',
+                'following',
+                'isAdmin',
+                'bio',
+                'profilePictureUrl',
+                'email',
+            ]);
+
+            if (!user) {
+                res.status(400).send({
+                    success: false,
+                    result: 'No User found!',
+                });
+                return;
+            }
+
+            const otherUser = await User.findById(otherUserId).select([
+                'username',
+                'name',
+                'followers',
+                'following',
+                'isAdmin',
+                'bio',
+                'profilePictureUrl',
+                'email',
+            ]);
+
+            if (!otherUser) {
+                res.status(400).send({
+                    success: false,
+                    result: 'Can not follow user!',
+                });
+                return;
+            }
+
+            if (
+                otherUser.followers.includes(userId) ||
+                user.following.includes(otherUserId)
+            ) {
+                res.status(400).send({
+                    success: false,
+                    result: 'Already following user',
+                });
+                return;
+            }
+
+            user.following.push(otherUserId);
+            otherUser.followers.push(userId);
+
+            const response =
+                (await otherUser.updateOne(otherUser)) &&
+                (await user.updateOne(user));
+
+            if (response) {
+                res.status(200).send({
+                    success: true,
+                    result: {
+                        user: user,
+                        otherUser: otherUser,
+                    },
+                });
+            } else {
+                res.status(400).send({
+                    success: false,
+                    result: 'Something went wrong!',
+                });
+            }
+        } catch (error) {
+            res.status(500).send({
+                success: false,
+                result: 'Internal server error!',
+            });
+        }
+    });
+
+    router.post('/unfollow', async (req: Request, res: Response) => {
+        if (!req.isAuthenticated()) {
+            res.status(400).send({
+                success: false,
+                result: 'User not authenticated',
+            });
+            return;
+        }
+
+        try {
+            const userId = req.user as string;
+            const otherUserId = req.body.otherUser;
+
+            if (otherUserId === userId) {
+                res.status(400).send({
+                    success: false,
+                    result: 'Can not unfollow user!',
+                });
+                return;
+            }
+
+            const user = await User.findById(userId).select([
+                'username',
+                'name',
+                'followers',
+                'following',
+                'isAdmin',
+                'bio',
+                'profilePictureUrl',
+                'email',
+            ]);
+
+            if (!user) {
+                res.status(400).send({
+                    success: false,
+                    result: 'No User found!',
+                });
+                return;
+            }
+
+            const otherUser = await User.findById(otherUserId).select([
+                'username',
+                'name',
+                'followers',
+                'following',
+                'isAdmin',
+                'bio',
+                'profilePictureUrl',
+                'email',
+            ]);
+
+            if (!otherUser) {
+                res.status(400).send({
+                    success: false,
+                    result: 'Can not follow user!',
+                });
+                return;
+            }
+
+            if (
+                !otherUser.followers.includes(userId) ||
+                !user.following.includes(otherUserId)
+            ) {
+                res.status(400).send({
+                    success: false,
+                    result: 'Can not unfollow user!',
+                });
+                return;
+            }
+
+            // removing follow with filtering
+            // id.toString returns mongodb ObjectId as a string
+
+            user.following = user.following.filter(
+                (id) => id.toString() !== otherUserId
+            );
+            otherUser.followers = otherUser.followers.filter(
+                (id) => id.toString() !== userId
+            );
+
+            const response =
+                (await otherUser.updateOne(otherUser)) &&
+                (await user.updateOne(user));
+
+            if (response) {
+                res.status(200).send({
+                    success: true,
+                    result: {
+                        user: user,
+                        otherUser: otherUser,
+                    },
+                });
+            } else {
+                res.status(400).send({
+                    success: false,
+                    result: 'Something went wrong!',
+                });
+            }
+        } catch (error) {
+            res.status(500).send({
+                success: false,
+                result: 'Internal server error!',
+            });
+        }
+    });
 
     router.get('/checkId', (req: Request, res: Response) => {
         if (req.isAuthenticated()) {
@@ -337,7 +548,7 @@ export const configureRoutes = (
                 });
                 return;
             }
-            const following = user.following.map((user) => user.id);
+            const following = user.following;
             following.push(user.id);
 
             const posts = await Post.find({ userId: { $in: following } })

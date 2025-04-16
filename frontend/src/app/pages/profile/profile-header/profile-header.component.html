@@ -15,7 +15,24 @@
     <div class="profile-info">
         <div class="profile-username-section">
             <h2 class="profile-username">{{ user?.username }}</h2>
-            <a routerLink="/edit" mat-raised-button> Edit Profile </a>
+            <a *ngIf="isSameUser" routerLink="/edit" mat-raised-button>
+                Edit Profile
+            </a>
+            <button
+                *ngIf="!isSameUser && !isFollowing"
+                (click)="follow()"
+                mat-raised-button
+                color="primary"
+            >
+                Follow
+            </button>
+            <button
+                *ngIf="!isSameUser && isFollowing"
+                (click)="unfollow()"
+                mat-raised-button
+            >
+                Unfollow
+            </button>
         </div>
 
         <div class="profile-stats">

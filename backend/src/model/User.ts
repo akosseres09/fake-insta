@@ -14,16 +14,8 @@ interface IUser extends Document {
     bio?: string;
     profilePictureUrl?: string;
     isAdmin: boolean;
-    followers: [
-        {
-            id: string;
-        }
-    ];
-    following: [
-        {
-            id: string;
-        }
-    ];
+    followers: Array<string>;
+    following: Array<string>;
 
     comparePassword: (
         candidatePassword: string,
@@ -42,8 +34,8 @@ const UserSchema = new mongoose.Schema<IUser>({
     bio: { type: String, default: '' },
     isAdmin: { type: Boolean, default: false },
     profilePictureUrl: { type: String, default: '' },
-    followers: [{ id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } }],
-    following: [{ id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } }],
+    followers: [ { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ],
+    following: [ { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ],
 });
 
 UserSchema.pre<IUser>('save', function (next) {
