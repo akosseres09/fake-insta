@@ -68,6 +68,10 @@ export class EditComponent implements OnInit {
             email: [this.user?.email, [Validators.required, Validators.email]],
             bio: [this.user?.bio, [Validators.maxLength(150)]],
         });
+
+        if (this.user?.profilePictureUrl) {
+            this.profilePicturePreview = `url(${this.user?.profilePictureUrl})`;
+        }
     }
 
     onProfilePictureSelected(event: Event): void {

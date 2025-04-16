@@ -12,7 +12,7 @@ import { User } from '../../shared/model/User';
     styleUrl: './footer-nav.component.scss',
 })
 export class FooterNavComponent {
-    @Input() user: User | null = null;
+    @Input() user?: User;
     @Output() viewChange = new EventEmitter<string>();
     @Output() logoutEvent: EventEmitter<void> = new EventEmitter<void>();
 
