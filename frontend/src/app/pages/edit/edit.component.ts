@@ -44,7 +44,7 @@ import { UserService } from '../../shared/services/user/user.service';
 })
 export class EditComponent implements OnInit {
     profileForm?: FormGroup;
-    profilePicturePreview = 'url(http://localhost:4200/assets/avatar.jpg)';
+    profilePicturePreview?: string;
     selectedProfilePicture?: File;
     isSubmitting = false;
     user?: User;
@@ -69,9 +69,7 @@ export class EditComponent implements OnInit {
             bio: [this.user?.bio, [Validators.maxLength(150)]],
         });
 
-        if (this.user?.profilePictureUrl) {
-            this.profilePicturePreview = `url(${this.user?.profilePictureUrl})`;
-        }
+        this.profilePicturePreview = `url(${this.user?.profilePictureUrl})`;
     }
 
     onProfilePictureSelected(event: Event): void {
@@ -134,6 +132,6 @@ export class EditComponent implements OnInit {
     }
 
     cancel(): void {
-        this.router.navigate(['/profile']);
+        this.router.navigateByUrl('/profile/' + this.user?._id);
     }
 }

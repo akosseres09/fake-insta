@@ -1,16 +1,6 @@
 <div class="mini-profile">
     <div class="mini-profile-avatar">
-        <img
-            *ngIf="user?.profilePictureUrl !== ''"
-            [src]="user?.profilePictureUrl"
-            alt="avatar"
-        />
-
-        <img
-            *ngIf="user?.profilePictureUrl == ''"
-            src="assets/avatar.jpg"
-            alt="avatar"
-        />
+        <img [src]="user?.profilePictureUrl" alt="avatar" />
     </div>
     <div class="mini-profile-info">
         <a

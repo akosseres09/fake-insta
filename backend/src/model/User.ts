@@ -34,7 +34,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     },
     bio: { type: String, default: '' },
     isAdmin: { type: Boolean, default: false },
-    profilePictureUrl: { type: String, default: '' },
+    profilePictureUrl: { type: String, default: '/assets/avatar.jpg' },
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],

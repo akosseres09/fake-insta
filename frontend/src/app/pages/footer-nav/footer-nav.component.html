@@ -10,18 +10,7 @@
     </a>
     <a routerLink="/profile/{{ user?._id }}" mat-icon-button>
         <div class="profile-avatar">
-            <img
-                *ngIf="user?.profilePictureUrl !== ''"
-                [src]="user?.profilePictureUrl"
-                alt="Your profile"
-            />
-
-            <img
-                *ngIf="user?.profilePictureUrl === ''"
-                src="assets/avatar.jpg"
-                alt="Your profile"
-            />
-            />
+            <img [src]="user?.profilePictureUrl" alt="Your profile" />
         </div>
     </a>
     <button (click)="logout($event)" mat-icon-button>

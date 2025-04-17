@@ -1,15 +1,6 @@
 <div class="profile-header">
     <div class="profile-avatar">
-        <img
-            *ngIf="user?.profilePictureUrl !== ''"
-            [src]="user?.profilePictureUrl"
-            alt="Your profile"
-        />
-        <img
-            *ngIf="user?.profilePictureUrl === ''"
-            src="assets/avatar.jpg"
-            alt="Default profile"
-        />
+        <img [src]="user?.profilePictureUrl" alt="Your profile" />
     </div>
 
     <div class="profile-info">

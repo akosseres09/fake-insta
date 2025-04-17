@@ -8,7 +8,7 @@ export interface User {
         last: string;
     };
     bio?: string;
-    profilePictureUrl?: string;
+    profilePictureUrl: string;
     isAdmin: boolean;
     followers: Array<string>;
     following: Array<string>;

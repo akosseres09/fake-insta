@@ -43,13 +43,7 @@
             >
                 <div class="profile-icon" matListItemIcon>
                     <img
-                        *ngIf="user?.profilePictureUrl !== ''"
                         src="{{ user?.profilePictureUrl }}"
-                        alt="Profile picture"
-                    />
-                    <img
-                        *ngIf="user?.profilePictureUrl === ''"
-                        src="assets/avatar.jpg"
                         alt="Profile picture"
                     />
                 </div>

@@ -3,17 +3,10 @@
         <img
             mat-card-avatar
             class="post-avatar"
-            *ngIf="post.userId.profilePictureUrl !== ''"
             [src]="post.userId.profilePictureUrl"
             [alt]="post.userId.username"
         />
 
-        <img
-            mat-card-avatar
-            *ngIf="post.userId.profilePictureUrl === ''"
-            src="assets/avatar.jpg"
-            [alt]="post.userId.username"
-        />
         <mat-card-title
             ><a [href]="'/profile/' + post.userId._id">{{
                 post.userId.username
