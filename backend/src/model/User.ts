@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema } from 'mongoose';
+import mongoose, { Document, Model } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 const SALT_FACTOR = 10;
@@ -16,6 +16,7 @@ interface IUser extends Document {
     isAdmin: boolean;
     followers: Array<string>;
     following: Array<string>;
+    posts: Array<string>;
 
     comparePassword: (
         candidatePassword: string,
@@ -34,8 +35,9 @@ const UserSchema = new mongoose.Schema<IUser>({
     bio: { type: String, default: '' },
     isAdmin: { type: Boolean, default: false },
     profilePictureUrl: { type: String, default: '' },
-    followers: [ { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ],
-    following: [ { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ],
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
 });
 
 UserSchema.pre<IUser>('save', function (next) {

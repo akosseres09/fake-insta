@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../model/User';
 import { PassportStatic } from 'passport';
+import { USER_PUBLIC_FIELDS } from '../constants/constants';
 
 export const authRoutes = (passport: PassportStatic): Router => {
     const router: Router = Router();
@@ -26,16 +27,7 @@ export const authRoutes = (passport: PassportStatic): Router => {
                                 });
                             } else {
                                 const user = await User.findById(userId).select(
-                                    [
-                                        'username',
-                                        'name',
-                                        'followers',
-                                        'following',
-                                        'isAdmin',
-                                        'bio',
-                                        'profilePictureUrl',
-                                        'email',
-                                    ]
+                                    [USER_PUBLIC_FIELDS]
                                 );
                                 res.status(200).send({
                                     success: true,

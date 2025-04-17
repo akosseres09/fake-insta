@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { User } from '../model/User';
 import { Post } from '../model/Post';
 import upload from '../middlewares/multer';
+import { USER_PUBLIC_FIELDS } from '../constants/constants';
 
 export const userRoutes = (): Router => {
     const router: Router = Router();
@@ -34,16 +35,7 @@ export const userRoutes = (): Router => {
 
             let users;
 
-            users = await User.find(filter).select([
-                'username',
-                'name',
-                'followers',
-                'following',
-                'isAdmin',
-                'bio',
-                'profilePictureUrl',
-                'email',
-            ]);
+            users = await User.find(filter).select([USER_PUBLIC_FIELDS]);
 
             if (users) {
                 if (!inArray && users.length === 1) {
@@ -80,14 +72,7 @@ export const userRoutes = (): Router => {
             const userId = req.params.id;
 
             const user = await User.findById(userId).select([
-                'username',
-                'name',
-                'followers',
-                'following',
-                'isAdmin',
-                'bio',
-                'profilePictureUrl',
-                'email',
+                USER_PUBLIC_FIELDS,
             ]);
 
             if (!user) {
@@ -139,14 +124,7 @@ export const userRoutes = (): Router => {
 
             try {
                 const user = await User.findById(userId).select([
-                    'username',
-                    'name',
-                    'followers',
-                    'following',
-                    'isAdmin',
-                    'bio',
-                    'profilePictureUrl',
-                    'email',
+                    USER_PUBLIC_FIELDS,
                 ]);
 
                 if (user) {
@@ -204,10 +182,11 @@ export const userRoutes = (): Router => {
         }
 
         try {
-            const userId = req.user as string;
+            const currentUserId = req.user as string;
             const otherUserId = req.body.otherUser;
+            const action = req.body.action; // 'follow | 'unfollow'
 
-            if (otherUserId === userId) {
+            if (otherUserId === currentUserId) {
                 res.status(400).send({
                     success: false,
                     result: 'Can not follow user!',
@@ -215,35 +194,26 @@ export const userRoutes = (): Router => {
                 return;
             }
 
-            const user = await User.findById(userId).select([
-                'username',
-                'name',
-                'followers',
-                'following',
-                'isAdmin',
-                'bio',
-                'profilePictureUrl',
-                'email',
+            if (!['follow', 'unfollow'].includes(action)) {
+                res.status(400).send({
+                    success: false,
+                    result: 'Invalid action',
+                });
+                return;
+            }
+
+            const [currentUser, otherUser] = await Promise.all([
+                User.findById(currentUserId).select([USER_PUBLIC_FIELDS]),
+                User.findById(otherUserId).select([USER_PUBLIC_FIELDS]),
             ]);
 
-            if (!user) {
+            if (!currentUser) {
                 res.status(400).send({
                     success: false,
                     result: 'No User found!',
                 });
                 return;
             }
-
-            const otherUser = await User.findById(otherUserId).select([
-                'username',
-                'name',
-                'followers',
-                'following',
-                'isAdmin',
-                'bio',
-                'profilePictureUrl',
-                'email',
-            ]);
 
             if (!otherUser) {
                 res.status(400).send({
@@ -254,8 +224,8 @@ export const userRoutes = (): Router => {
             }
 
             if (
-                otherUser.followers.includes(userId) ||
-                user.following.includes(otherUserId)
+                otherUser.followers.includes(currentUserId) ||
+                currentUser.following.includes(otherUserId)
             ) {
                 res.status(400).send({
                     success: false,
@@ -264,18 +234,18 @@ export const userRoutes = (): Router => {
                 return;
             }
 
-            user.following.push(otherUserId);
-            otherUser.followers.push(userId);
+            currentUser.following.push(otherUserId);
+            otherUser.followers.push(currentUserId);
 
             const response =
                 (await otherUser.updateOne(otherUser)) &&
-                (await user.updateOne(user));
+                (await currentUser.updateOne(currentUser));
 
             if (response) {
                 res.status(200).send({
                     success: true,
                     result: {
-                        user: user,
+                        user: currentUser,
                         otherUser: otherUser,
                     },
                 });

@@ -12,4 +12,5 @@ export interface User {
     isAdmin: boolean;
     followers: Array<string>;
     following: Array<string>;
+    posts: Array<string>;
 }
