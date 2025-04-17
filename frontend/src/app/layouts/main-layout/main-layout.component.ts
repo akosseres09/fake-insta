@@ -58,15 +58,20 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
                 switchMap((id) => {
                     const currentUser = this.userService.getCurrentUser();
                     if (currentUser) {
-                        return of(currentUser);
+                        // object needed, as if there is no currentUser
+                        // the getUser method returns a response like this object
+                        return of({
+                            success: true,
+                            result: currentUser,
+                        });
                     } else {
                         return this.userService.getUser(id as string);
                     }
                 })
             )
             .subscribe({
-                next: (user) => {
-                    this.user = user as User;
+                next: (response) => {
+                    this.user = response.result as User;
                     this.userService.setUser(this.user);
                 },
                 error: (error) => {

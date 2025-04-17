@@ -38,10 +38,11 @@ export class ProfileHeaderComponent implements OnInit {
         console.log(this.isUserFollowing);
     }
 
-    follow() {
+    follow(action: 'follow' | 'unfollow') {
         const data = {
             user: this.currentUser?._id,
             otherUser: this.user?._id,
+            action: action,
         };
 
         this.userService.follow(data).subscribe({
@@ -50,29 +51,10 @@ export class ProfileHeaderComponent implements OnInit {
                 const queriedUser: User = data.result.otherUser; //queried user
                 this.userService.setUser(currentUser); //setting user in authservice
                 this.user = queriedUser; //setting user so ui updates
-                this.isFollowing = true;
+                this.isFollowing = !this.isFollowing; //toggle follow state
             },
             error: (err) => {
                 console.error(err.result);
-            },
-        });
-    }
-
-    unfollow() {
-        const data = {
-            otherUser: this.user?._id,
-            user: this.currentUser?._id,
-        };
-        this.userService.unfollow(data).subscribe({
-            next: (data: FollowResponse) => {
-                const currentUser: User = data.result.user;
-                const queriedUser: User = data.result.otherUser;
-                this.userService.setUser(currentUser);
-                this.user = queriedUser;
-                this.isFollowing = false;
-            },
-            error: (err) => {
-                console.error(err);
             },
         });
     }

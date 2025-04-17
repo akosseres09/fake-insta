@@ -36,14 +36,22 @@ export class UserService {
     }
 
     getUser(id: string) {
-        return this.http.get(`http://localhost:3000/user`, {
-            params: { id },
+        const inArray = 'false';
+        return this.http.get<IResponse<User>>(`http://localhost:3000/user`, {
+            params: { id: id, inArray: inArray },
+            withCredentials: true,
         });
     }
 
-    getUsersBySearch(name: string) {
+    getUsersBySearch(username: string) {
         return this.http.get<IResponse<Array<User>>>(
-            'http://localhost:3000/user'
+            'http://localhost:3000/user',
+            {
+                params: {
+                    username,
+                },
+                withCredentials: true,
+            }
         );
     }
 
@@ -71,21 +79,6 @@ export class UserService {
         return this.http.post<IResponse<User | string>>(
             `http://localhost:3000/update/${userId}`,
             form,
-            {
-                withCredentials: true,
-            }
-        );
-    }
-
-    unfollow(data: any) {
-        const form: FormData = new FormData();
-        Object.keys(data).forEach((key) => {
-            form.append(key, data[key]);
-        });
-
-        return this.http.post<FollowResponse>(
-            'http://localhost:3000/unfollow',
-            data,
             {
                 withCredentials: true,
             }

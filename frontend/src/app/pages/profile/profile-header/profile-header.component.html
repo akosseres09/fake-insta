@@ -20,7 +20,7 @@
             </a>
             <button
                 *ngIf="!isSameUser && !isFollowing && isUserFollowing"
-                (click)="follow()"
+                (click)="follow('follow')"
                 mat-raised-button
                 color="primary"
             >
@@ -28,7 +28,7 @@
             </button>
             <button
                 *ngIf="!isSameUser && !isFollowing && !isUserFollowing"
-                (click)="follow()"
+                (click)="follow('follow')"
                 mat-raised-button
                 color="primary"
             >
@@ -36,7 +36,7 @@
             </button>
             <button
                 *ngIf="!isSameUser && isFollowing"
-                (click)="unfollow()"
+                (click)="follow('unfollow')"
                 mat-raised-button
             >
                 Unfollow

@@ -18,7 +18,6 @@ export const userRoutes = (): Router => {
 
         try {
             const { id, username, email, inArray } = req.query;
-
             const filter: any = {};
 
             if (id) filter._id = id;
@@ -38,7 +37,7 @@ export const userRoutes = (): Router => {
             users = await User.find(filter).select([USER_PUBLIC_FIELDS]);
 
             if (users) {
-                if (!inArray && users.length === 1) {
+                if (inArray === 'false' && users.length === 1) {
                     users = users[0];
                 }
 
@@ -172,6 +171,7 @@ export const userRoutes = (): Router => {
         }
     );
 
+    // handles following/unfollowing a user
     router.post('/follow', async (req: Request, res: Response) => {
         if (!req.isAuthenticated()) {
             res.status(400).send({
@@ -184,15 +184,7 @@ export const userRoutes = (): Router => {
         try {
             const currentUserId = req.user as string;
             const otherUserId = req.body.otherUser;
-            const action = req.body.action; // 'follow | 'unfollow'
-
-            if (otherUserId === currentUserId) {
-                res.status(400).send({
-                    success: false,
-                    result: 'Can not follow user!',
-                });
-                return;
-            }
+            const action = req.body.action; // 'follow' | 'unfollow'
 
             if (!['follow', 'unfollow'].includes(action)) {
                 res.status(400).send({
@@ -202,20 +194,7 @@ export const userRoutes = (): Router => {
                 return;
             }
 
-            const [currentUser, otherUser] = await Promise.all([
-                User.findById(currentUserId).select([USER_PUBLIC_FIELDS]),
-                User.findById(otherUserId).select([USER_PUBLIC_FIELDS]),
-            ]);
-
-            if (!currentUser) {
-                res.status(400).send({
-                    success: false,
-                    result: 'No User found!',
-                });
-                return;
-            }
-
-            if (!otherUser) {
+            if (otherUserId === currentUserId) {
                 res.status(400).send({
                     success: false,
                     result: 'Can not follow user!',
@@ -223,9 +202,23 @@ export const userRoutes = (): Router => {
                 return;
             }
 
+            const [currentUser, otherUser] = await Promise.all([
+                User.findById(currentUserId).select([USER_PUBLIC_FIELDS]),
+                User.findById(otherUserId).select([USER_PUBLIC_FIELDS]),
+            ]);
+
+            if (!currentUser || !otherUser) {
+                res.status(400).send({
+                    success: false,
+                    result: 'No User found!',
+                });
+                return;
+            }
+
             if (
-                otherUser.followers.includes(currentUserId) ||
-                currentUser.following.includes(otherUserId)
+                action === 'follow' &&
+                (otherUser.followers.includes(currentUserId) ||
+                    currentUser.following.includes(otherUserId))
             ) {
                 res.status(400).send({
                     success: false,
@@ -234,8 +227,29 @@ export const userRoutes = (): Router => {
                 return;
             }
 
-            currentUser.following.push(otherUserId);
-            otherUser.followers.push(currentUserId);
+            if (
+                action === 'unfollow' &&
+                (!otherUser.followers.includes(currentUserId) ||
+                    !currentUser.following.includes(otherUserId))
+            ) {
+                res.status(400).send({
+                    success: false,
+                    result: 'Can not unfollow user!',
+                });
+                return;
+            }
+
+            if (action === 'follow') {
+                currentUser.following.push(otherUserId);
+                otherUser.followers.push(currentUserId);
+            } else if (action === 'unfollow') {
+                currentUser.following = currentUser.following.filter(
+                    (id) => id.toString() !== otherUserId
+                );
+                otherUser.followers = otherUser.followers.filter(
+                    (id) => id.toString() !== currentUserId
+                );
+            }
 
             const response =
                 (await otherUser.updateOne(otherUser)) &&
@@ -263,110 +277,5 @@ export const userRoutes = (): Router => {
         }
     });
 
-    router.post('/unfollow', async (req: Request, res: Response) => {
-        if (!req.isAuthenticated()) {
-            res.status(400).send({
-                success: false,
-                result: 'User not authenticated',
-            });
-            return;
-        }
-
-        try {
-            const userId = req.user as string;
-            const otherUserId = req.body.otherUser;
-
-            if (otherUserId === userId) {
-                res.status(400).send({
-                    success: false,
-                    result: 'Can not unfollow user!',
-                });
-                return;
-            }
-
-            const user = await User.findById(userId).select([
-                'username',
-                'name',
-                'followers',
-                'following',
-                'isAdmin',
-                'bio',
-                'profilePictureUrl',
-                'email',
-            ]);
-
-            if (!user) {
-                res.status(400).send({
-                    success: false,
-                    result: 'No User found!',
-                });
-                return;
-            }
-
-            const otherUser = await User.findById(otherUserId).select([
-                'username',
-                'name',
-                'followers',
-                'following',
-                'isAdmin',
-                'bio',
-                'profilePictureUrl',
-                'email',
-            ]);
-
-            if (!otherUser) {
-                res.status(400).send({
-                    success: false,
-                    result: 'Can not follow user!',
-                });
-                return;
-            }
-
-            if (
-                !otherUser.followers.includes(userId) ||
-                !user.following.includes(otherUserId)
-            ) {
-                res.status(400).send({
-                    success: false,
-                    result: 'Can not unfollow user!',
-                });
-                return;
-            }
-
-            // removing follow with filtering
-            // id.toString returns mongodb ObjectId as a string
-
-            user.following = user.following.filter(
-                (id) => id.toString() !== otherUserId
-            );
-            otherUser.followers = otherUser.followers.filter(
-                (id) => id.toString() !== userId
-            );
-
-            const response =
-                (await otherUser.updateOne(otherUser)) &&
-                (await user.updateOne(user));
-
-            if (response) {
-                res.status(200).send({
-                    success: true,
-                    result: {
-                        user: user,
-                        otherUser: otherUser,
-                    },
-                });
-            } else {
-                res.status(400).send({
-                    success: false,
-                    result: 'Something went wrong!',
-                });
-            }
-        } catch (error) {
-            res.status(500).send({
-                success: false,
-                result: 'Internal server error!',
-            });
-        }
-    });
     return router;
 };
