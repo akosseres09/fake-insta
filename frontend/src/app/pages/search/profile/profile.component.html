@@ -1,0 +1,35 @@
+<ng-container *ngIf="!isLoading">
+    <div *ngIf="filteredUsers && filteredUsers.length > 0" class="users-list">
+        <div *ngFor="let user of filteredUsers; index as i" class="user-card">
+            <div class="user-avatar" [routerLink]="'/profile/' + user._id">
+                <img [src]="user.profilePictureUrl" [alt]="user.username" />
+            </div>
+
+            <div class="user-info" [routerLink]="'/profile/' + user._id">
+                <div class="username">{{ user.username }}</div>
+                <div class="full-name">{{ user.name.first }}</div>
+                <div class="full-name">{{ user.name.last }}</div>
+            </div>
+
+            <button
+                mat-stroked-button
+                color="primary"
+                class="follow-button"
+                (click)="
+                    toggleFollow(
+                        user._id,
+                        isFollowing(user) ? 'unfollow' : 'follow',
+                        i
+                    )
+                "
+            >
+                {{ isFollowing(user) ? "Unfollow" : "Follow" }}
+            </button>
+        </div>
+
+        <div *ngIf="showMore && filteredUsers.length > 5" class="more-results">
+            <span>{{ filteredUsers.length - 5 }} more results</span>
+            <button mat-button color="primary">See All</button>
+        </div>
+    </div>
+</ng-container>
