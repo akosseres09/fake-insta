@@ -102,20 +102,22 @@ export class EditComponent implements OnInit {
         }
 
         this.isSubmitting = true;
+        const form: FormData = new FormData();
+        for (const key in this.profileForm?.controls) {
+            if (key === 'name') {
+                form.append(
+                    'first',
+                    this.profileForm?.get('name.first')?.value
+                );
+                form.append('last', this.profileForm?.get('name.last')?.value);
+            }
+            form.append(key, this.profileForm?.get(key)?.value);
+            console.log(key, this.profileForm?.get(key)?.value);
+        }
+        form.append('media', this.selectedProfilePicture as Blob);
+        form.append('userId', this.user?._id as string);
 
-        const data = {
-            _id: this.profileForm?.get('_id')?.value,
-            media: this.selectedProfilePicture,
-            email: this.profileForm?.get('email')?.value,
-            username: this.profileForm?.get('username')?.value,
-            bio: this.profileForm?.get('bio')?.value,
-            name: {
-                first: this.profileForm?.get('name.first')?.value,
-                last: this.profileForm?.get('name.last')?.value,
-            },
-        };
-
-        this.userService.updateUser(data, this.user?._id as string).subscribe({
+        this.userService.updateUser(form).subscribe({
             next: (res: IResponse<User | string>) => {
                 this.isSubmitting = false;
                 this.snackBar.openSnackBar('Profile updated successfully!');

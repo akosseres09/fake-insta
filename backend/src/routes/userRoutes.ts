@@ -73,7 +73,7 @@ export const userRoutes = (): Router => {
     });
 
     router.post(
-        '/update/:id',
+        '/user',
         upload.single('media'),
         async (req: Request, res: Response) => {
             if (!req.isAuthenticated()) {
@@ -83,7 +83,7 @@ export const userRoutes = (): Router => {
                 return;
             }
 
-            const userId = req.params.id;
+            const { userId, username, email, first, last, bio } = req.body;
 
             if (userId !== req.user) {
                 res.status(403).send({
@@ -103,17 +103,17 @@ export const userRoutes = (): Router => {
                         user.profilePictureUrl = req.file.path;
                     }
 
-                    if (req.body.username) {
-                        user.username = req.body.username;
+                    if (username) {
+                        user.username = username;
                     }
 
-                    if (req.body.email) {
-                        user.email = req.body.email;
+                    if (email) {
+                        user.email = email;
                     }
 
-                    user.name.first = req.body.first;
-                    user.name.last = req.body.last;
-                    user.bio = req.body.bio;
+                    user.name.first = first;
+                    user.name.last = last;
+                    user.bio = bio;
 
                     const response = await user.updateOne(user);
 

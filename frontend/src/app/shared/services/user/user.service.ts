@@ -18,7 +18,7 @@ export type FollowResponse = IResponse<FRes<User>>;
 export class UserService {
     private userSubject: BehaviorSubject<User | null> =
         new BehaviorSubject<User | null>(null);
-    private GET_USER_URL = 'http://localhost:3000/user';
+    private USER_URL = 'http://localhost:3000/user';
     private FOLLOW_URL = 'http://localhost:3000/follow';
 
     constructor(private http: HttpClient) {}
@@ -33,14 +33,14 @@ export class UserService {
 
     getUser(id: string) {
         const inArray = 'false';
-        return this.http.get<IResponse<User>>(this.GET_USER_URL, {
+        return this.http.get<IResponse<User>>(this.USER_URL, {
             params: { id: id, inArray: inArray },
             withCredentials: true,
         });
     }
 
     getUsersBySearch(username: string) {
-        return this.http.get<IResponse<Array<User>>>(this.GET_USER_URL, {
+        return this.http.get<IResponse<Array<User>>>(this.USER_URL, {
             params: {
                 username,
             },
@@ -49,7 +49,7 @@ export class UserService {
     }
 
     getUserProfile(id: string) {
-        return this.http.get<PostResponse>(this.GET_USER_URL, {
+        return this.http.get<PostResponse>(this.USER_URL, {
             params: {
                 id: id,
                 populate: 'post',
@@ -59,25 +59,10 @@ export class UserService {
         });
     }
 
-    updateUser(data: any, userId: string) {
-        const form: FormData = new FormData();
-
-        Object.keys(data).forEach((key) => {
-            if (key === 'name') {
-                form.append('first', data[key].first);
-                form.append('last', data[key].last);
-            } else {
-                form.append(key, data[key]);
-            }
+    updateUser(data: FormData) {
+        return this.http.post<IResponse<User | string>>(this.USER_URL, data, {
+            withCredentials: true,
         });
-
-        return this.http.post<IResponse<User | string>>(
-            `http://localhost:3000/update/${userId}`,
-            form,
-            {
-                withCredentials: true,
-            }
-        );
     }
 
     follow(data: any) {
