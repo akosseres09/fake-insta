@@ -17,10 +17,18 @@ export const userRoutes = (): Router => {
         }
 
         try {
-            const { id, username, email, inArray } = req.query;
+            const { id, username, email, inArray, populate } = req.query;
             const filter: any = {};
 
-            if (id) filter._id = id;
+            if (id) {
+                filter._id = id;
+            } else {
+                filter._id = {
+                    $not: {
+                        $eq: req.user,
+                    },
+                };
+            }
             if (username)
                 filter.username = {
                     $regex: username,
@@ -33,8 +41,13 @@ export const userRoutes = (): Router => {
                 };
 
             let users;
+            const usersQuery = User.find(filter).select([USER_PUBLIC_FIELDS]);
 
-            users = await User.find(filter).select([USER_PUBLIC_FIELDS]);
+            if (populate === 'post') {
+                usersQuery.populate('posts');
+            }
+
+            users = await usersQuery;
 
             if (users) {
                 if (inArray === 'false' && users.length === 1) {
@@ -52,50 +65,10 @@ export const userRoutes = (): Router => {
                 });
             }
         } catch (error) {
+            console.log(error);
             res.status(500).send({
                 success: false,
                 result: 'Internal server error!',
-            });
-        }
-    });
-
-    router.get('/userProfile/:id', async (req: Request, res: Response) => {
-        if (!req.isAuthenticated()) {
-            res.status(400).send({
-                success: false,
-                result: 'User not authenticated',
-            });
-            return;
-        }
-        try {
-            const userId = req.params.id;
-
-            const user = await User.findById(userId).select([
-                USER_PUBLIC_FIELDS,
-            ]);
-
-            if (!user) {
-                res.status(404).send({
-                    success: false,
-                    result: 'User not found',
-                });
-                return;
-            }
-
-            const posts = await Post.find({ userId: userId }).sort({
-                createdAt: -1,
-            });
-            res.status(200).send({
-                success: true,
-                result: {
-                    user: user,
-                    posts: posts,
-                },
-            });
-        } catch (error) {
-            res.status(500).send({
-                success: false,
-                result: 'Internal server error',
             });
         }
     });

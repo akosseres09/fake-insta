@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Post, IBodyPost } from '../../model/Post';
 import { IResponse } from '../../model/Response';
@@ -7,6 +7,8 @@ import { IResponse } from '../../model/Response';
     providedIn: 'root',
 })
 export class PostService {
+    private POST_URL = 'http://localhost:3000/post';
+
     constructor(private http: HttpClient) {}
 
     createPost(post: IBodyPost) {
@@ -17,7 +19,7 @@ export class PostService {
         formData.append('userId', post.userId);
 
         return this.http.post<IResponse<Post | string>>(
-            'http://localhost:3000/createPost',
+            this.POST_URL,
             formData,
             {
                 withCredentials: true,
@@ -26,11 +28,8 @@ export class PostService {
     }
 
     getPosts() {
-        return this.http.get<IResponse<Array<Post> | string>>(
-            'http://localhost:3000/posts',
-            {
-                withCredentials: true,
-            }
-        );
+        return this.http.get<IResponse<Array<Post> | string>>(this.POST_URL, {
+            withCredentials: true,
+        });
     }
 }

@@ -1,3 +1,5 @@
+import { Post } from './Post';
+
 export interface User {
     _id: string;
     email: string;
@@ -12,5 +14,5 @@ export interface User {
     isAdmin: boolean;
     followers: Array<string>;
     following: Array<string>;
-    posts: Array<string>;
+    posts: Array<string> | Array<Post>;
 }

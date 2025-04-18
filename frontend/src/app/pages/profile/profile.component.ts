@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../shared/services/auth/auth.service';
 import { User } from '../../shared/model/User';
 import { Subscription } from 'rxjs';
 import { ProfileHeaderComponent } from './profile-header/profile-header.component';
@@ -39,8 +38,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
             .getUserProfile(userId as string)
             .subscribe({
                 next: (data) => {
-                    this.queriedUser = data.result.user as User;
-                    this.posts = data.result.posts as Array<Post>;
+                    this.queriedUser = data.result as User;
+                    this.posts = this.queriedUser.posts as Array<Post>;
                     this.postsCount = this.posts.length;
                 },
                 error: (err) => {

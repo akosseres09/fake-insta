@@ -3,19 +3,13 @@ import { Injectable } from '@angular/core';
 import { IResponse } from '../../model/Response';
 import { User } from '../../model/User';
 import { BehaviorSubject } from 'rxjs';
-import { Post } from '../../model/Post';
-
-interface Result<T, Z> {
-    user: T;
-    posts: Z;
-}
 
 interface FRes<T> {
     user: T;
     otherUser: T;
 }
 
-type PostResponse = IResponse<Result<User, Array<Post>>>;
+type PostResponse = IResponse<User>;
 export type FollowResponse = IResponse<FRes<User>>;
 
 @Injectable({
@@ -24,6 +18,8 @@ export type FollowResponse = IResponse<FRes<User>>;
 export class UserService {
     private userSubject: BehaviorSubject<User | null> =
         new BehaviorSubject<User | null>(null);
+    private GET_USER_URL = 'http://localhost:3000/user';
+    private FOLLOW_URL = 'http://localhost:3000/follow';
 
     constructor(private http: HttpClient) {}
 
@@ -37,31 +33,30 @@ export class UserService {
 
     getUser(id: string) {
         const inArray = 'false';
-        return this.http.get<IResponse<User>>(`http://localhost:3000/user`, {
+        return this.http.get<IResponse<User>>(this.GET_USER_URL, {
             params: { id: id, inArray: inArray },
             withCredentials: true,
         });
     }
 
     getUsersBySearch(username: string) {
-        return this.http.get<IResponse<Array<User>>>(
-            'http://localhost:3000/user',
-            {
-                params: {
-                    username,
-                },
-                withCredentials: true,
-            }
-        );
+        return this.http.get<IResponse<Array<User>>>(this.GET_USER_URL, {
+            params: {
+                username,
+            },
+            withCredentials: true,
+        });
     }
 
     getUserProfile(id: string) {
-        return this.http.get<PostResponse>(
-            `http://localhost:3000/userProfile/${id}`,
-            {
-                withCredentials: true,
-            }
-        );
+        return this.http.get<PostResponse>(this.GET_USER_URL, {
+            params: {
+                id: id,
+                populate: 'post',
+                inArray: 'false',
+            },
+            withCredentials: true,
+        });
     }
 
     updateUser(data: any, userId: string) {
@@ -91,12 +86,8 @@ export class UserService {
             form.append(key, data[key]);
         });
 
-        return this.http.post<FollowResponse>(
-            'http://localhost:3000/follow',
-            data,
-            {
-                withCredentials: true,
-            }
-        );
+        return this.http.post<FollowResponse>(this.FOLLOW_URL, data, {
+            withCredentials: true,
+        });
     }
 }

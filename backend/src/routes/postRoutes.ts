@@ -5,7 +5,7 @@ import upload from '../middlewares/multer';
 
 export const postRoutes = (): Router => {
     const router: Router = Router();
-    router.get('/posts', async (req: Request, res: Response) => {
+    router.get('/post', async (req: Request, res: Response) => {
         if (!req.isAuthenticated()) {
             res.status(400).send({
                 success: false,
@@ -52,7 +52,7 @@ export const postRoutes = (): Router => {
     });
 
     router.post(
-        '/createPost',
+        '/post',
         upload.single('media'),
         async (req: Request, res: Response) => {
             try {
