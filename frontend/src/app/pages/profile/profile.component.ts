@@ -8,6 +8,7 @@ import { ProfileTabsComponent } from './profile-tabs/profile-tabs.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Post } from '../../shared/model/Post';
 import { UserService } from '../../shared/services/user/user.service';
+import { SnackbarService } from '../../shared/snackbar/snackbar.service';
 
 @Component({
     selector: 'app-profile',
@@ -19,16 +20,17 @@ import { UserService } from '../../shared/services/user/user.service';
 export class ProfileComponent implements OnInit, OnDestroy {
     queriedUser?: User; //queried user via query param
     currentUser?: User; //logged in user
-    posts: Array<Post> | null = null;
-    postsCount: number = 0;
-    userSub: Subscription | null = null;
+    posts?: Array<Post>;
+    postsCount?: number;
+    userSub?: Subscription;
     ownProfile: boolean = true;
     isLoading: boolean = true;
 
     constructor(
         private userService: UserService,
         private activatedRoute: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private snackbar: SnackbarService
     ) {}
 
     ngOnInit(): void {
@@ -44,6 +46,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 error: (err) => {
                     console.error(err);
                     this.router.navigateByUrl('/feed');
+                    this.snackbar.openSnackBar('User not found', [
+                        'snackbar-error',
+                    ]);
                 },
             });
 
