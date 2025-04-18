@@ -2,6 +2,10 @@ import { Request, Response, Router } from 'express';
 import { User } from '../model/User';
 import { Post } from '../model/Post';
 import upload from '../middlewares/multer';
+import {
+    POST_POPOPULATE_FIELDS,
+    USER_PUBLIC_FIELDS,
+} from '../constants/constants';
 
 export const postRoutes = (): Router => {
     const router: Router = Router();
@@ -15,7 +19,18 @@ export const postRoutes = (): Router => {
         }
 
         try {
-            const user = await User.findById(req.user);
+            const { userId, populate } = req.query;
+            const postFilter: any = {};
+            const populateFields: Array<string> = [];
+
+            let userQuery;
+            if (userId) {
+                userQuery = User.findById(userId);
+            } else {
+                userQuery = User.findById(req.user);
+            }
+
+            const user = await userQuery;
             if (!user) {
                 res.status(404).send({
                     success: false,
@@ -28,9 +43,33 @@ export const postRoutes = (): Router => {
                 following.push(user.id);
             }
 
-            const posts = await Post.find({ userId: { $in: following } })
+            postFilter.userId = {
+                $in: following,
+            };
+
+            if (populate) {
+                for (const field of (populate as string).split(',')) {
+                    if (!POST_POPOPULATE_FIELDS.includes(field)) {
+                        res.status(400).send({
+                            success: false,
+                            result: 'Invalid populate field',
+                        });
+                        return;
+                    }
+                    populateFields.push(field);
+                }
+            }
+
+            let postsQuery = Post.find(postFilter)
                 .sort({ createdAt: -1 })
-                .populate('userId', ['username', 'profilePictureUrl']);
+                .populate(
+                    populateFields,
+                    populateFields.includes('userId')
+                        ? USER_PUBLIC_FIELDS
+                        : null
+                );
+
+            const posts = await postsQuery;
 
             if (posts) {
                 res.status(200).send({
@@ -44,6 +83,7 @@ export const postRoutes = (): Router => {
                 });
             }
         } catch (error) {
+            console.log(error);
             res.status(500).send({
                 success: false,
                 result: 'Internal server error',
@@ -88,6 +128,7 @@ export const postRoutes = (): Router => {
                     });
                 }
             } catch (error) {
+                console.log(error);
                 res.status(500).send({
                     success: false,
                     result: 'Internal server error',

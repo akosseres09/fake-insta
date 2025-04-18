@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { Request, Response } from 'express';
 import { User } from '../model/User';
-import { Post } from '../model/Post';
 import upload from '../middlewares/multer';
 import { USER_PUBLIC_FIELDS } from '../constants/constants';
 
@@ -136,6 +135,7 @@ export const userRoutes = (): Router => {
                     });
                 }
             } catch (error) {
+                console.log(error);
                 res.status(500).send({
                     success: false,
                     result: 'Internal server error',
@@ -243,6 +243,7 @@ export const userRoutes = (): Router => {
                 });
             }
         } catch (error) {
+            console.log(error);
             res.status(500).send({
                 success: false,
                 result: 'Internal server error!',
