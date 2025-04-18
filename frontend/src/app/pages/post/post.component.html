@@ -1,15 +1,15 @@
-<mat-card class="post">
+<mat-card *ngIf="post && user" class="post">
     <mat-card-header>
         <img
             mat-card-avatar
             class="post-avatar"
-            [src]="post.userId.profilePictureUrl"
-            [alt]="post.userId.username"
+            [src]="user.profilePictureUrl"
+            [alt]="user.username"
         />
 
         <mat-card-title
-            ><a [href]="'/profile/' + post.userId._id">{{
-                post.userId.username
+            ><a [href]="'/profile/' + user._id">{{
+                user.username
             }}</a></mat-card-title
         >
     </mat-card-header>
@@ -18,11 +18,11 @@
         *ngIf="post.mediaType === 'image'"
         mat-card-image
         [src]="post.mediaUrl"
-        alt="{{ post.altText }}"
+        [alt]="post.altText"
         class="post-image"
     />
     <video *ngIf="post.mediaType === 'video'" controls class="post-video">
-        <source src="{{ post.mediaUrl }}" />
+        <source [src]="post.mediaUrl" />
     </video>
 
     <mat-card-actions>
@@ -42,8 +42,8 @@
     <mat-card-content>
         <div class="post-likes">{{ post.likes.length }} likes</div>
 
-        <a [href]="'/profile/' + post.userId._id" class="post-caption">
-            <span class="post-username">{{ post.userId.username }}</span>
+        <a [href]="'/profile/' + user._id" class="post-caption">
+            <span class="post-username">{{ user.username }}</span>
         </a>
         {{ post.caption }}
 
@@ -55,16 +55,16 @@
                 View all {{ post.comments.length }} comments
             </div>
             <div
-                *ngFor="let comment of post.comments.slice(0, 2)"
+                *ngFor="let comment of post?.comments!.slice(0, 2)"
                 class="post-comment"
             >
-                <span class="post-username">{{ comment.username }}</span>
-                {{ comment.text }}
+                <!--<span class="post-username">{{ comment?.username }}</span>
+                {{ comment.text }} -->
             </div>
         </div>
 
-        <div class="post-time">
+        <!--<div class="post-time">
             {{ post.createdAt | date : "short" }}
-        </div>
+        </div> -->
     </mat-card-content>
 </mat-card>

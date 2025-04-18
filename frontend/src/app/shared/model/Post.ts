@@ -1,13 +1,16 @@
+import { Like } from './Like';
+import { User } from './User';
+
 export interface Post {
-    userId: string;
+    userId: string | User;
     mediaUrl: string;
     mediaType: string;
     caption: string;
     altText: string;
     createdAt: Date;
     updatedAt: Date;
-    likes: Array<{ id: string }>;
-    comments: Array<{ id: string }>;
+    likes: Array<string | Like>;
+    comments: Array<string | Comment>;
 }
 
 export interface IBodyPost {
