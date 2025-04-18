@@ -2,9 +2,76 @@ import { Router } from 'express';
 import { User } from '../model/User';
 import { Post } from '../model/Post';
 import { Like } from '../model/Like';
+import { USER_PUBLIC_FIELDS } from '../constants/constants';
 
 export const likeRoutes = (): Router => {
     const router: Router = Router();
+
+    router.get('/like', async (req, res) => {
+        if (!req.isAuthenticated()) {
+            res.status(400).send({
+                success: false,
+                result: 'User not authenticated',
+            });
+            return;
+        }
+
+        try {
+            const { userId, postId, populate } = req.query;
+            const filters: any = {};
+            const populateFields = populate
+                ? (populate as string).split(',')
+                : [];
+            const populatableFields = ['userId', 'postId'];
+
+            if (userId) {
+                filters.userId = userId;
+            }
+
+            if (postId) {
+                filters.postId = postId;
+            }
+
+            for (const field of populateFields) {
+                if (!populatableFields.includes(field)) {
+                    res.status(400).send({
+                        success: false,
+                        result: `Invalid populate field: ${field}`,
+                    });
+                    return;
+                }
+            }
+
+            const likes = await Like.find(filters)
+                .populate(
+                    populateFields,
+                    populateFields.includes('userId')
+                        ? USER_PUBLIC_FIELDS
+                        : null
+                )
+                .sort({
+                    createdAt: -1,
+                });
+
+            if (likes) {
+                res.status(200).send({
+                    success: true,
+                    result: likes,
+                });
+            } else {
+                res.status(400).send({
+                    success: false,
+                    result: 'Error fetching likes!',
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({
+                success: false,
+                result: 'Internal server error',
+            });
+        }
+    });
 
     //create a like
     router.post('/like', async (req, res) => {
