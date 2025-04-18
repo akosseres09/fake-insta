@@ -3,6 +3,7 @@ import { PassportStatic } from 'passport';
 import { authRoutes } from './authRoutes';
 import { userRoutes } from './userRoutes';
 import { postRoutes } from './postRoutes';
+import { likeRoutes } from './likeRoutes';
 
 export const configureRoutes = (
     passport: PassportStatic,
@@ -16,6 +17,9 @@ export const configureRoutes = (
 
     // Post routes
     router.use('/', postRoutes());
+
+    // Like routes
+    router.use('/', likeRoutes());
 
     return router;
 };

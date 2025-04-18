@@ -26,8 +26,8 @@ const PostSchema = new mongoose.Schema<IPost>({
     altText: { type: String, default: '' },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: null },
-    likes: [{ id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } }],
-    comments: [{ id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } }],
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 });
 
 export const Post: Model<IPost> = mongoose.model<IPost>('Post', PostSchema);
