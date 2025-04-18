@@ -2,6 +2,7 @@ import { Like } from './Like';
 import { User } from './User';
 
 export interface Post {
+    _id: string;
     userId: string | User;
     mediaUrl: string;
     mediaType: string;

@@ -27,8 +27,15 @@
 
     <mat-card-actions>
         <div class="post-actions-left">
-            <button mat-icon-button (click)="likePost()">
+            <button *ngIf="!isLiked" mat-icon-button (click)="likePost('like')">
                 <mat-icon>favorite_outline</mat-icon>
+            </button>
+            <button
+                *ngIf="isLiked"
+                mat-icon-button
+                (click)="likePost('unlike')"
+            >
+                <mat-icon style="color: red; border: none">favorite</mat-icon>
             </button>
             <button mat-icon-button>
                 <mat-icon>chat_bubble_outline</mat-icon>

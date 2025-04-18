@@ -1,13 +1,15 @@
-import { Router } from 'express';
+import { Request, Response, Router } from 'express';
 import { User } from '../model/User';
 import { Post } from '../model/Post';
 import { Like } from '../model/Like';
 import { USER_PUBLIC_FIELDS } from '../constants/constants';
+import multer from 'multer';
 
 export const likeRoutes = (): Router => {
     const router: Router = Router();
+    const upload = multer();
 
-    router.get('/like', async (req, res) => {
+    router.get('/like', async (req: Request, res: Response) => {
         if (!req.isAuthenticated()) {
             res.status(400).send({
                 success: false,
@@ -74,7 +76,7 @@ export const likeRoutes = (): Router => {
     });
 
     //create a like
-    router.post('/like', async (req, res) => {
+    router.post('/like', async (req: Request, res: Response) => {
         if (!req.isAuthenticated()) {
             res.status(400).send({
                 success: false,
@@ -86,7 +88,6 @@ export const likeRoutes = (): Router => {
         try {
             const { postId, userId, action } = req.body;
 
-            console.log(req.body);
             if (userId !== req.user) {
                 res.status(400).send({
                     success: false,
