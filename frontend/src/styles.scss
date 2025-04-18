@@ -51,7 +51,13 @@ body {
 }
 
 .snackbar-error {
-    --mdc-snackbar-container-color: red;
+    --mdc-snackbar-container-color: #c2185b;
+    --mdc-snackbar-supporting-text-color: white;
+    --mat-snack-bar-button-color: white;
+}
+
+.snackbar-success {
+    --mdc-snackbar-container-color: #32ad37;
     --mdc-snackbar-supporting-text-color: white;
     --mat-snack-bar-button-color: white;
 }

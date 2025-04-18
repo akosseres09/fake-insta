@@ -8,6 +8,7 @@ import {
     UserService,
     FollowResponse,
 } from '../../../shared/services/user/user.service';
+import { SnackbarService } from '../../../shared/snackbar/snackbar.service';
 
 @Component({
     selector: 'app-profile-header',
@@ -23,7 +24,10 @@ export class ProfileHeaderComponent implements OnInit {
     isFollowing?: boolean; // does the currently logged in user follow the queried user
     isUserFollowing?: boolean; // does the queried user follow the currently logged in user
 
-    constructor(private userService: UserService) {}
+    constructor(
+        private userService: UserService,
+        private snackbar: SnackbarService
+    ) {}
 
     ngOnInit(): void {
         this.isFollowing = this.user?.followers.includes(
@@ -47,14 +51,19 @@ export class ProfileHeaderComponent implements OnInit {
 
         this.userService.follow(data).subscribe({
             next: (data: FollowResponse) => {
-                const currentUser: User = data.result.user; //logged in user
-                const queriedUser: User = data.result.otherUser; //queried user
-                this.userService.setUser(currentUser); //setting user in authservice
-                this.user = queriedUser; //setting user so ui updates
+                this.userService.setUser(data.result.user); //setting user in authservice
+                this.user = data.result.otherUser; //setting user so ui updates
+                this.snackbar.openSnackBar(
+                    this.isFollowing ? 'Unfollowed User' : 'Followed User'
+                );
                 this.isFollowing = !this.isFollowing; //toggle follow state
             },
             error: (err) => {
                 console.error(err.result);
+                this.snackbar.openSnackBar(
+                    this.isFollowing ? 'Unfollow Failed' : 'Follow Failed',
+                    ['snackbar-error']
+                );
             },
         });
     }
