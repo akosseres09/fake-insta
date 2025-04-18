@@ -43,7 +43,10 @@ export const userRoutes = (): Router => {
             const usersQuery = User.find(filter).select([USER_PUBLIC_FIELDS]);
 
             if (populate === 'post') {
-                usersQuery.populate('posts');
+                usersQuery.populate({
+                    path: 'posts',
+                    options: { sort: { createdAt: -1 } },
+                });
             }
 
             users = await usersQuery;
