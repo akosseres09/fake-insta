@@ -14,17 +14,12 @@ export const mainGuard: CanActivateFn = (
 ) => {
     const router = inject(Router);
     const auth = inject(AuthService);
-    const authRoutes = ['/auth/login', '/auth/signup', '/auth/not-found'];
 
     return auth.checkauth().pipe(
         map((isAuthenticated) => {
             if (!isAuthenticated) {
-                if (authRoutes.includes(state.url)) {
-                    return true;
-                } else {
-                    router.navigateByUrl('/auth/not-found');
-                    return false;
-                }
+                router.navigateByUrl('/auth/login');
+                return false;
             } else {
                 return true;
             }
