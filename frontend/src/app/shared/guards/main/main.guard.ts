@@ -6,12 +6,17 @@ import { catchError, map, of } from 'rxjs';
 export const mainGuard: CanActivateFn = (route, state) => {
     const router = inject(Router);
     const auth = inject(AuthService);
+    const authRoutes = ['/auth/login', '/auth/signup', '/auth/not-found'];
 
     return auth.checkauth().pipe(
         map((isAuthenticated) => {
             if (!isAuthenticated) {
-                router.navigateByUrl('/auth/login');
-                return false;
+                if (authRoutes.includes(state.url)) {
+                    return true;
+                } else {
+                    router.navigateByUrl('/auth/not-found');
+                    return false;
+                }
             } else {
                 return true;
             }

@@ -1,0 +1,77 @@
+:host {
+    width: clamp(250px, 80%, 1200px);
+}
+
+.search-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.search-header {
+    margin-bottom: 20px;
+}
+
+.search-input {
+    width: 100%;
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+}
+
+.no-results,
+.empty-search {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.no-results mat-icon,
+.empty-search mat-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    margin-bottom: 16px;
+    color: #a8a8a8;
+}
+
+.no-results h3,
+.empty-search h3 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.no-results p,
+.empty-search p {
+    margin: 0;
+    color: #a8a8a8;
+    max-width: 300px;
+}
+
+@media (max-width: 600px) {
+    .search-container {
+        padding: 16px 20px;
+    }
+
+    .user-card {
+        padding: 10px;
+    }
+
+    .user-avatar {
+        width: 48px;
+        height: 48px;
+        margin-right: 12px;
+    }
+
+    .follow-button {
+        min-width: 80px;
+        font-size: 12px;
+    }
+}

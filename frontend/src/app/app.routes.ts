@@ -50,6 +50,20 @@ export const routes: Routes = [
                         (c) => c.CreateComponent
                     ),
             },
+            {
+                path: 'search',
+                loadComponent: () =>
+                    import('./pages/search/search.component').then(
+                        (c) => c.SearchComponent
+                    ),
+            },
+            {
+                path: 'not-found',
+                loadComponent: () =>
+                    import('./pages/not-found/not-found.component').then(
+                        (c) => c.NotFoundComponent
+                    ),
+            },
         ],
     },
     {
@@ -86,20 +100,6 @@ export const routes: Routes = [
                     import('./pages/signup/signup.component').then(
                         (c) => c.SignupComponent
                     ),
-            },
-        ],
-    },
-    {
-        path: '',
-        loadComponent: () =>
-            import('./layouts/auth-layout/auth-layout.component').then(
-                (c) => c.AuthLayoutComponent
-            ),
-        children: [
-            {
-                path: '',
-                pathMatch: 'full',
-                redirectTo: 'not-found',
             },
             {
                 path: 'not-found',

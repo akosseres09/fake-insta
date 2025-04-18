@@ -1,0 +1,56 @@
+<div class="search-container">
+    <div class="search-header">
+        <mat-form-field appearance="outline" class="search-input">
+            <mat-label>Search</mat-label>
+            <input
+                matInput
+                [formControl]="searchControl"
+                placeholder="Search for users..."
+                autocomplete="off"
+            />
+            <mat-icon matPrefix>search</mat-icon>
+            <button
+                *ngIf="searchControl.value"
+                matSuffix
+                mat-icon-button
+                aria-label="Clear"
+                (click)="clearSearch()"
+            >
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
+
+    <div class="search-results">
+        <div *ngIf="isLoading" class="loading-container">
+            <mat-spinner diameter="40"></mat-spinner>
+        </div>
+
+        <ng-container *ngIf="!isLoading">
+            <app-search-profile
+                [isLoading]="isLoading"
+                [filteredUsers]="filteredUsers"
+                [user]="user"
+            ></app-search-profile>
+
+            <div
+                *ngIf="searchControl.value && filteredUsers.length === 0"
+                class="no-results"
+            >
+                <mat-icon>search_off</mat-icon>
+                <h3>No users found</h3>
+                <p>
+                    We couldn't find any users matching "{{
+                        searchControl.value
+                    }}"
+                </p>
+            </div>
+
+            <div *ngIf="!searchControl.value" class="empty-search">
+                <mat-icon>person_search</mat-icon>
+                <h3>Search for users</h3>
+                <p>Find people to follow and connect with</p>
+            </div>
+        </ng-container>
+    </div>
+</div>
