@@ -23,14 +23,9 @@ export const postRoutes = (): Router => {
             const postFilter: any = {};
             const populateFields: Array<string> = [];
 
-            let userQuery;
-            if (userId) {
-                userQuery = User.findById(userId);
-            } else {
-                userQuery = User.findById(req.user);
-            }
+            const id = userId ?? req.user;
+            const user = await User.findById(id);
 
-            const user = await userQuery;
             if (!user) {
                 res.status(404).send({
                     success: false,
@@ -38,6 +33,7 @@ export const postRoutes = (): Router => {
                 });
                 return;
             }
+
             const following = user.following;
             if (following.length === 0) {
                 following.push(user.id);
@@ -95,10 +91,37 @@ export const postRoutes = (): Router => {
         '/post',
         upload.single('media'),
         async (req: Request, res: Response) => {
+            if (!req.isAuthenticated()) {
+                res.status(400).send({
+                    success: false,
+                    result: 'User not authenticated',
+                });
+                return;
+            }
+
             try {
                 const { caption, altText, userId } = req.body;
+
+                if (userId !== req.user) {
+                    res.status(400).send({
+                        success: false,
+                        result: 'User not authorized',
+                    });
+                    return;
+                }
+
                 if (!req.file || !req.file.path) {
                     res.status(400).send('No file uploaded');
+                    return;
+                }
+
+                const user = await User.findById(userId);
+
+                if (!user) {
+                    res.status(404).send({
+                        success: false,
+                        result: 'User not found',
+                    });
                     return;
                 }
 
@@ -117,6 +140,8 @@ export const postRoutes = (): Router => {
                 const response = await newPost.save();
 
                 if (response) {
+                    user.posts.push(response.id);
+                    await user.updateOne(user);
                     res.status(200).send({
                         success: true,
                         result: newPost,
