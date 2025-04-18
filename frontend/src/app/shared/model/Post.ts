@@ -5,6 +5,7 @@ export interface Post {
     userId: string | User;
     mediaUrl: string;
     mediaType: string;
+    mediaPublicId: string;
     caption: string;
     altText: string;
     createdAt: Date;

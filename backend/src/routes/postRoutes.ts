@@ -133,6 +133,7 @@ export const postRoutes = (): Router => {
                     mediaType: req.file.mimetype.startsWith('video')
                         ? 'video'
                         : 'image',
+                    mediaPublicId: req.file.filename,
                     likes: [],
                     comments: [],
                 });

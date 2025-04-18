@@ -4,6 +4,7 @@ interface IPost extends mongoose.Document {
     userId: Types.ObjectId;
     mediaUrl: string;
     mediaType: string;
+    mediaPublicId: string;
     caption: string;
     altText: string;
     createdAt: Date;
@@ -20,6 +21,7 @@ const PostSchema = new mongoose.Schema<IPost>({
     },
     mediaUrl: { type: String, required: true },
     mediaType: { type: String, required: true },
+    mediaPublicId: { type: String, required: true },
     caption: { type: String, default: '' },
     altText: { type: String, default: '' },
     createdAt: { type: Date, default: Date.now },
