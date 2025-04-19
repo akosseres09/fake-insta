@@ -6,7 +6,8 @@ import { MiniProfileComponent } from '../mini-profile/mini-profile.component';
 import { RouterModule } from '@angular/router';
 import { PostService } from '../../shared/services/post/post.service';
 import { Subscription } from 'rxjs';
-import { PostWithComments } from '../../shared/model/Post';
+import { Post } from '../../shared/model/Post';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-feed',
@@ -17,21 +18,26 @@ import { PostWithComments } from '../../shared/model/Post';
         MaterialModule,
         MiniProfileComponent,
         RouterModule,
+        MatProgressSpinnerModule,
     ],
     templateUrl: './feed.component.html',
     styleUrl: './feed.component.scss',
 })
 export class FeedComponent implements OnInit, OnDestroy {
-    posts?: Array<PostWithComments>;
+    posts?: Array<Post>;
     postSub?: Subscription;
+    isLoading?: boolean;
     constructor(private postService: PostService) {}
 
     ngOnInit(): void {
+        this.isLoading = true;
         this.postSub = this.postService.getPosts().subscribe({
             next: (data) => {
-                this.posts = data.result as Array<PostWithComments>;
+                this.isLoading = false;
+                this.posts = data.result as Array<Post>;
             },
             error: (error) => {
+                this.isLoading = false;
                 console.error('Error fetching posts:', error);
             },
         });

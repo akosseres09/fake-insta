@@ -75,7 +75,7 @@ export const likeRoutes = (): Router => {
         }
     });
 
-    //create a like
+    // creates and deletes a like
     router.post('/like', async (req: Request, res: Response) => {
         if (!req.isAuthenticated()) {
             res.status(400).send({

@@ -2,8 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IResponse } from '../../model/Response';
 import { Post } from '../../model/Post';
-import { throwError } from 'rxjs';
-import { Comment } from '../../model/Comment';
 
 export interface Data {
     userId: string;
@@ -32,12 +30,8 @@ export class LikeService {
     }
 
     likePost(formData: Data) {
-        return this.http.post<IResponse<Post<Comment>>>(
-            this.LIKE_URL,
-            formData,
-            {
-                withCredentials: true,
-            }
-        );
+        return this.http.post<IResponse<Post>>(this.LIKE_URL, formData, {
+            withCredentials: true,
+        });
     }
 }
