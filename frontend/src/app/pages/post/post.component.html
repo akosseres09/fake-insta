@@ -35,7 +35,7 @@
                 mat-icon-button
                 (click)="likePost('unlike')"
             >
-                <mat-icon style="color: red; border: none">favorite</mat-icon>
+                <mat-icon style="color: #c2185b">favorite</mat-icon>
             </button>
             <button mat-icon-button>
                 <mat-icon>chat_bubble_outline</mat-icon>
@@ -54,24 +54,18 @@
         </a>
         {{ post.caption }}
 
-        <div
-            class="post-comments"
-            *ngIf="post.comments && post.comments.length > 0"
-        >
-            <div *ngIf="post.comments.length > 2" class="view-comments">
-                View all {{ post.comments.length }} comments
+        <div class="post-comments" *ngIf="comments && comments.length > 0">
+            <div *ngIf="comments.length > 2" class="view-comments">
+                View all {{ comments.length }} comments
             </div>
-            <div
-                *ngFor="let comment of post?.comments!.slice(0, 2)"
-                class="post-comment"
-            >
-                <!--<span class="post-username">{{ comment?.username }}</span>
-                {{ comment.text }} -->
+            <div *ngFor="let comment of comments" class="post-comment">
+                <span class="post-username">{{ comment }}</span>
+                {{ comment.text }}
             </div>
         </div>
 
-        <!--<div class="post-time">
+        <div class="post-time">
             {{ post.createdAt | date : "short" }}
-        </div> -->
+        </div>
     </mat-card-content>
 </mat-card>

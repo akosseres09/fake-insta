@@ -28,9 +28,9 @@ export class PostService {
     }
 
     getPosts() {
-        return this.http.get<IResponse<Array<Post> | string>>(this.POST_URL, {
+        return this.http.get<IResponse<Array<Post<Comment>>>>(this.POST_URL, {
             params: {
-                populate: 'userId',
+                populate: 'userId,comments',
             },
             withCredentials: true,
         });

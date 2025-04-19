@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IResponse } from '../../model/Response';
-import { Post } from '../../model/Post';
+import { Post, PostWithComments } from '../../model/Post';
 import { throwError } from 'rxjs';
+import { Comment } from '../../model/Comment';
 
 export interface Data {
     userId: string;
@@ -16,7 +17,6 @@ export interface Data {
 })
 export class LikeService {
     private LIKE_URL = 'http://localhost:3000/like';
-    private ACTIONS = ['like', 'unlike'];
     constructor(private http: HttpClient) {}
 
     getLikes(data: Data) {
@@ -32,7 +32,7 @@ export class LikeService {
     }
 
     likePost(formData: Data) {
-        return this.http.post<IResponse<Post | string>>(
+        return this.http.post<IResponse<PostWithComments>>(
             this.LIKE_URL,
             formData,
             {

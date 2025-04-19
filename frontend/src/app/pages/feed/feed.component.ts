@@ -6,7 +6,7 @@ import { MiniProfileComponent } from '../mini-profile/mini-profile.component';
 import { RouterModule } from '@angular/router';
 import { PostService } from '../../shared/services/post/post.service';
 import { Subscription } from 'rxjs';
-import { Post } from '../../shared/model/Post';
+import { PostWithComments } from '../../shared/model/Post';
 
 @Component({
     selector: 'app-feed',
@@ -22,14 +22,14 @@ import { Post } from '../../shared/model/Post';
     styleUrl: './feed.component.scss',
 })
 export class FeedComponent implements OnInit, OnDestroy {
-    posts?: Array<Post>;
+    posts?: Array<PostWithComments>;
     postSub?: Subscription;
     constructor(private postService: PostService) {}
 
     ngOnInit(): void {
         this.postSub = this.postService.getPosts().subscribe({
             next: (data) => {
-                this.posts = data.result as Array<Post>;
+                this.posts = data.result as Array<PostWithComments>;
             },
             error: (error) => {
                 console.error('Error fetching posts:', error);

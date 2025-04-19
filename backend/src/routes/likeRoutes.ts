@@ -106,7 +106,7 @@ export const likeRoutes = (): Router => {
 
             const [user, post] = await Promise.all([
                 User.findById(userId),
-                Post.findById(postId),
+                Post.findById(postId).populate('comments'),
             ]);
 
             if (!user || !post) {
