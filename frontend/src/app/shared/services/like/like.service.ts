@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IResponse } from '../../model/Response';
-import { Post, PostWithComments } from '../../model/Post';
+import { Post } from '../../model/Post';
 import { throwError } from 'rxjs';
 import { Comment } from '../../model/Comment';
 
@@ -32,7 +32,7 @@ export class LikeService {
     }
 
     likePost(formData: Data) {
-        return this.http.post<IResponse<PostWithComments>>(
+        return this.http.post<IResponse<Post<Comment>>>(
             this.LIKE_URL,
             formData,
             {

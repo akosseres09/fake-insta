@@ -23,7 +23,7 @@ import { Comment } from '../../shared/model/Comment';
     styleUrl: './post.component.scss',
 })
 export class PostComponent implements OnInit {
-    @Input() post?: PostWithComments;
+    @Input() post?: Post<Comment>;
     commentForm?: FormGroup;
     currentUser?: User;
     user?: User;
@@ -68,7 +68,7 @@ export class PostComponent implements OnInit {
 
         this.likeService.likePost(formData).subscribe({
             next: (response) => {
-                this.post = response.result as PostWithComments;
+                this.post = response.result as Post<Comment>;
                 this.snackbar.openSnackBar(
                     action === 'like' ? 'Post liked' : 'Post unliked',
                     ['snackbar-success']
