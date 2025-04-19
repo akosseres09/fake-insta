@@ -65,10 +65,26 @@ mat-card-actions {
 .view-comments {
     color: #a8a8a8;
     margin-bottom: 4px;
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+.view-comments:hover {
+    text-decoration: underline;
 }
 
 .post-comment {
     margin-bottom: 4px;
+}
+
+mat-form-field {
+    margin-top: 20px;
+    width: 90%;
+}
+
+.input {
+    display: flex;
+    align-items: center;
 }
 
 .post-time {

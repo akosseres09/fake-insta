@@ -1,0 +1,40 @@
+.container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.outer-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.user {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.container img {
+    cursor: pointer;
+}
+
+.user .username:hover {
+    cursor: pointer;
+}
+
+mat-dialog-content {
+    overflow-x: hidden;
+}
+
+.data {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.profile-picture {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}

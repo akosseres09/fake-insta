@@ -54,16 +54,20 @@
         </a>
         {{ post.caption }}
 
-        <div class="post-comments" *ngIf="comments && comments.length > 0">
-            <div *ngIf="comments.length > 2" class="view-comments">
-                View all {{ comments.length }} comments
-            </div>
-            <div *ngFor="let comment of comments" class="post-comment">
-                <span class="post-username">{{ comment }}</span>
-                {{ comment.text }}
+        <div class="post-comments" *ngIf="post.comments.length > 0">
+            <div class="view-comments" (click)="getComments()">
+                View all comments
             </div>
         </div>
-
+        <div class="input" [formGroup]="commentForm">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Comment</mat-label>
+                <input matInput formControlName="comment" />
+            </mat-form-field>
+            <button mat-icon-button (click)="addComment()">
+                <mat-icon>send</mat-icon>
+            </button>
+        </div>
         <div class="post-time">
             {{ post.createdAt | date : "short" }}
         </div>

@@ -1,0 +1,58 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<mat-dialog-content>
+    <div class="outer-container" *ngIf="data.comments">
+        <div *ngFor="let item of data.comments" class="item">
+            <div class="container">
+                <img
+                    (click)="navigatePage('/profile/' + item.userId._id)"
+                    [src]="item.userId.profilePictureUrl"
+                    alt="Profile Picture"
+                    class="profile-picture"
+                />
+                <div class="user">
+                    <div
+                        class="username"
+                        (click)="navigatePage('/profile/' + item.userId._id)"
+                    >
+                        {{ item.userId.username }}
+                    </div>
+                    <div class="data">
+                        {{ item.text }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="outer-container" *ngIf="data.likes">
+        <div
+            *ngFor="let item of data.likes"
+            (click)="navigatePage('/profile/' + item.userId._id)"
+            class="item"
+        >
+            <div class="container">
+                <img
+                    (click)="navigatePage('/profile/' + item.userId._id)"
+                    [src]="item.userId.profilePictureUrl"
+                    alt="Profile Picture"
+                    class="profile-picture"
+                />
+                <div class="user">
+                    <div
+                        class="username"
+                        (click)="navigatePage('/profile/' + item.userId._id)"
+                    >
+                        {{ item.userId.username }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="data.comments?.length === 0 && data.likes?.length === 0">
+        <p>No {{ data.title.toLowerCase() }} yet.</p>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

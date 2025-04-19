@@ -39,10 +39,14 @@ export const commentRoutes = () => {
                 }
             }
 
-            const comments = await PostComment.find(filters).populate(
-                populateFields,
-                populateFields.includes('userId') ? USER_PUBLIC_FIELDS : null
-            );
+            const comments = await PostComment.find(filters)
+                .populate(
+                    populateFields,
+                    populateFields.includes('userId')
+                        ? USER_PUBLIC_FIELDS
+                        : null
+                )
+                .sort({ createdAt: -1 });
 
             if (comments) {
                 res.status(200).send({
