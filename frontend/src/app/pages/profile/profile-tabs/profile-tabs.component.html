@@ -12,7 +12,12 @@
 
         <!-- Profile Posts Grid -->
         <div class="posts-grid">
-            <div class="post-item" *ngFor="let post of userPosts" matRipple>
+            <div
+                class="post-item"
+                [routerLink]="'/post/' + post._id"
+                *ngFor="let post of userPosts"
+                matRipple
+            >
                 <img
                     *ngIf="post.mediaType === 'image'"
                     [src]="post.mediaUrl"

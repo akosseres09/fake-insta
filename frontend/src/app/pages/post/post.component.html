@@ -12,6 +12,27 @@
                 user.username
             }}</a></mat-card-title
         >
+        <div
+            *ngIf="
+                (isView && user._id === currentUser?._id) ||
+                currentUser?.isAdmin
+            "
+        >
+            <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                aria-label="Example icon-button with a menu"
+                class="more-button"
+            >
+                <mat-icon>more_horiz</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item>
+                    <mat-icon color="primary">delete</mat-icon>
+                    <span class="delete">Delete</span>
+                </button>
+            </mat-menu>
+        </div>
     </mat-card-header>
 
     <img
@@ -37,17 +58,13 @@
             >
                 <mat-icon style="color: #c2185b">favorite</mat-icon>
             </button>
-            <button mat-icon-button>
-                <mat-icon>chat_bubble_outline</mat-icon>
-            </button>
         </div>
-        <button mat-icon-button>
-            <mat-icon>bookmark_border</mat-icon>
-        </button>
     </mat-card-actions>
 
     <mat-card-content>
-        <div class="post-likes">{{ post.likes.length }} likes</div>
+        <div class="post-likes" (click)="getLikes()">
+            {{ post.likes.length }} likes
+        </div>
 
         <a [href]="'/profile/' + user._id" class="post-caption">
             <span class="post-username">{{ user.username }}</span>
@@ -56,7 +73,7 @@
 
         <div class="post-comments" *ngIf="post.comments.length > 0">
             <div class="view-comments" (click)="getComments()">
-                View all comments
+                View all ({{ post.comments.length }}) comments
             </div>
         </div>
         <div class="input" [formGroup]="commentForm">

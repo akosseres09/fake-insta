@@ -1,0 +1,4 @@
+<div class="container">
+    <app-post *ngIf="post" [post]="post" [isView]="true"></app-post>
+    <mat-spinner *ngIf="!post"></mat-spinner>
+</div>

@@ -1,7 +1,7 @@
 :host {
     display: block;
     width: 100%;
-    max-width: clamp(1000px, 90vw, 1500px);
+    max-width: clamp(1000px, 80vw, 1500px);
 }
 
 .container {
@@ -15,10 +15,11 @@
     flex: 1 1 auto;
     flex-direction: column;
     align-items: center;
+    width: 80%;
 }
 
 .posts {
-    max-width: 600px;
+    max-width: clamp(250px, 75%, 600px);
 }
 
 .mini-profile {
@@ -48,6 +49,10 @@
 @media screen and (max-width: 1300px) {
     .mini-profile {
         display: none;
+    }
+
+    .feed {
+        width: 100%;
     }
 
     .container .feed .no-posts {

@@ -1,0 +1,9 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+app-post {
+    max-width: clamp(300px, 75%, 1000px);
+}

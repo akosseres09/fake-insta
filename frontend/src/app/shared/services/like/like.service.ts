@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IResponse } from '../../model/Response';
 import { Post } from '../../model/Post';
+import { LikeWithUser } from '../../model/Like';
 
 export interface Data {
     userId: string;
@@ -17,16 +18,14 @@ export class LikeService {
     private LIKE_URL = 'http://localhost:3000/like';
     constructor(private http: HttpClient) {}
 
-    getLikes(data: Data) {
-        return this.http.get<IResponse<Array<Post> | string>>(this.LIKE_URL, {
-            params: {
-                userId: data.userId ?? '',
-                postId: data.postId ?? '',
-                populate: data.populate,
-                action: data.action,
-            },
-            withCredentials: true,
-        });
+    getLikes(data: any) {
+        return this.http.get<IResponse<Array<LikeWithUser> | string>>(
+            this.LIKE_URL,
+            {
+                params: data,
+                withCredentials: true,
+            }
+        );
     }
 
     likePost(formData: Data) {

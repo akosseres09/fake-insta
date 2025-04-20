@@ -2,51 +2,56 @@
 
 <mat-dialog-content>
     <div class="outer-container" *ngIf="data.comments">
-        <div *ngFor="let item of data.comments" class="item">
-            <div class="container">
+        <mat-list dense>
+            <mat-list-item
+                class="user"
+                *ngFor="let comment of data.comments; index as i"
+                [ngClass]="{
+                    'multiple-comments': i !== data.comments.length - 1
+                }"
+            >
                 <img
-                    (click)="navigatePage('/profile/' + item.userId._id)"
-                    [src]="item.userId.profilePictureUrl"
-                    alt="Profile Picture"
+                    (click)="navigatePage('/profile/' + comment.userId._id)"
                     class="profile-picture"
+                    matListItemAvatar
+                    [src]="comment.userId.profilePictureUrl"
+                    [alt]="comment.userId.username"
                 />
-                <div class="user">
-                    <div
+                <div matListItemLine>
+                    <b
+                        (click)="navigatePage('/profile/' + comment.userId._id)"
                         class="username"
-                        (click)="navigatePage('/profile/' + item.userId._id)"
-                    >
-                        {{ item.userId.username }}
-                    </div>
-                    <div class="data">
-                        {{ item.text }}
-                    </div>
+                        >{{ comment.userId.username }}
+                    </b>
+                    <span>{{ comment.createdAt | date : "short" }} </span>
                 </div>
-            </div>
-        </div>
+                <span matListItemLine> {{ comment.text }} </span>
+            </mat-list-item>
+        </mat-list>
     </div>
     <div class="outer-container" *ngIf="data.likes">
-        <div
-            *ngFor="let item of data.likes"
-            (click)="navigatePage('/profile/' + item.userId._id)"
-            class="item"
+        <mat-list-item
+            class="user"
+            *ngFor="let like of data.likes; index as i"
+            [ngClass]="{
+                'multiple-likes': i !== data.likes.length - 1
+            }"
         >
-            <div class="container">
-                <img
-                    (click)="navigatePage('/profile/' + item.userId._id)"
-                    [src]="item.userId.profilePictureUrl"
-                    alt="Profile Picture"
-                    class="profile-picture"
-                />
-                <div class="user">
-                    <div
-                        class="username"
-                        (click)="navigatePage('/profile/' + item.userId._id)"
-                    >
-                        {{ item.userId.username }}
-                    </div>
-                </div>
+            <img
+                (click)="navigatePage('/profile/' + like.userId._id)"
+                class="profile-picture"
+                matListItemAvatar
+                [src]="like.userId.profilePictureUrl"
+                [alt]="like.userId.username"
+            />
+            <div matListItemLine>
+                <b
+                    (click)="navigatePage('/profile/' + like.userId._id)"
+                    class="username"
+                    >{{ like.userId.username }}
+                </b>
             </div>
-        </div>
+        </mat-list-item>
     </div>
     <div *ngIf="data.comments?.length === 0 && data.likes?.length === 0">
         <p>No {{ data.title.toLowerCase() }} yet.</p>
@@ -54,5 +59,5 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Close</button>
+    <button mat-stroked-button color="primary" mat-dialog-close>Close</button>
 </mat-dialog-actions>

@@ -4,10 +4,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatRippleModule } from '@angular/material/core';
 import { Post } from '../../../shared/model/Post';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-profile-tabs',
-    imports: [MatIconModule, MatTabsModule, MatRippleModule, CommonModule],
+    imports: [
+        MatIconModule,
+        MatTabsModule,
+        MatRippleModule,
+        CommonModule,
+        RouterModule,
+    ],
     templateUrl: './profile-tabs.component.html',
     styleUrl: './profile-tabs.component.scss',
 })

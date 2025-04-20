@@ -1,10 +1,9 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MaterialModule } from '../../material.module';
 import { Post } from '../../shared/model/Post';
 import { User } from '../../shared/model/User';
-import { Like, LikeWithUser } from '../../shared/model/Like';
-import { PostComment, PostCommentWithUser } from '../../shared/model/Comment';
+import { LikeWithUser } from '../../shared/model/Like';
+import { PostCommentWithUser } from '../../shared/model/Comment';
 import { Data, LikeService } from '../../shared/services/like/like.service';
 import { SnackbarService } from '../../shared/snackbar/snackbar.service';
 import { UserService } from '../../shared/services/user/user.service';
@@ -22,10 +21,18 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
     selector: 'app-post',
     standalone: true,
+    providers: [
+        {
+            provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+            useValue: { subscriptSizing: 'dynamic' },
+        },
+    ],
     imports: [
         CommonModule,
         ReactiveFormsModule,
@@ -33,17 +40,19 @@ import { MatButtonModule } from '@angular/material/button';
         MatIconModule,
         MatCardModule,
         MatButtonModule,
+        MatMenuModule,
     ],
     templateUrl: `./post.component.html`,
     styleUrl: './post.component.scss',
 })
 export class PostComponent implements OnInit, OnDestroy {
     @Input() post?: Post;
+    @Input() isView?: boolean = false;
     commentForm: FormGroup;
     currentUser?: User;
     user?: User;
     comments?: Array<PostCommentWithUser>;
-    likes?: Array<Like>;
+    likes?: Array<LikeWithUser>;
     isLiked?: boolean;
     commentSubscription?: Subscription;
     likeSubscription?: Subscription;
@@ -90,7 +99,7 @@ export class PostComponent implements OnInit, OnDestroy {
                 this.snackbar.openSnackBar('Comment added', [
                     'snackbar-success',
                 ]);
-                console.log(response);
+                this.post = response.result as Post;
                 this.commentForm.reset();
             },
             error: (error) => {
@@ -121,7 +130,27 @@ export class PostComponent implements OnInit, OnDestroy {
             });
     }
 
-    getLikes() {}
+    getLikes() {
+        const data = {
+            postId: this.post?._id,
+            populate: 'userId',
+        };
+        this.likeService.getLikes(data).subscribe({
+            next: (response) => {
+                this.likes = response.result as Array<LikeWithUser>;
+                console.log(this.likes);
+                console.log(this.post?.likes);
+
+                this.openListDialog('Likes', [], this.likes);
+            },
+            error: (error) => {
+                console.log(error);
+                this.snackbar.openSnackBar('Error fetching likes', [
+                    'snackbar-error',
+                ]);
+            },
+        });
+    }
 
     likePost(action: 'like' | 'unlike') {
         const formData: Data = {

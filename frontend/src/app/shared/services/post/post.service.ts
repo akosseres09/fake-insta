@@ -35,4 +35,16 @@ export class PostService {
             withCredentials: true,
         });
     }
+
+    getPostById(id: string) {
+        return this.http.get<IResponse<Post>>(this.POST_URL, {
+            params: {
+                inArray: 'false',
+                postId: id,
+                populate: 'userId',
+                follow: 'false',
+            },
+            withCredentials: true,
+        });
+    }
 }

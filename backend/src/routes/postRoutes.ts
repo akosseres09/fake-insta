@@ -19,7 +19,7 @@ export const postRoutes = (): Router => {
         }
 
         try {
-            const { userId, populate } = req.query;
+            const { postId, userId, populate, inArray, follow } = req.query;
             const postFilter: any = {};
             const populateFields: Array<string> = [];
 
@@ -34,14 +34,20 @@ export const postRoutes = (): Router => {
                 return;
             }
 
-            const following = user.following;
-            if (following.length === 0) {
-                following.push(user.id);
+            if (!follow) {
+                const following = user.following;
+                if (following.length === 0) {
+                    following.push(user.id);
+                }
+
+                postFilter.userId = {
+                    $in: following,
+                };
             }
 
-            postFilter.userId = {
-                $in: following,
-            };
+            if (postId) {
+                postFilter._id = postId;
+            }
 
             if (populate) {
                 for (const field of (populate as string).split(',')) {
@@ -64,8 +70,12 @@ export const postRoutes = (): Router => {
                         ? USER_PUBLIC_FIELDS
                         : null
                 );
+            let posts;
+            posts = await postsQuery;
 
-            const posts = await postsQuery;
+            if (inArray === 'false' && posts.length === 1) {
+                posts = posts[0];
+            }
 
             if (posts) {
                 res.status(200).send({

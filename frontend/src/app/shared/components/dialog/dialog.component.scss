@@ -1,3 +1,7 @@
+mat-list-item {
+    padding: 0.5rem 0;
+}
+
 .container {
     display: flex;
     gap: 0.5rem;
@@ -10,31 +14,31 @@
 }
 
 .user {
-    display: flex;
     gap: 1rem;
-    align-items: center;
 }
 
-.container img {
-    cursor: pointer;
+.multiple-comments {
+    border-bottom: 1px solid;
+}
+
+.multiple-likes {
+    border-bottom: 1px solid;
 }
 
 .user .username:hover {
     cursor: pointer;
 }
 
-mat-dialog-content {
-    overflow-x: hidden;
+.profile-picture {
+    margin-top: 8px !important;
+    cursor: pointer;
 }
 
-.data {
+::ng-deep .mat-list .mat-list-item .mat-line {
     word-wrap: break-word;
     white-space: pre-wrap;
 }
 
-.profile-picture {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
+::ng-deep .mat-list .mat-list-item {
+    height: initial !important;
 }

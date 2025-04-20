@@ -1,3 +1,9 @@
+:host {
+    --mat-form-field-container-height: 2rem;
+    --mat-form-field-container-vertical-padding: 0.25rem;
+    --mat-form-field-container-text-size: 12px;
+}
+
 .post {
     margin-bottom: 16px;
     background-color: #1e1e1e;
@@ -24,6 +30,11 @@ mat-card-header {
     top: 8px;
 }
 
+.delete {
+    color: #c2185b;
+    font-weight: bold;
+}
+
 .post-image {
     width: 100%;
     margin: 0;
@@ -43,6 +54,7 @@ mat-card-actions {
 }
 
 .post-likes {
+    cursor: pointer;
     font-weight: 600;
     font-size: 14px;
     margin-bottom: 8px;
@@ -78,8 +90,26 @@ mat-card-actions {
 }
 
 mat-form-field {
-    margin-top: 20px;
     width: 90%;
+}
+
+.custom-height {
+    height: 60px;
+    width: 90%;
+}
+
+.custom-height .mat-form-field-wrapper {
+    padding-bottom: 0;
+    padding-top: 0;
+    height: 100%;
+}
+
+.custom-height .mat-input-element {
+    height: 100%;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+    line-height: 60px;
 }
 
 .input {

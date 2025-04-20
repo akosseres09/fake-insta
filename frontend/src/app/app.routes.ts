@@ -37,6 +37,13 @@ export const routes: Routes = [
                     ),
             },
             {
+                path: 'post/:id',
+                loadComponent: () =>
+                    import('./pages/view-post/view-post.component').then(
+                        (c) => c.ViewPostComponent
+                    ),
+            },
+            {
                 path: 'edit',
                 loadComponent: () =>
                     import('./pages/edit/edit.component').then(

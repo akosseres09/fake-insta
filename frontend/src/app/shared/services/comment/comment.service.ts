@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PostComment, PostCommentWithUser } from '../../model/Comment';
 import { IResponse } from '../../model/Response';
+import { Post } from '../../model/Post';
 
 export interface PostData {
     postId: string;
@@ -27,7 +28,7 @@ export class CommentService {
     }
 
     createComment(data: PostData) {
-        return this.http.post<IResponse<PostComment>>(this.COMMENT_URL, data, {
+        return this.http.post<IResponse<Post>>(this.COMMENT_URL, data, {
             withCredentials: true,
         });
     }

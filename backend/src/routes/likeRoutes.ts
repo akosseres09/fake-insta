@@ -43,6 +43,7 @@ export const likeRoutes = (): Router => {
                     return;
                 }
             }
+            console.log(filters);
 
             const likes = await Like.find(filters)
                 .populate(
