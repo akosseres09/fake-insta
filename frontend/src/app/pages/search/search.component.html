@@ -27,14 +27,17 @@
         </div>
 
         <ng-container *ngIf="!isLoading">
-            <app-search-profile
+            <!-- CASE 1: when searching and results found -->
+            <app-list-profile
+                *ngIf="getSearchValue() && filteredUsers.length > 0"
                 [isLoading]="isLoading"
                 [filteredUsers]="filteredUsers"
                 [user]="user"
-            ></app-search-profile>
+            ></app-list-profile>
 
+            <!-- CASE 2: when searching and no results found -->
             <div
-                *ngIf="searchControl.value && filteredUsers.length === 0"
+                *ngIf="getSearchValue() && filteredUsers.length === 0"
                 class="no-results"
             >
                 <mat-icon>search_off</mat-icon>
@@ -46,7 +49,19 @@
                 </p>
             </div>
 
-            <div *ngIf="!searchControl.value" class="empty-search">
+            <!-- CASE 3: not searching (empty input) and users list given (admin mode) -->
+            <app-list-profile
+                *ngIf="!getSearchValue() && users.length > 0"
+                [isLoading]="isLoading"
+                [filteredUsers]="users"
+                [user]="user"
+            ></app-list-profile>
+
+            <!-- CASE 4: not searching and no users given (empty state) -->
+            <div
+                *ngIf="!getSearchValue() && users.length === 0"
+                class="empty-search"
+            >
                 <mat-icon>person_search</mat-icon>
                 <h3>Search for users</h3>
                 <p>Find people to follow and connect with</p>

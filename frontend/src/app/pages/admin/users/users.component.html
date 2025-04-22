@@ -1,0 +1,5 @@
+<app-search
+    *ngIf="currentUser && users"
+    [users]="users"
+    [currentUserIsAdmin]="currentUser.isAdmin"
+></app-search>

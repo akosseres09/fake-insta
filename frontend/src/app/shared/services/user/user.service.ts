@@ -39,6 +39,12 @@ export class UserService {
         });
     }
 
+    getAllUsers() {
+        return this.http.get<IResponse<Array<User>>>(this.USER_URL, {
+            withCredentials: true,
+        });
+    }
+
     getUsersBySearch(username: string) {
         return this.http.get<IResponse<Array<User>>>(this.USER_URL, {
             params: {
