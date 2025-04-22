@@ -80,6 +80,15 @@ export const routes: Routes = [
                 (c) => c.MainLayoutComponent
             ),
         canActivate: [adminGuard],
+        children: [
+            {
+                path: 'users',
+                loadComponent: () =>
+                    import('./pages/admin/users/users.component').then(
+                        (c) => c.UsersComponent
+                    ),
+            },
+        ],
     },
     {
         path: 'auth',
