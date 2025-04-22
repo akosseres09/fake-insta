@@ -21,12 +21,6 @@ export const userRoutes = (): Router => {
 
             if (id) {
                 filter._id = id;
-            } else {
-                filter._id = {
-                    $not: {
-                        $eq: req.user,
-                    },
-                };
             }
             if (username)
                 filter.username = {
