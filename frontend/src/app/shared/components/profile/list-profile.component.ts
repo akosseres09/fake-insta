@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
-import { User } from '../../../shared/model/User';
+import { User } from '../../model/User';
 import { MatButtonModule } from '@angular/material/button';
-import { UserService } from '../../../shared/services/user/user.service';
-import { SnackbarService } from '../../../shared/snackbar/snackbar.service';
+import { UserService } from '../../services/user/user.service';
+import { SnackbarService } from '../../snackbar/snackbar.service';
 
 @Component({
-    selector: 'app-search-profile',
+    selector: 'app-list-profile',
     imports: [CommonModule, RouterModule, MatIconModule, MatButtonModule],
-    templateUrl: './profile.component.html',
-    styleUrl: './profile.component.scss',
+    templateUrl: './list-profile.component.html',
+    styleUrl: './list-profile.component.scss',
 })
-export class ProfileComponent {
+export class ListProfileComponent {
     @Input() isLoading?: boolean;
     @Input() filteredUsers?: Array<User>;
     @Input() showMore: boolean = true;

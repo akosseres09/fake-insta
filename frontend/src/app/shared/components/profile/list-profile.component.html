@@ -7,8 +7,10 @@
 
             <div class="user-info" [routerLink]="'/profile/' + user._id">
                 <div class="username">{{ user.username }}</div>
-                <div class="full-name">{{ user.name.first }}</div>
-                <div class="full-name">{{ user.name.last }}</div>
+                <div class="full-name">
+                    <div class="first-name">{{ user.name.first }}</div>
+                    <div class="last-name">{{ user.name.last }}</div>
+                </div>
             </div>
 
             <button
@@ -25,11 +27,6 @@
             >
                 {{ isFollowing(user) ? "Unfollow" : "Follow" }}
             </button>
-        </div>
-
-        <div *ngIf="showMore && filteredUsers.length > 5" class="more-results">
-            <span>{{ filteredUsers.length - 5 }} more results</span>
-            <button mat-button color="primary">See All</button>
         </div>
     </div>
 </ng-container>

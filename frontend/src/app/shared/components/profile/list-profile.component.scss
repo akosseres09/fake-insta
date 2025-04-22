@@ -45,6 +45,8 @@
 }
 
 .full-name {
+    display: flex;
+    gap: 4px;
     color: #a8a8a8;
     font-size: 14px;
     margin-bottom: 4px;
