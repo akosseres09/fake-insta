@@ -82,6 +82,11 @@ export const routes: Routes = [
         canActivate: [adminGuard],
         children: [
             {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: 'users',
+            },
+            {
                 path: 'users',
                 loadComponent: () =>
                     import('./pages/admin/users/users.component').then(
