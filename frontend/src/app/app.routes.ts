@@ -93,6 +93,13 @@ export const routes: Routes = [
                         (c) => c.UsersComponent
                     ),
             },
+            {
+                path: 'notification',
+                loadComponent: () =>
+                    import(
+                        './pages/admin/create-notification/create-notification.component'
+                    ).then((c) => c.CreateNotificationComponent),
+            },
         ],
     },
     {

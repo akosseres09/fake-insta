@@ -9,10 +9,18 @@ import {
     FollowResponse,
 } from '../../../shared/services/user/user.service';
 import { SnackbarService } from '../../../shared/snackbar/snackbar.service';
+import { MatBadgeModule } from '@angular/material/badge';
+import { Notification } from '../../../shared/model/Notification';
 
 @Component({
     selector: 'app-profile-header',
-    imports: [CommonModule, MatIconModule, MatButtonModule, RouterModule],
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatButtonModule,
+        RouterModule,
+        MatBadgeModule,
+    ],
     templateUrl: './profile-header.component.html',
     styleUrl: './profile-header.component.scss',
 })
@@ -23,6 +31,7 @@ export class ProfileHeaderComponent implements OnInit {
     @Input() currentUser?: User;
     isFollowing?: boolean; // does the currently logged in user follow the queried user
     isUserFollowing?: boolean; // does the queried user follow the currently logged in user
+    notifications: Array<Notification> = [];
 
     constructor(
         private userService: UserService,
@@ -37,9 +46,6 @@ export class ProfileHeaderComponent implements OnInit {
         this.isUserFollowing = this.user?.following.includes(
             this.currentUser?._id as string
         );
-
-        console.log(this.isFollowing);
-        console.log(this.isUserFollowing);
     }
 
     follow(action: 'follow' | 'unfollow') {
