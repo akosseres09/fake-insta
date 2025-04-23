@@ -5,6 +5,7 @@ import { userRoutes } from './userRoutes';
 import { postRoutes } from './postRoutes';
 import { likeRoutes } from './likeRoutes';
 import { commentRoutes } from './commentRoutes';
+import { notificationRoutes } from './notificationRoutes';
 
 export const configureRoutes = (
     passport: PassportStatic,
@@ -24,6 +25,9 @@ export const configureRoutes = (
 
     // Comment routes
     router.use('/', commentRoutes());
+
+    // Notification routes
+    router.use('/', notificationRoutes());
 
     return router;
 };
