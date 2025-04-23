@@ -89,3 +89,9 @@
         font-size: 12px;
     }
 }
+
+@media screen and (max-width: 480px) {
+    .full-name {
+        display: none;
+    }
+}

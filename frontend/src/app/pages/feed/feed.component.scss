@@ -1,7 +1,7 @@
 :host {
     display: block;
     width: 100%;
-    max-width: clamp(1000px, 80vw, 1500px);
+    max-width: clamp(1000px, 100%, 1500px);
 }
 
 .container {
@@ -19,7 +19,7 @@
 }
 
 .posts {
-    max-width: clamp(250px, 75%, 600px);
+    max-width: clamp(250px, 100%, 600px);
 }
 
 .mini-profile {
