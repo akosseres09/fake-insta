@@ -73,7 +73,11 @@ export class SearchComponent implements OnInit {
             this.isLoading = false;
             return;
         }
-        this.userService.getUsersBySearch(query).subscribe({
+
+        const data = {
+            username: query,
+        };
+        this.userService.getUsersBySearch(data).subscribe({
             next: (respone) => {
                 this.filteredUsers = respone.result.filter(
                     (user: User) => user._id !== this.user?._id

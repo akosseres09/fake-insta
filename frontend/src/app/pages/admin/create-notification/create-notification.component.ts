@@ -1,52 +1,176 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { UserService } from '../../../shared/services/user/user.service';
-import { PostService } from '../../../shared/services/post/post.service';
 import { NotificationService } from '../../../shared/services/notification/notification.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {
+    MatAutocompleteModule,
+    MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 import { User } from '../../../shared/model/User';
+import {
+    FormBuilder,
+    FormGroup,
+    ReactiveFormsModule,
+    Validators,
+} from '@angular/forms';
+import { typesLookup } from '../../../shared/model/Notification';
+import { MatInputModule } from '@angular/material/input';
+import { debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
 import { Post } from '../../../shared/model/Post';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { types } from '../../../shared/model/Notification';
+import { SnackbarService } from '../../../shared/snackbar/snackbar.service';
 
 @Component({
     selector: 'app-create-notification',
-    imports: [MatFormFieldModule, MatButtonModule, MatAutocompleteModule],
+    imports: [
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatAutocompleteModule,
+        ReactiveFormsModule,
+        MatSelectModule,
+        CommonModule,
+        MatCardModule,
+    ],
     templateUrl: './create-notification.component.html',
     styleUrl: './create-notification.component.scss',
 })
-export class CreateNotificationComponent implements OnInit {
+export class CreateNotificationComponent {
     notificationForm: FormGroup;
-    users?: Array<User>;
-    posts?: Array<Post>;
-    violationTypes = types; // from the Notification model
+    filteredUsers: Array<User> = [];
+    selectedUser: User | null = null;
+    selectedPost?: Post;
+    posts: Array<Post> = [];
+    isLoading = false;
+    searchTerm = '';
+    types = typesLookup;
 
     constructor(
+        private fb: FormBuilder,
         private userService: UserService,
-        private postService: PostService,
         private notiService: NotificationService,
-        private formBuilder: FormBuilder
+        private snackBar: SnackbarService
     ) {
-        this.notificationForm = this.formBuilder.group({
-            username: ['', [Validators.required]],
-            type: ['', [Validators.required]],
+        this.notificationForm = this.fb.group({
+            username: ['', Validators.required],
+            type: ['userViolation', Validators.required],
             postId: [''],
-            reason: ['', [Validators.required]],
+            reason: ['', Validators.required],
         });
+
+        this.notificationForm.get('type')?.valueChanges.subscribe((type) => {
+            const postIdControl = this.notificationForm.get('postId');
+            if (type === 'postViolation') {
+                postIdControl?.setValidators(Validators.required);
+            } else {
+                postIdControl?.clearValidators();
+                this.selectedPost = undefined;
+            }
+            postIdControl?.updateValueAndValidity();
+        });
+
+        this.notificationForm
+            .get('username')
+            ?.valueChanges.pipe(
+                debounceTime(300),
+                distinctUntilChanged(),
+                switchMap((value) => {
+                    if (typeof value === 'string') {
+                        this.searchTerm = value.trim();
+                        if (this.searchTerm) {
+                            this.isLoading = true;
+                            const data = {
+                                username: this.searchTerm,
+                                populate: 'post',
+                            };
+                            return this.userService.getUsersBySearch(data);
+                        }
+                    }
+                    return of({
+                        result: [],
+                    });
+                })
+            )
+            .subscribe((users) => {
+                this.filteredUsers = users.result;
+                this.isLoading = false;
+            });
     }
 
-    ngOnInit(): void {
-        this.notificationForm
-            .get('type')
-            ?.valueChanges.subscribe((selectedType) => {
-                const postIdControl = this.notificationForm.get('postId');
-                if (selectedType === 'postViolation') {
-                    postIdControl?.setValidators([Validators.required]);
+    displayUsername(user: User | null): string {
+        return user ? user.username : '';
+    }
+
+    onUserSelected(event: MatAutocompleteSelectedEvent): void {
+        this.selectedUser = event.option.value;
+        this.posts = this.selectedUser?.posts as Array<Post>;
+
+        if (this.notificationForm.get('type')?.value === 'postViolation') {
+            this.notificationForm.get('postId')?.setValue('');
+        }
+    }
+
+    onPostSelected(event: MatSelectChange): void {
+        const selectedPostId = event.value;
+        this.selectedPost = this.posts.find(
+            (post) => post._id === selectedPostId
+        );
+    }
+
+    getThumbnail(videoUrl: string): string {
+        if (!videoUrl.includes('/video/upload/')) {
+            return videoUrl;
+        }
+
+        const transformedUrl = videoUrl.replace(
+            '/video/upload/',
+            '/video/upload/so_1,c_fill,w_300,h_300/' //so=1  start offset at 1 seconds
+        );
+
+        const lastDotIndex = transformedUrl.lastIndexOf('.');
+        if (lastDotIndex !== -1) {
+            return transformedUrl.substring(0, lastDotIndex) + '.jpg';
+        }
+
+        return transformedUrl + '.jpg';
+    }
+
+    onSubmit(): void {
+        if (!this.notificationForm.valid) {
+            return;
+        }
+        const notificationData = {
+            userId: this.selectedUser?._id as string,
+            type: this.notificationForm.get('type')?.value,
+            postId: this.selectedPost?._id as string,
+            reason: this.notificationForm.get('reason')?.value,
+        };
+
+        this.notiService.createNotification(notificationData).subscribe({
+            next: (response) => {
+                if (response.success) {
+                    this.snackBar.openSnackBar(
+                        'Notification created successfully',
+                        ['snackbar-success']
+                    );
                 } else {
-                    postIdControl?.clearValidators();
+                    this.snackBar.openSnackBar(
+                        'Failed to create notification',
+                        ['snackbar-error']
+                    );
                 }
-                postIdControl?.updateValueAndValidity();
-            });
+            },
+            error: (error) => {
+                console.log(error);
+                this.snackBar.openSnackBar('Failed to create notification', [
+                    'snackbar-error',
+                ]);
+            },
+        });
+
+        this.selectedUser = null;
     }
 }

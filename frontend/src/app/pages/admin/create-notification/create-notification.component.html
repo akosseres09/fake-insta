@@ -1,0 +1,151 @@
+<div class="notification-container">
+    <mat-card class="notification-card">
+        <mat-card-header>
+            <mat-card-title>Create Notification</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            <form [formGroup]="notificationForm" (ngSubmit)="onSubmit()">
+                <!-- Username Autocomplete -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Username</mat-label>
+                    <input
+                        type="text"
+                        matInput
+                        formControlName="username"
+                        [matAutocomplete]="auto"
+                        placeholder="Search for user..."
+                    />
+                    <mat-autocomplete
+                        #auto="matAutocomplete"
+                        [displayWith]="displayUsername"
+                        (optionSelected)="onUserSelected($event)"
+                    >
+                        <mat-option *ngIf="isLoading" disabled
+                            >Loading...</mat-option
+                        >
+                        <ng-container *ngIf="!isLoading">
+                            <mat-option
+                                *ngFor="let user of filteredUsers"
+                                [value]="user"
+                            >
+                                <span>{{ user.username }}</span>
+                            </mat-option>
+                            <mat-option
+                                *ngIf="filteredUsers.length === 0 && searchTerm"
+                                disabled
+                            >
+                                No users found
+                            </mat-option>
+                        </ng-container>
+                    </mat-autocomplete>
+                    <mat-error
+                        *ngIf="
+                            notificationForm
+                                .get('username')
+                                ?.hasError('required')
+                        "
+                    >
+                        Username is required
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Notification Type -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Notification Type</mat-label>
+                    <mat-select formControlName="type">
+                        <mat-option
+                            *ngFor="let type of types | keyvalue"
+                            value="{{ type.key }}"
+                        >
+                            {{ type.value }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error
+                        *ngIf="
+                            notificationForm.get('type')?.hasError('required')
+                        "
+                    >
+                        Notification type is required
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Post Selection (Conditional) -->
+                <mat-form-field
+                    *ngIf="
+                        notificationForm.get('type')?.value === 'postViolation'
+                    "
+                    appearance="outline"
+                    class="full-width"
+                >
+                    <mat-label>Select Post</mat-label>
+                    <mat-select
+                        formControlName="postId"
+                        (selectionChange)="onPostSelected($event)"
+                    >
+                        <mat-option *ngIf="!selectedUser" disabled
+                            >Select a user first</mat-option
+                        >
+                        <mat-option
+                            *ngIf="
+                                selectedUser && selectedUser.posts.length === 0
+                            "
+                            disabled
+                        >
+                            No posts available
+                        </mat-option>
+                        <mat-option
+                            *ngFor="let post of posts; index as i"
+                            [value]="post._id"
+                        >
+                            {{ post.caption | slice : 0 : 50
+                            }}{{ post.caption.length > 50 ? "..." : "" }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error
+                        *ngIf="
+                            notificationForm.get('postId')?.hasError('required')
+                        "
+                    >
+                        Post selection is required
+                    </mat-error>
+                </mat-form-field>
+                <div *ngIf="selectedPost" class="selected-post-prewiew">
+                    <a [href]="'/post/' + selectedPost._id"
+                        >See selected post</a
+                    >
+                </div>
+
+                <!-- Reason -->
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Reason</mat-label>
+                    <textarea
+                        matInput
+                        formControlName="reason"
+                        rows="3"
+                        placeholder="Enter the reason for this notification"
+                    ></textarea>
+                    <mat-error
+                        *ngIf="
+                            notificationForm.get('reason')?.hasError('required')
+                        "
+                    >
+                        Reason is required
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Submit Button -->
+                <div class="form-actions">
+                    <button
+                        mat-flat-button
+                        color="primary"
+                        type="submit"
+                        [disabled]="notificationForm.invalid"
+                    >
+                        Create Notification
+                    </button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

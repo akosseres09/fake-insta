@@ -94,7 +94,7 @@ export const notificationRoutes = (): Router => {
                     return;
                 }
 
-                if (!notiUser.posts.includes(postId)) {
+                if (postId && !notiUser.posts.includes(postId)) {
                     res.status(400).send({
                         success: false,
                         result: 'User does not have this post',

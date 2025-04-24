@@ -45,11 +45,9 @@ export class UserService {
         });
     }
 
-    getUsersBySearch(username: string) {
+    getUsersBySearch(data: any) {
         return this.http.get<IResponse<Array<User>>>(this.USER_URL, {
-            params: {
-                username,
-            },
+            params: data,
             withCredentials: true,
         });
     }
