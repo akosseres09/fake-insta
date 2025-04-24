@@ -23,6 +23,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatMenuModule } from '@angular/material/menu';
+import { PostService } from '../../shared/services/post/post.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-post',
@@ -60,10 +62,12 @@ export class PostComponent implements OnInit, OnDestroy {
     constructor(
         private likeService: LikeService,
         private userService: UserService,
+        private postService: PostService,
         private commentService: CommentService,
         private snackbar: SnackbarService,
         private formBuilder: FormBuilder,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private router: Router
     ) {
         this.commentForm = this.formBuilder.group({
             comment: ['', [Validators.required]],
@@ -177,6 +181,23 @@ export class PostComponent implements OnInit, OnDestroy {
                         : 'unliking' + 'post',
                     ['snackbar-error']
                 );
+            },
+        });
+    }
+
+    deletePost(id: string) {
+        this.postService.deletePost(id).subscribe({
+            next: (response) => {
+                this.snackbar.openSnackBar(response.result, [
+                    'snackbar-success',
+                ]);
+                this.router.navigateByUrl('/feed');
+            },
+            error: (error) => {
+                console.error(error);
+                this.snackbar.openSnackBar('Error deleting post', [
+                    'snackbar-error',
+                ]);
             },
         });
     }

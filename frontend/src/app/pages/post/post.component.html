@@ -27,7 +27,7 @@
                 <mat-icon>more_horiz</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-                <button mat-menu-item>
+                <button mat-menu-item  (click)="deletePost(post._id)">
                     <mat-icon color="primary">delete</mat-icon>
                     <span class="delete">Delete</span>
                 </button>

@@ -6,6 +6,9 @@ import {
     POST_POPOPULATE_FIELDS,
     USER_PUBLIC_FIELDS,
 } from '../constants/constants';
+import { Like } from '../model/Like';
+import cloudinary from '../utils/cloudinary';
+import { PostComment } from '../model/Comment';
 
 export const postRoutes = (): Router => {
     const router: Router = Router();
@@ -172,6 +175,102 @@ export const postRoutes = (): Router => {
             }
         }
     );
+
+    router.delete('/post/:id', async (req: Request, res: Response) => {
+        if (!req.isAuthenticated()) {
+            res.status(400).send({
+                success: false,
+                result: 'User not authenticated',
+            });
+            return;
+        }
+
+        try {
+            const userId = req.user;
+            const user = await User.findById(userId); // the user who requested the delete (logged in user)
+
+            if (!user) {
+                res.status(404).send({
+                    success: false,
+                    result: 'User not found',
+                });
+                return;
+            }
+
+            const postId = req.params.id;
+            const post = await Post.findById(postId);
+
+            if (!post) {
+                res.status(404).send({
+                    success: false,
+                    result: 'Post not found',
+                });
+                return;
+            }
+
+            if (req.user !== post.userId && !user.isAdmin) {
+                res.status(403).send({
+                    success: false,
+                    result: 'Not authorized to delete this post',
+                });
+                return;
+            }
+
+            const postCreator =
+                req.user === post.userId
+                    ? user
+                    : await User.findById(post.userId);
+
+            if (!postCreator) {
+                res.status(404).send({
+                    success: false,
+                    result: 'Post creator not found',
+                });
+                return;
+            }
+
+            const cloudRes = await cloudinary.uploader.destroy(
+                post.mediaPublicId
+            );
+
+            if (cloudRes.result !== 'ok') {
+                res.status(400).send({
+                    success: false,
+                    result: 'Error deleting media from cloud',
+                });
+                return;
+            }
+
+            postCreator.posts = postCreator.posts.filter(
+                (postId: string) => postId !== post.id.toString()
+            );
+
+            const response =
+                (await postCreator.updateOne(postCreator)) &&
+                (await Like.deleteMany({ postId: postId })) &&
+                (await PostComment.deleteMany({ postId: postId })) &&
+                (await Post.deleteOne({ _id: postId }));
+
+            if (!response) {
+                res.status(400).send({
+                    success: false,
+                    result: 'Error deleting post',
+                });
+                return;
+            }
+
+            res.status(200).send({
+                success: true,
+                result: 'Post deleted successfully',
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                success: false,
+                result: 'Internal server error',
+            });
+        }
+    });
 
     return router;
 };

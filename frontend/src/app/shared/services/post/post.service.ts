@@ -47,4 +47,20 @@ export class PostService {
             withCredentials: true,
         });
     }
+
+    updatePost(id: string) {
+        const data = {
+            postId: id,
+        };
+
+        return this.http.post<IResponse<string>>(this.POST_URL, data, {
+            withCredentials: true,
+        });
+    }
+
+    deletePost(id: string) {
+        return this.http.delete<IResponse<string>>(this.POST_URL + `/${id}`, {
+            withCredentials: true,
+        });
+    }
 }
