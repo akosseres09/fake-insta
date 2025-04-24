@@ -9,6 +9,7 @@ import {
 import { Like } from '../model/Like';
 import cloudinary from '../utils/cloudinary';
 import { PostComment } from '../model/Comment';
+import mongoose from 'mongoose';
 
 export const postRoutes = (): Router => {
     const router: Router = Router();
@@ -185,11 +186,16 @@ export const postRoutes = (): Router => {
             return;
         }
 
+        const session = await mongoose.startSession();
+        session.startTransaction();
+
         try {
             const userId = req.user;
             const user = await User.findById(userId); // the user who requested the delete (logged in user)
 
             if (!user) {
+                await session.abortTransaction();
+                await session.endSession();
                 res.status(404).send({
                     success: false,
                     result: 'User not found',
@@ -201,6 +207,8 @@ export const postRoutes = (): Router => {
             const post = await Post.findById(postId);
 
             if (!post) {
+                await session.abortTransaction();
+                await session.endSession();
                 res.status(404).send({
                     success: false,
                     result: 'Post not found',
@@ -208,7 +216,9 @@ export const postRoutes = (): Router => {
                 return;
             }
 
-            if (req.user !== post.userId && !user.isAdmin) {
+            if (userId !== post.userId && !user.isAdmin) {
+                await session.abortTransaction();
+                await session.endSession();
                 res.status(403).send({
                     success: false,
                     result: 'Not authorized to delete this post',
@@ -222,6 +232,8 @@ export const postRoutes = (): Router => {
                     : await User.findById(post.userId);
 
             if (!postCreator) {
+                await session.abortTransaction();
+                await session.endSession();
                 res.status(404).send({
                     success: false,
                     result: 'Post creator not found',
@@ -234,6 +246,8 @@ export const postRoutes = (): Router => {
             );
 
             if (cloudRes.result !== 'ok') {
+                await session.abortTransaction();
+                await session.endSession();
                 res.status(400).send({
                     success: false,
                     result: 'Error deleting media from cloud',
@@ -252,6 +266,8 @@ export const postRoutes = (): Router => {
                 (await Post.deleteOne({ _id: postId }));
 
             if (!response) {
+                await session.abortTransaction();
+                await session.endSession();
                 res.status(400).send({
                     success: false,
                     result: 'Error deleting post',
@@ -259,11 +275,15 @@ export const postRoutes = (): Router => {
                 return;
             }
 
+            await session.commitTransaction();
+            await session.endSession();
             res.status(200).send({
                 success: true,
                 result: 'Post deleted successfully',
             });
         } catch (error) {
+            await session.abortTransaction();
+            await session.endSession();
             console.log(error);
             res.status(500).send({
                 success: false,

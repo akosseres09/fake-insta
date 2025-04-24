@@ -3,6 +3,11 @@ import { Request, Response } from 'express';
 import { User } from '../model/User';
 import upload from '../middlewares/multer';
 import { USER_PUBLIC_FIELDS } from '../constants/constants';
+import { Post } from '../model/Post';
+import cloudinary from '../utils/cloudinary';
+import { Like } from '../model/Like';
+import { PostComment } from '../model/Comment';
+import mongoose from 'mongoose';
 
 export const userRoutes = (): Router => {
     const router: Router = Router();
@@ -95,40 +100,41 @@ export const userRoutes = (): Router => {
                     USER_PUBLIC_FIELDS,
                 ]);
 
-                if (user) {
-                    if (req.file && req.file.path) {
-                        user.profilePictureUrl = req.file.path;
-                    }
-
-                    if (username) {
-                        user.username = username;
-                    }
-
-                    if (email) {
-                        user.email = email;
-                    }
-
-                    user.name.first = first;
-                    user.name.last = last;
-                    user.bio = bio;
-
-                    const response = await user.updateOne(user);
-
-                    if (response) {
-                        res.status(200).send({
-                            success: true,
-                            result: user,
-                        });
-                    } else {
-                        res.status(400).send({
-                            success: false,
-                            result: 'Error updating user',
-                        });
-                    }
-                } else {
+                if (!user) {
                     res.status(404).send({
                         success: false,
                         result: 'User not found',
+                    });
+                    return;
+                }
+
+                if (req.file && req.file.path) {
+                    user.profilePictureUrl = req.file.path;
+                }
+
+                if (username) {
+                    user.username = username;
+                }
+
+                if (email) {
+                    user.email = email;
+                }
+
+                user.name.first = first;
+                user.name.last = last;
+                user.bio = bio;
+
+                const response = await user.updateOne(user);
+
+                if (response) {
+                    res.status(200).send({
+                        success: true,
+                        result: user,
+                    });
+                } else {
+                    res.status(400).send({
+                        success: false,
+                        result: 'Error updating user',
                     });
                 }
             } catch (error) {
@@ -140,6 +146,104 @@ export const userRoutes = (): Router => {
             }
         }
     );
+
+    router.delete('/user/:id', async (req: Request, res: Response) => {
+        if (!req.isAuthenticated()) {
+            res.status(400).send({
+                success: false,
+                result: 'User not authenticated',
+            });
+            return;
+        }
+
+        const currentUserId = req.user;
+        const currentUser = await User.findById(currentUserId);
+
+        if (!currentUser) {
+            res.status(404).send({
+                success: false,
+                result: 'User not found',
+            });
+            return;
+        }
+
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            res.status(404).send({
+                success: false,
+                result: 'User not found',
+            });
+            return;
+        }
+
+        if (currentUserId !== userId && !currentUser.isAdmin) {
+            res.status(403).send({
+                success: false,
+                result: 'Not authorized',
+            });
+            return;
+        }
+
+        const session = await mongoose.startSession();
+        session.startTransaction();
+
+        try {
+            const posts = await Post.find({ userId: userId });
+
+            for (const post of posts) {
+                console.log(post);
+
+                const cloudRes = await cloudinary.uploader.destroy(
+                    post.mediaPublicId,
+                    {
+                        resource_type: post.mediaType === 'video' ? 'video' : 'image',
+
+                    }
+                );
+                if (cloudRes.result !== 'ok') {
+                    await session.abortTransaction();
+                    await session.endSession();
+                    res.status(400).send({
+                        success: false,
+                        result: 'Error deleting post media: ' + cloudRes.result,
+                    });
+                    return;
+                }
+                await Like.deleteMany({ postId: post._id });
+                await PostComment.deleteMany({ postId: post._id });
+            }
+            const response =
+                (await Post.deleteMany({ userId: userId })) &&
+                (await User.deleteOne({ _id: userId }));
+
+            if (!response) {
+                await session.abortTransaction();
+                await session.endSession();
+                res.status(400).send({
+                    success: false,
+                    result: 'Error deleting user',
+                });
+                return;
+            }
+            await session.commitTransaction();
+            await session.endSession();
+            res.status(200).send({
+                success: true,
+                result: 'User deleted successfully',
+                logout: currentUserId === userId,
+            });
+        } catch (error) {
+            await session.abortTransaction();
+            await session.endSession();
+            console.log(error);
+            res.status(500).send({
+                success: false,
+                result: 'Internal server error',
+            });
+        }
+    });
 
     // handles following/unfollowing a user
     router.post('/follow', async (req: Request, res: Response) => {
