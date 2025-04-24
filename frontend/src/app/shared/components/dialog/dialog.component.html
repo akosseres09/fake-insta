@@ -6,9 +6,6 @@
             <mat-list-item
                 class="user"
                 *ngFor="let comment of data.comments; index as i"
-                [ngClass]="{
-                    'multiple-comments': i !== data.comments.length - 1
-                }"
             >
                 <img
                     (click)="navigatePage('/profile/' + comment.userId._id)"
@@ -30,13 +27,7 @@
         </mat-list>
     </div>
     <div class="outer-container" *ngIf="data.likes">
-        <mat-list-item
-            class="user"
-            *ngFor="let like of data.likes; index as i"
-            [ngClass]="{
-                'multiple-likes': i !== data.likes.length - 1
-            }"
-        >
+        <mat-list-item class="user" *ngFor="let like of data.likes; index as i">
             <img
                 (click)="navigatePage('/profile/' + like.userId._id)"
                 class="profile-picture"

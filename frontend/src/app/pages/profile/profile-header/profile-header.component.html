@@ -32,7 +32,12 @@
             >
                 Unfollow
             </button>
-            <button *ngIf="notifications" mat-icon-button [matBadge]="notifications.length" [matBadgeHidden]="!notifications.length">
+            <button
+                *ngIf="notifications && isSameUser"
+                mat-icon-button
+                [matBadge]="notifications.length"
+                [matBadgeHidden]="!notifications.length"
+            >
                 <mat-icon>notifications</mat-icon>
             </button>
         </div>

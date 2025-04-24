@@ -61,6 +61,12 @@
     max-width: 300px;
 }
 
+.button-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .follow-button {
     min-width: 100px;
 }
@@ -93,5 +99,10 @@
 @media screen and (max-width: 480px) {
     .full-name {
         display: none;
+    }
+
+    .button-container {
+        gap: 4px;
+        flex-direction: column;
     }
 }

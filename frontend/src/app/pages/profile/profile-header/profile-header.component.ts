@@ -11,6 +11,7 @@ import {
 import { SnackbarService } from '../../../shared/snackbar/snackbar.service';
 import { MatBadgeModule } from '@angular/material/badge';
 import { Notification } from '../../../shared/model/Notification';
+import { NotificationService } from '../../../shared/services/notification/notification.service';
 
 @Component({
     selector: 'app-profile-header',
@@ -35,7 +36,8 @@ export class ProfileHeaderComponent implements OnInit {
 
     constructor(
         private userService: UserService,
-        private snackbar: SnackbarService
+        private snackbar: SnackbarService,
+        private notificationService: NotificationService
     ) {}
 
     ngOnInit(): void {
@@ -46,6 +48,21 @@ export class ProfileHeaderComponent implements OnInit {
         this.isUserFollowing = this.user?.following.includes(
             this.currentUser?._id as string
         );
+
+        this.notificationService
+            .getUnseenNotifications(this.currentUser?._id as string)
+            .subscribe({
+                next: (data) => {
+                    this.notifications = data.result;
+                },
+                error: (err) => {
+                    console.error(err.result);
+                    this.snackbar.openSnackBar(
+                        'Failed to fetch notifications',
+                        ['snackbar-error']
+                    );
+                },
+            });
     }
 
     follow(action: 'follow' | 'unfollow') {

@@ -17,13 +17,14 @@ export class NotificationService {
     private NOTIFICATION_URL = 'http://localhost:3000/notification';
     constructor(private http: HttpClient) {}
 
-    getNotifications(id: string) {
+    getUnseenNotifications(id: string) {
         return this.http.get<IResponse<Array<Notification>>>(
             this.NOTIFICATION_URL,
             {
                 params: {
                     userId: id,
                     populate: 'userId,postId',
+                    seen: 'false',
                 },
                 withCredentials: true,
             }

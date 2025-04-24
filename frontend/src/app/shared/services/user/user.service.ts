@@ -9,6 +9,10 @@ interface FRes<T> {
     otherUser: T;
 }
 
+interface DeleteResponse extends IResponse<string> {
+    logout?: boolean;
+}
+
 type PostResponse = IResponse<User>;
 export type FollowResponse = IResponse<FRes<User>>;
 
@@ -65,6 +69,12 @@ export class UserService {
 
     updateUser(data: FormData) {
         return this.http.post<IResponse<User | string>>(this.USER_URL, data, {
+            withCredentials: true,
+        });
+    }
+
+    deleteUser(id: string) {
+        return this.http.delete<DeleteResponse>(this.USER_URL + `/${id}`, {
             withCredentials: true,
         });
     }

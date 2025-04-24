@@ -13,20 +13,31 @@
                 </div>
             </div>
 
-            <button
-                mat-stroked-button
-                color="primary"
-                class="follow-button"
-                (click)="
-                    toggleFollow(
-                        user._id,
-                        isFollowing(user) ? 'unfollow' : 'follow',
-                        i
-                    )
-                "
-            >
-                {{ isFollowing(user) ? "Unfollow" : "Follow" }}
-            </button>
+            <div class="button-container">
+                <button
+                    *ngIf="currentUser?.isAdmin"
+                    mat-stroked-button
+                    color="warning"
+                    class="message-button"
+                    (click)="deleteUser(user._id, i)"
+                >
+                    Delete
+                </button>
+                <button
+                    mat-stroked-button
+                    color="primary"
+                    class="follow-button"
+                    (click)="
+                        toggleFollow(
+                            user._id,
+                            isFollowing(user) ? 'unfollow' : 'follow',
+                            i
+                        )
+                    "
+                >
+                    {{ isFollowing(user) ? "Unfollow" : "Follow" }}
+                </button>
+            </div>
         </div>
     </div>
 </ng-container>
