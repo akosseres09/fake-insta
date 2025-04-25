@@ -1,13 +1,14 @@
-import { Router } from 'express';
+import { Request, Response, Router } from 'express';
 import { USER_PUBLIC_FIELDS } from '../constants/constants';
 import { Notification, types } from '../model/Notification';
 import { User } from '../model/User';
 import { Post } from '../model/Post';
+import mongoose from 'mongoose';
 
 export const notificationRoutes = (): Router => {
     const router: Router = Router();
 
-    router.get('/notification', async (req, res) => {
+    router.get('/notification', async (req: Request, res: Response) => {
         if (!req.isAuthenticated()) {
             res.status(400).send({
                 success: false,
@@ -62,7 +63,81 @@ export const notificationRoutes = (): Router => {
         }
     });
 
-    router.post('/notification', async (req, res) => {
+    router.post(
+        '/notification/:userId',
+        async (req: Request, res: Response) => {
+            if (!req.isAuthenticated()) {
+                res.status(400).send({
+                    success: false,
+                    result: 'User not authenticated',
+                });
+                return;
+            }
+
+            const session = await mongoose.startSession();
+            await session.startTransaction();
+
+            try {
+                const { userId } = req.params;
+                const currentUserId = req.user as string;
+
+                if (userId !== currentUserId) {
+                    await session.abortTransaction();
+                    await session.endSession();
+                    res.status(400).send({
+                        success: false,
+                        result: 'User not authorized',
+                    });
+                    return;
+                }
+
+                const user = await User.findById(req.user);
+
+                if (!user) {
+                    await session.abortTransaction();
+                    await session.endSession();
+                    res.status(400).send({
+                        success: false,
+                        result: 'User not found',
+                    });
+                    return;
+                }
+
+                const notifications = await Notification.find({
+                    userId: userId,
+                });
+
+                if (!notifications) {
+                    await session.abortTransaction();
+                    await session.endSession();
+                    res.status(404).send({
+                        success: false,
+                        result: 'No notifications found',
+                    });
+                    return;
+                }
+
+                for (const notification of notifications) {
+                    notification.seenByUser = true;
+                    await notification.save();
+                }
+
+                await session.commitTransaction();
+                await session.endSession();
+                res.status(200).send({
+                    success: true,
+                    result: notifications,
+                });
+            } catch (error) {
+                res.status(500).send({
+                    success: false,
+                    result: 'Internal server error',
+                });
+            }
+        }
+    );
+
+    router.post('/notification', async (req: Request, res: Response) => {
         if (!req.isAuthenticated()) {
             res.status(400).send({
                 success: false,

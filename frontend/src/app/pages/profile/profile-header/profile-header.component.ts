@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, viewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { User } from '../../../shared/model/User';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,8 +10,10 @@ import {
 } from '../../../shared/services/user/user.service';
 import { SnackbarService } from '../../../shared/snackbar/snackbar.service';
 import { MatBadgeModule } from '@angular/material/badge';
-import { Notification } from '../../../shared/model/Notification';
+import { NotificationWithPost } from '../../../shared/model/Notification';
 import { NotificationService } from '../../../shared/services/notification/notification.service';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
     selector: 'app-profile-header',
@@ -21,6 +23,8 @@ import { NotificationService } from '../../../shared/services/notification/notif
         MatButtonModule,
         RouterModule,
         MatBadgeModule,
+        MatMenuModule,
+        MatListModule,
     ],
     templateUrl: './profile-header.component.html',
     styleUrl: './profile-header.component.scss',
@@ -32,12 +36,13 @@ export class ProfileHeaderComponent implements OnInit {
     @Input() currentUser?: User;
     isFollowing?: boolean; // does the currently logged in user follow the queried user
     isUserFollowing?: boolean; // does the queried user follow the currently logged in user
-    notifications: Array<Notification> = [];
+    notifications: Array<NotificationWithPost> = [];
 
     constructor(
         private userService: UserService,
         private snackbar: SnackbarService,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private snackBar: SnackbarService
     ) {}
 
     ngOnInit(): void {
@@ -54,6 +59,7 @@ export class ProfileHeaderComponent implements OnInit {
             .subscribe({
                 next: (data) => {
                     this.notifications = data.result;
+                    console.log(this.notifications);
                 },
                 error: (err) => {
                     console.error(err.result);
@@ -89,5 +95,25 @@ export class ProfileHeaderComponent implements OnInit {
                 );
             },
         });
+    }
+
+    clearNotifications() {
+        this.notificationService
+            .setNotificationsSeen(this.currentUser?._id as string)
+            .subscribe({
+                next: (data) => {
+                    this.notifications = [];
+                    this.snackbar.openSnackBar('Notifications cleared', [
+                        'snackbar-success',
+                    ]);
+                },
+                error: (err) => {
+                    console.error(err.result);
+                    this.snackbar.openSnackBar(
+                        'Failed to clear notifications',
+                        ['snackbar-error']
+                    );
+                },
+            });
     }
 }

@@ -14,6 +14,11 @@ body {
     color: white;
 }
 
+.mat-mdc-menu-panel {
+    --mat-menu-container-color: #1a1a1a;
+    --mat-menu-item-hover-state-layer-color: #242424;
+}
+
 .mat-mdc-card {
     --mdc-elevated-card-container-color: #1e1e1e;
 }
