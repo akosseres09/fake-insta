@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     ReactiveFormsModule,
@@ -21,6 +21,7 @@ import { User } from '../../shared/model/User';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IResponse } from '../../shared/model/Response';
 import { UserService } from '../../shared/services/user/user.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-edit',
@@ -42,12 +43,13 @@ import { UserService } from '../../shared/services/user/user.service';
     templateUrl: './edit.component.html',
     styleUrl: './edit.component.scss',
 })
-export class EditComponent implements OnInit {
+export class EditComponent implements OnInit, OnDestroy {
     profileForm?: FormGroup;
     profilePicturePreview?: string;
     selectedProfilePicture?: File;
     isSubmitting = false;
     user?: User;
+    userUpdateSubscription?: Subscription;
 
     constructor(
         private userService: UserService,
@@ -117,23 +119,29 @@ export class EditComponent implements OnInit {
         form.append('media', this.selectedProfilePicture as Blob);
         form.append('userId', this.user?._id as string);
 
-        this.userService.updateUser(form).subscribe({
-            next: (res: IResponse<User | string>) => {
-                this.isSubmitting = false;
-                this.snackBar.openSnackBar('Profile updated successfully!');
-                const user: User = res.result as User;
-                this.userService.setUser(user);
-                this.router.navigateByUrl('/profile/' + user._id);
-            },
-            error: (error) => {
-                console.log(error);
-                this.isSubmitting = false;
-                this.snackBar.openSnackBar(error.error, ['snackbar-error']);
-            },
-        });
+        this.userUpdateSubscription = this.userService
+            .updateUser(form)
+            .subscribe({
+                next: (res: IResponse<User | string>) => {
+                    this.isSubmitting = false;
+                    this.snackBar.openSnackBar('Profile updated successfully!');
+                    const user: User = res.result as User;
+                    this.userService.setUser(user);
+                    this.router.navigateByUrl('/profile/' + user._id);
+                },
+                error: (error) => {
+                    console.log(error);
+                    this.isSubmitting = false;
+                    this.snackBar.openSnackBar(error.error, ['snackbar-error']);
+                },
+            });
     }
 
     cancel(): void {
         this.router.navigateByUrl('/profile/' + this.user?._id);
+    }
+
+    ngOnDestroy(): void {
+        this.userUpdateSubscription?.unsubscribe();
     }
 }

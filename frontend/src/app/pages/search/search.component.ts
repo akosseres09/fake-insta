@@ -1,4 +1,4 @@
-import { Component, Input, type OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, type OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -32,7 +32,7 @@ import { ListProfileComponent } from '../../shared/components/profile/list-profi
     templateUrl: `./search.component.html`,
     styleUrl: './search.component.scss',
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, OnDestroy {
     @Input() title: string = 'Search for Users';
     @Input() text: string = 'Find people to follow and connect with';
     @Input() currentUserIsAdmin: boolean = false;
@@ -41,7 +41,6 @@ export class SearchComponent implements OnInit {
     user?: User;
     filteredUsers: Array<User> = [];
     usersSubscription?: Subscription;
-    currentUserSubscription?: Subscription;
     isLoading = false;
 
     constructor(private userService: UserService) {}
@@ -77,18 +76,20 @@ export class SearchComponent implements OnInit {
         const data = {
             username: query,
         };
-        this.userService.getUsersBySearch(data).subscribe({
-            next: (respone) => {
-                this.filteredUsers = respone.result.filter(
-                    (user: User) => user._id !== this.user?._id
-                );
-                this.isLoading = false;
-            },
-            error: (error) => {
-                console.error(error);
-                this.isLoading = false;
-            },
-        });
+        this.usersSubscription = this.userService
+            .getUsersBySearch(data)
+            .subscribe({
+                next: (respone) => {
+                    this.filteredUsers = respone.result.filter(
+                        (user: User) => user._id !== this.user?._id
+                    );
+                    this.isLoading = false;
+                },
+                error: (error) => {
+                    console.error(error);
+                    this.isLoading = false;
+                },
+            });
     }
 
     clearSearch(): void {
@@ -96,13 +97,15 @@ export class SearchComponent implements OnInit {
         this.filteredUsers = [];
     }
 
-    toggleFollow(userId: string): void {}
-
     isFollowing(user: User) {
         return user?.following.includes(this.user?._id as string);
     }
 
     getSearchValue(): string {
         return this.searchControl.value as string;
+    }
+
+    ngOnDestroy(): void {
+        this.usersSubscription?.unsubscribe();
     }
 }

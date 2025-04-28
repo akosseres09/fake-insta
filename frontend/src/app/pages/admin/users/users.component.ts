@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UserService } from '../../../shared/services/user/user.service';
 import { User } from '../../../shared/model/User';
 import { Subscription } from 'rxjs';
@@ -13,7 +13,7 @@ import { SearchComponent } from '../../search/search.component';
     templateUrl: './users.component.html',
     styleUrl: './users.component.scss',
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, OnDestroy {
     users?: Array<User>;
     currentUser?: User;
     userSubscription?: Subscription;
@@ -41,5 +41,9 @@ export class UsersComponent implements OnInit {
                 ]);
             },
         });
+    }
+
+    ngOnDestroy(): void {
+        this.userSubscription?.unsubscribe();
     }
 }

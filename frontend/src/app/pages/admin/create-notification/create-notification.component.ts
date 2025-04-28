@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { UserService } from '../../../shared/services/user/user.service';
 import { NotificationService } from '../../../shared/services/notification/notification.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,7 +16,13 @@ import {
 } from '@angular/forms';
 import { typesLookup } from '../../../shared/model/Notification';
 import { MatInputModule } from '@angular/material/input';
-import { debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
+import {
+    debounceTime,
+    distinctUntilChanged,
+    of,
+    Subscription,
+    switchMap,
+} from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
@@ -38,7 +44,7 @@ import { SnackbarService } from '../../../shared/snackbar/snackbar.service';
     templateUrl: './create-notification.component.html',
     styleUrl: './create-notification.component.scss',
 })
-export class CreateNotificationComponent {
+export class CreateNotificationComponent implements OnDestroy {
     notificationForm: FormGroup;
     filteredUsers: Array<User> = [];
     selectedUser: User | null = null;
@@ -47,6 +53,10 @@ export class CreateNotificationComponent {
     isLoading = false;
     searchTerm = '';
     types = typesLookup;
+
+    notiFormTypeSubscription?: Subscription;
+    notiFormNameSubscription?: Subscription;
+    notiCreateSubscription?: Subscription;
 
     constructor(
         private fb: FormBuilder,
@@ -61,18 +71,20 @@ export class CreateNotificationComponent {
             reason: ['', Validators.required],
         });
 
-        this.notificationForm.get('type')?.valueChanges.subscribe((type) => {
-            const postIdControl = this.notificationForm.get('postId');
-            if (type === 'postViolation') {
-                postIdControl?.setValidators(Validators.required);
-            } else {
-                postIdControl?.clearValidators();
-                this.selectedPost = undefined;
-            }
-            postIdControl?.updateValueAndValidity();
-        });
+        this.notiFormTypeSubscription = this.notificationForm
+            .get('type')
+            ?.valueChanges.subscribe((type) => {
+                const postIdControl = this.notificationForm.get('postId');
+                if (type === 'postViolation') {
+                    postIdControl?.setValidators(Validators.required);
+                } else {
+                    postIdControl?.clearValidators();
+                    this.selectedPost = undefined;
+                }
+                postIdControl?.updateValueAndValidity();
+            });
 
-        this.notificationForm
+        this.notiFormNameSubscription = this.notificationForm
             .get('username')
             ?.valueChanges.pipe(
                 debounceTime(300),
@@ -149,28 +161,37 @@ export class CreateNotificationComponent {
             reason: this.notificationForm.get('reason')?.value,
         };
 
-        this.notiService.createNotification(notificationData).subscribe({
-            next: (response) => {
-                if (response.success) {
-                    this.snackBar.openSnackBar(
-                        'Notification created successfully',
-                        ['snackbar-success']
-                    );
-                } else {
+        this.notiCreateSubscription = this.notiService
+            .createNotification(notificationData)
+            .subscribe({
+                next: (response) => {
+                    if (response.success) {
+                        this.snackBar.openSnackBar(
+                            'Notification created successfully',
+                            ['snackbar-success']
+                        );
+                    } else {
+                        this.snackBar.openSnackBar(
+                            'Failed to create notification',
+                            ['snackbar-error']
+                        );
+                    }
+                },
+                error: (error) => {
+                    console.log(error);
                     this.snackBar.openSnackBar(
                         'Failed to create notification',
                         ['snackbar-error']
                     );
-                }
-            },
-            error: (error) => {
-                console.log(error);
-                this.snackBar.openSnackBar('Failed to create notification', [
-                    'snackbar-error',
-                ]);
-            },
-        });
+                },
+            });
 
         this.selectedUser = null;
+    }
+
+    ngOnDestroy(): void {
+        this.notiFormTypeSubscription?.unsubscribe();
+        this.notiFormNameSubscription?.unsubscribe();
+        this.notiCreateSubscription?.unsubscribe();
     }
 }

@@ -95,5 +95,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.userSubscription?.unsubscribe();
         this.idSubscription?.unsubscribe();
+        this.logoutSubscription?.unsubscribe();
     }
 }

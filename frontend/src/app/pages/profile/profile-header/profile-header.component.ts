@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, viewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, viewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { User } from '../../../shared/model/User';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,7 @@ import { NotificationWithPost } from '../../../shared/model/Notification';
 import { NotificationService } from '../../../shared/services/notification/notification.service';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-profile-header',
@@ -29,7 +30,7 @@ import { MatListModule } from '@angular/material/list';
     templateUrl: './profile-header.component.html',
     styleUrl: './profile-header.component.scss',
 })
-export class ProfileHeaderComponent implements OnInit {
+export class ProfileHeaderComponent implements OnInit, OnDestroy {
     @Input() user?: User;
     @Input() postsCount?: number;
     @Input() isSameUser?: boolean;
@@ -37,12 +38,14 @@ export class ProfileHeaderComponent implements OnInit {
     isFollowing?: boolean; // does the currently logged in user follow the queried user
     isUserFollowing?: boolean; // does the queried user follow the currently logged in user
     notifications: Array<NotificationWithPost> = [];
+    getNotificationSubscription?: Subscription;
+    setNotificationSubscription?: Subscription;
+    followSubscription?: Subscription;
 
     constructor(
         private userService: UserService,
         private snackbar: SnackbarService,
-        private notificationService: NotificationService,
-        private snackBar: SnackbarService
+        private notificationService: NotificationService
     ) {}
 
     ngOnInit(): void {
@@ -54,7 +57,7 @@ export class ProfileHeaderComponent implements OnInit {
             this.currentUser?._id as string
         );
 
-        this.notificationService
+        this.getNotificationSubscription = this.notificationService
             .getUnseenNotifications(this.currentUser?._id as string)
             .subscribe({
                 next: (data) => {
@@ -78,7 +81,7 @@ export class ProfileHeaderComponent implements OnInit {
             action: action,
         };
 
-        this.userService.follow(data).subscribe({
+        this.followSubscription = this.userService.follow(data).subscribe({
             next: (data: FollowResponse) => {
                 this.userService.setUser(data.result.user); //setting user in authservice
                 this.user = data.result.otherUser; //setting user so ui updates
@@ -98,7 +101,7 @@ export class ProfileHeaderComponent implements OnInit {
     }
 
     clearNotifications() {
-        this.notificationService
+        this.setNotificationSubscription = this.notificationService
             .setNotificationsSeen(this.currentUser?._id as string)
             .subscribe({
                 next: (data) => {
@@ -115,5 +118,11 @@ export class ProfileHeaderComponent implements OnInit {
                     );
                 },
             });
+    }
+
+    ngOnDestroy(): void {
+        this.getNotificationSubscription?.unsubscribe();
+        this.setNotificationSubscription?.unsubscribe();
+        this.followSubscription?.unsubscribe();
     }
 }

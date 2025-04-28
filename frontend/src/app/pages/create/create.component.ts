@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     ReactiveFormsModule,
@@ -21,6 +21,7 @@ import { SnackbarService } from '../../shared/snackbar/snackbar.service';
 import { PostService } from '../../shared/services/post/post.service';
 import { IBodyPost } from '../../shared/model/Post';
 import { UserService } from '../../shared/services/user/user.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-create',
@@ -48,17 +49,16 @@ import { UserService } from '../../shared/services/user/user.service';
     templateUrl: './create.component.html',
     styleUrl: './create.component.scss',
 })
-export class CreateComponent implements OnInit {
+export class CreateComponent implements OnInit, OnDestroy {
     uploadForm: FormGroup;
     detailsForm: FormGroup;
-
     filePreview: string | null = null;
     fileType: 'image' | 'video' | null = null;
     selectedFile: File | null = null;
     isDragging = false;
     isSubmitting = false;
-
     userId: string | null = null;
+    postCreateSubscription?: Subscription;
 
     constructor(
         private fb: FormBuilder,
@@ -154,20 +154,28 @@ export class CreateComponent implements OnInit {
                 altText: this.detailsForm.get('altText')?.value,
             };
 
-            this.postService.createPost(post).subscribe({
-                next: (response) => {
-                    this.isSubmitting = false;
-                    console.log(response);
-                    this.snackBar.openSnackBar('Your post has been shared!');
-                },
-                error: (error) => {
-                    console.log(error);
-                    this.isSubmitting = false;
-                    this.snackBar.openSnackBar('Failed to share post', [
-                        'snackbar-error',
-                    ]);
-                },
-            });
+            this.postCreateSubscription = this.postService
+                .createPost(post)
+                .subscribe({
+                    next: (response) => {
+                        this.isSubmitting = false;
+                        console.log(response);
+                        this.snackBar.openSnackBar(
+                            'Your post has been shared!'
+                        );
+                    },
+                    error: (error) => {
+                        console.log(error);
+                        this.isSubmitting = false;
+                        this.snackBar.openSnackBar('Failed to share post', [
+                            'snackbar-error',
+                        ]);
+                    },
+                });
         }
+    }
+
+    ngOnDestroy(): void {
+        this.postCreateSubscription?.unsubscribe();
     }
 }

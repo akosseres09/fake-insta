@@ -57,7 +57,10 @@ export class PostComponent implements OnInit, OnDestroy {
     likes?: Array<LikeWithUser>;
     isLiked?: boolean;
     commentSubscription?: Subscription;
+    createCommentsSubscription?: Subscription;
+    createLikesSubscription?: Subscription;
     likeSubscription?: Subscription;
+    deletePostSubscription?: Subscription;
 
     constructor(
         private likeService: LikeService,
@@ -82,11 +85,6 @@ export class PostComponent implements OnInit, OnDestroy {
         );
     }
 
-    ngOnDestroy(): void {
-        this.commentSubscription?.unsubscribe();
-        this.likeSubscription?.unsubscribe();
-    }
-
     addComment() {
         if (this.commentForm?.invalid) {
             return;
@@ -98,21 +96,23 @@ export class PostComponent implements OnInit, OnDestroy {
             text: this.commentForm?.value.comment,
         };
 
-        this.commentService.createComment(data).subscribe({
-            next: (response) => {
-                this.snackbar.openSnackBar('Comment added', [
-                    'snackbar-success',
-                ]);
-                this.post = response.result as Post;
-                this.commentForm.reset();
-            },
-            error: (error) => {
-                console.error(error);
-                this.snackbar.openSnackBar('Error adding comment', [
-                    'snackbar-error',
-                ]);
-            },
-        });
+        this.createCommentsSubscription = this.commentService
+            .createComment(data)
+            .subscribe({
+                next: (response) => {
+                    this.snackbar.openSnackBar('Comment added', [
+                        'snackbar-success',
+                    ]);
+                    this.post = response.result as Post;
+                    this.commentForm.reset();
+                },
+                error: (error) => {
+                    console.error(error);
+                    this.snackbar.openSnackBar('Error adding comment', [
+                        'snackbar-error',
+                    ]);
+                },
+            });
     }
 
     getComments() {
@@ -139,7 +139,7 @@ export class PostComponent implements OnInit, OnDestroy {
             postId: this.post?._id,
             populate: 'userId',
         };
-        this.likeService.getLikes(data).subscribe({
+        this.likeSubscription = this.likeService.getLikes(data).subscribe({
             next: (response) => {
                 this.likes = response.result as Array<LikeWithUser>;
                 console.log(this.likes);
@@ -164,42 +164,46 @@ export class PostComponent implements OnInit, OnDestroy {
             action: action,
         };
 
-        this.likeService.likePost(formData).subscribe({
-            next: (response) => {
-                this.post = response.result as Post;
-                this.snackbar.openSnackBar(
-                    action === 'like' ? 'Post liked' : 'Post unliked',
-                    ['snackbar-success']
-                );
-                this.isLiked = !this.isLiked;
-            },
-            error: (error) => {
-                console.error(error);
-                this.snackbar.openSnackBar(
-                    'Error' + action === 'like'
-                        ? 'liking'
-                        : 'unliking' + 'post',
-                    ['snackbar-error']
-                );
-            },
-        });
+        this.createLikesSubscription = this.likeService
+            .likePost(formData)
+            .subscribe({
+                next: (response) => {
+                    this.post = response.result as Post;
+                    this.snackbar.openSnackBar(
+                        action === 'like' ? 'Post liked' : 'Post unliked',
+                        ['snackbar-success']
+                    );
+                    this.isLiked = !this.isLiked;
+                },
+                error: (error) => {
+                    console.error(error);
+                    this.snackbar.openSnackBar(
+                        'Error' + action === 'like'
+                            ? 'liking'
+                            : 'unliking' + 'post',
+                        ['snackbar-error']
+                    );
+                },
+            });
     }
 
     deletePost(id: string) {
-        this.postService.deletePost(id).subscribe({
-            next: (response) => {
-                this.snackbar.openSnackBar(response.result, [
-                    'snackbar-success',
-                ]);
-                this.router.navigateByUrl('/feed');
-            },
-            error: (error) => {
-                console.error(error);
-                this.snackbar.openSnackBar('Error deleting post', [
-                    'snackbar-error',
-                ]);
-            },
-        });
+        this.deletePostSubscription = this.postService
+            .deletePost(id)
+            .subscribe({
+                next: (response) => {
+                    this.snackbar.openSnackBar(response.result, [
+                        'snackbar-success',
+                    ]);
+                    this.router.navigateByUrl('/feed');
+                },
+                error: (error) => {
+                    console.error(error);
+                    this.snackbar.openSnackBar('Error deleting post', [
+                        'snackbar-error',
+                    ]);
+                },
+            });
     }
 
     openListDialog(
@@ -215,5 +219,13 @@ export class PostComponent implements OnInit, OnDestroy {
             },
             width: '400px',
         });
+    }
+
+    ngOnDestroy(): void {
+        this.commentSubscription?.unsubscribe();
+        this.createCommentsSubscription?.unsubscribe();
+        this.createLikesSubscription?.unsubscribe();
+        this.likeSubscription?.unsubscribe();
+        this.deletePostSubscription?.unsubscribe();
     }
 }

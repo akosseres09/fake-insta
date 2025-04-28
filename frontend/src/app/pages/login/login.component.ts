@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     ReactiveFormsModule,
@@ -17,6 +17,7 @@ import { AuthService } from '../../shared/services/auth/auth.service';
 import { SnackbarService } from '../../shared/snackbar/snackbar.service';
 import { User } from '../../shared/model/User';
 import { UserService } from '../../shared/services/user/user.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-login',
@@ -35,10 +36,11 @@ import { UserService } from '../../shared/services/user/user.service';
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
     loginForm: FormGroup;
     hidePassword = true;
     isLoading = false;
+    loginSubscription?: Subscription;
 
     constructor(
         private fb: FormBuilder,
@@ -61,20 +63,28 @@ export class LoginComponent {
             const username = this.loginForm.get('username')?.value;
             const password = this.loginForm.get('password')?.value;
 
-            this.authService.login(username, password).subscribe({
-                next: (response) => {
-                    const user: User = response.result as User;
-                    localStorage.setItem('user', user._id as string);
-                    this.isLoading = false;
-                    this.userService.setUser(user);
-                    this.router.navigateByUrl('/feed');
-                },
-                error: (error) => {
-                    console.log(error);
-                    this.snackBar.openSnackBar(error.error, ['snackbar-error']);
-                    this.isLoading = false;
-                },
-            });
+            this.loginSubscription = this.authService
+                .login(username, password)
+                .subscribe({
+                    next: (response) => {
+                        const user: User = response.result as User;
+                        localStorage.setItem('user', user._id as string);
+                        this.isLoading = false;
+                        this.userService.setUser(user);
+                        this.router.navigateByUrl('/feed');
+                    },
+                    error: (error) => {
+                        console.log(error);
+                        this.snackBar.openSnackBar(error.error, [
+                            'snackbar-error',
+                        ]);
+                        this.isLoading = false;
+                    },
+                });
         }
+    }
+
+    ngOnDestroy(): void {
+        this.loginSubscription?.unsubscribe();
     }
 }

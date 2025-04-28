@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
     ReactiveFormsModule,
@@ -17,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../shared/services/auth/auth.service';
 import { SnackbarService } from '../../shared/snackbar/snackbar.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-signup',
@@ -37,11 +38,12 @@ import { SnackbarService } from '../../shared/snackbar/snackbar.service';
     templateUrl: './signup.component.html',
     styleUrl: './signup.component.scss',
 })
-export class SignupComponent {
+export class SignupComponent implements OnDestroy {
     signupForm: FormGroup;
     hidePassword = true;
     hidePasswordConfirm = true;
     isLoading = false;
+    registerSubscription?: Subscription;
 
     constructor(
         private fb: FormBuilder,
@@ -90,19 +92,27 @@ export class SignupComponent {
         if (this.signupForm.valid) {
             this.isLoading = true;
 
-            this.authService.register(this.signupForm.value).subscribe({
-                next: (data) => {
-                    this.isLoading = false;
-                    this.snackBar.openSnackBar('Account created successfully');
-                },
-                error: (error) => {
-                    console.log(error);
-                    this.isLoading = false;
-                    this.snackBar.openSnackBar('Error creating account', [
-                        'snackbar-error',
-                    ]);
-                },
-            });
+            this.registerSubscription = this.authService
+                .register(this.signupForm.value)
+                .subscribe({
+                    next: (data) => {
+                        this.isLoading = false;
+                        this.snackBar.openSnackBar(
+                            'Account created successfully'
+                        );
+                    },
+                    error: (error) => {
+                        console.log(error);
+                        this.isLoading = false;
+                        this.snackBar.openSnackBar('Error creating account', [
+                            'snackbar-error',
+                        ]);
+                    },
+                });
         }
+    }
+
+    ngOnDestroy(): void {
+        this.registerSubscription?.unsubscribe();
     }
 }
