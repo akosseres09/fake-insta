@@ -65,6 +65,31 @@
     gap: 7px;
 }
 
+.holder {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.no-posts {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.no-posts mat-icon {
+    --font-size: 50px;
+    height: var(--font-size);
+    width: var(--font-size);
+    font-size: var(--font-size);
+}
+
 @media screen and (max-width: 768px) {
     .posts-grid {
         grid-template-columns: repeat(2, 1fr);

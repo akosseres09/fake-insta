@@ -3,6 +3,7 @@
     mat-align-tabs="center"
     animationDuration="0ms"
     class="profile-tabs"
+    dynamicHeight
 >
     <mat-tab>
         <ng-template mat-tab-label>
@@ -11,7 +12,7 @@
         </ng-template>
 
         <!-- Profile Posts Grid -->
-        <div class="posts-grid">
+        <div class="posts-grid" *ngIf="userPosts.length > 0; else noPosts">
             <div
                 class="post-item"
                 [routerLink]="'/post/' + post._id"
@@ -20,7 +21,7 @@
             >
                 <img
                     *ngIf="post.mediaType === 'image'"
-                    [src]="post.mediaUrl"
+                    [src]="getUrl(post.mediaUrl)"
                     [alt]="post.altText"
                 />
                 <img
@@ -43,5 +44,21 @@
                 </div>
             </div>
         </div>
+        <ng-template class="holder" #noPosts>
+            <div class="holder">
+                <div class="no-posts">
+                    <mat-icon>photo_camera</mat-icon>
+                    <p>No posts available.</p>
+                    <button
+                        mat-raised-button
+                        color="primary"
+                        routerLink="/create"
+                        *ngIf="ownProfile"
+                    >
+                        Create a Post
+                    </button>
+                </div>
+            </div>
+        </ng-template>
     </mat-tab>
 </mat-tab-group>

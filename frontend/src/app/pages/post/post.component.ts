@@ -221,6 +221,10 @@ export class PostComponent implements OnInit, OnDestroy {
         });
     }
 
+    getTransformedUrl(url: string): string {
+        return url.replace('/upload/', '/upload/w_600,h_600,c_pad,b_black/');
+    }
+
     ngOnDestroy(): void {
         this.commentSubscription?.unsubscribe();
         this.createCommentsSubscription?.unsubscribe();

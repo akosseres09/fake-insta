@@ -5,6 +5,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatRippleModule } from '@angular/material/core';
 import { Post } from '../../../shared/model/Post';
 import { RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
     selector: 'app-profile-tabs',
@@ -14,12 +15,14 @@ import { RouterModule } from '@angular/router';
         MatRippleModule,
         CommonModule,
         RouterModule,
+        MatButtonModule,
     ],
     templateUrl: './profile-tabs.component.html',
     styleUrl: './profile-tabs.component.scss',
 })
 export class ProfileTabsComponent {
-    @Input() userPosts: Array<Post> | null = null;
+    @Input() userPosts: Array<Post> = [];
+    @Input() ownProfile: boolean = true;
 
     getThumbnail(videoUrl: string): string {
         // Check if it's a Cloudinary video URL
@@ -40,5 +43,9 @@ export class ProfileTabsComponent {
         }
 
         return transformedUrl + '.jpg';
+    }
+
+    getUrl(url: string): string {
+        return url.replace('/upload/', '/upload/w_200,h_200,c_fill/');
     }
 }

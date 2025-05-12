@@ -19,7 +19,7 @@ import { SnackbarService } from '../../shared/snackbar/snackbar.service';
 export class ProfileComponent implements OnInit, OnDestroy {
     queriedUser?: User; //queried user via query param
     currentUser?: User; //logged in user
-    posts?: Array<Post>;
+    posts: Array<Post> = [];
     postsCount?: number;
     userSub?: Subscription;
     ownProfile: boolean = true;

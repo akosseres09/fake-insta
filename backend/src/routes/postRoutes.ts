@@ -216,7 +216,7 @@ export const postRoutes = (): Router => {
                 return;
             }
 
-            if (userId !== post.userId && !user.isAdmin) {
+            if (userId !== post.userId.toString() && !user.isAdmin) {
                 await session.abortTransaction();
                 await session.endSession();
                 res.status(403).send({
