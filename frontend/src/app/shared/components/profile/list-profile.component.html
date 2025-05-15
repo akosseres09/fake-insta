@@ -16,9 +16,8 @@
             <div class="button-container">
                 <button
                     *ngIf="currentUser?.isAdmin"
-                    mat-stroked-button
-                    color="warning"
-                    class="message-button"
+                    mat-flat-button
+                    color="primary"
                     (click)="deleteUser(user._id, i)"
                 >
                     Delete

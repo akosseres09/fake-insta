@@ -76,6 +76,19 @@
                         </mat-error>
                     </mat-form-field>
 
+                    <mat-form-field
+                        appearance="outline"
+                        *ngIf="!user?.isAdmin"
+                        class="full-width"
+                    >
+                        <mat-label>Role</mat-label>
+                        <mat-select formControlName="role">
+                            <mat-option value="user">User</mat-option>
+                            <mat-option value="influencer"
+                                >Influencer</mat-option
+                            >
+                        </mat-select>
+                    </mat-form-field>
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Email</mat-label>
                         <input matInput formControlName="email" type="email" />

@@ -11,6 +11,7 @@ interface IUser extends Document {
         first: string;
         last: string;
     };
+    role: string;
     bio?: string;
     profilePictureUrl?: string;
     isAdmin: boolean;
@@ -31,6 +32,11 @@ const UserSchema = new mongoose.Schema<IUser>({
     name: {
         first: { type: String, required: true },
         last: { type: String, required: true },
+    },
+    role: {
+        type: String,
+        default: 'user',
+        enum: ['user', 'admin', 'influencer'],
     },
     bio: { type: String, default: '' },
     isAdmin: { type: Boolean, default: false },

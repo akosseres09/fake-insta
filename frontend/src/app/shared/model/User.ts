@@ -9,6 +9,7 @@ export interface User {
         first: string;
         last: string;
     };
+    role: string;
     bio?: string;
     profilePictureUrl: string;
     isAdmin: boolean;

@@ -33,6 +33,22 @@
                 Unfollow
             </button>
             <button
+                *ngIf="!isSameUser && currentUser?.isAdmin && !user?.isAdmin"
+                color="primary"
+                mat-stroked-button
+                (click)="promote()"
+            >
+                Promote
+            </button>
+            <button
+                *ngIf="!isSameUser && currentUser?.isAdmin && user?.isAdmin"
+                color="primary"
+                mat-stroked-button
+                (click)="demote()"
+            >
+                Demote
+            </button>
+            <button
                 *ngIf="notifications && isSameUser"
                 mat-icon-button
                 [matBadge]="notifications.length"
@@ -53,7 +69,10 @@
                         <span>{{ notification.reason }}</span>
                     </div>
                 </div>
-                <div class="clear-notifications" *ngIf="notifications.length > 0">
+                <div
+                    class="clear-notifications"
+                    *ngIf="notifications.length > 0"
+                >
                     <button
                         mat-stroked-button
                         color="primary"

@@ -120,6 +120,46 @@ export class ProfileHeaderComponent implements OnInit, OnDestroy {
             });
     }
 
+    promote() {
+        const data = new FormData();
+        data.append('userId', this.user?._id as string);
+        data.append('role', 'admin');
+        this.userService.updateUser(data).subscribe({
+            next: (data) => {
+                this.user = data.result as User;
+                this.snackbar.openSnackBar('User promoted to admin', [
+                    'snackbar-success',
+                ]);
+            },
+            error: (err) => {
+                console.error(err.result);
+                this.snackbar.openSnackBar('Failed to promote user', [
+                    'snackbar-error',
+                ]);
+            },
+        });
+    }
+
+    demote() {
+        const data = new FormData();
+        data.append('userId', this.user?._id as string);
+        data.append('role', 'user');
+        this.userService.updateUser(data).subscribe({
+            next: (data) => {
+                this.user = data.result as User;
+                this.snackbar.openSnackBar('User demoted to admin', [
+                    'snackbar-success',
+                ]);
+            },
+            error: (err) => {
+                console.error(err.result);
+                this.snackbar.openSnackBar('Failed to demote user', [
+                    'snackbar-error',
+                ]);
+            },
+        });
+    }
+
     ngOnDestroy(): void {
         this.getNotificationSubscription?.unsubscribe();
         this.setNotificationSubscription?.unsubscribe();

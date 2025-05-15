@@ -85,9 +85,22 @@ export const userRoutes = (): Router => {
                 return;
             }
 
-            const { userId, username, email, first, last, bio } = req.body;
+            const { userId, username, email, first, last, bio, role } =
+                req.body;
 
-            if (userId !== req.user) {
+            const reqUser = await User.findById(req.user).select([
+                USER_PUBLIC_FIELDS,
+            ]);
+
+            if (!reqUser) {
+                res.status(404).send({
+                    success: false,
+                    result: 'User not found',
+                });
+                return;
+            }
+
+            if (userId !== req.user && !reqUser.isAdmin) {
                 res.status(403).send({
                     success: false,
                     result: 'Not authorized',
@@ -120,9 +133,22 @@ export const userRoutes = (): Router => {
                     user.email = email;
                 }
 
-                user.name.first = first;
-                user.name.last = last;
-                user.bio = bio;
+                if (role) {
+                    user.isAdmin = role === 'admin';
+                    user.role = role;
+                }
+
+                if (first) {
+                    user.name.first = first;
+                }
+
+                if (last) {
+                    user.name.last = last;
+                }
+
+                if (bio) {
+                    user.bio = bio;
+                }
 
                 const response = await user.updateOne(user);
 
@@ -198,8 +224,8 @@ export const userRoutes = (): Router => {
                 const cloudRes = await cloudinary.uploader.destroy(
                     post.mediaPublicId,
                     {
-                        resource_type: post.mediaType === 'video' ? 'video' : 'image',
-
+                        resource_type:
+                            post.mediaType === 'video' ? 'video' : 'image',
                     }
                 );
                 if (cloudRes.result !== 'ok') {

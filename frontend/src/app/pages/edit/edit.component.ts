@@ -22,6 +22,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { IResponse } from '../../shared/model/Response';
 import { UserService } from '../../shared/services/user/user.service';
 import { Subscription } from 'rxjs';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
     selector: 'app-edit',
@@ -39,6 +40,7 @@ import { Subscription } from 'rxjs';
         MatTabsModule,
         MatSlideToggleModule,
         MatTooltipModule,
+        MatSelectModule,
     ],
     templateUrl: './edit.component.html',
     styleUrl: './edit.component.scss',
@@ -66,6 +68,7 @@ export class EditComponent implements OnInit, OnDestroy {
                 first: [this.user?.name.first],
                 last: [this.user?.name.last],
             }),
+            role: [this.user?.role, [Validators.required]],
             username: [this.user?.username, [Validators.required]],
             email: [this.user?.email, [Validators.required, Validators.email]],
             bio: [this.user?.bio, [Validators.maxLength(150)]],
