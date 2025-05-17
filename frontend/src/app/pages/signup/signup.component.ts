@@ -6,7 +6,7 @@ import {
     FormGroup,
     Validators,
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -48,7 +48,8 @@ export class SignupComponent implements OnDestroy {
     constructor(
         private fb: FormBuilder,
         private authService: AuthService,
-        private snackBar: SnackbarService
+        private snackBar: SnackbarService,
+        private router: Router
     ) {
         this.signupForm = this.fb.group(
             {
@@ -100,6 +101,7 @@ export class SignupComponent implements OnDestroy {
                         this.snackBar.openSnackBar(
                             'Account created successfully'
                         );
+                        this.router.navigateByUrl('/auth/login');
                     },
                     error: (error) => {
                         console.error(error);
