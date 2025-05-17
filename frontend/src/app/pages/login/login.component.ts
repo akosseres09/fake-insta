@@ -75,7 +75,7 @@ export class LoginComponent implements OnDestroy {
                     },
                     error: (error) => {
                         console.error(error);
-                        this.snackBar.openSnackBar(error.error, [
+                        this.snackBar.openSnackBar(error.error.result, [
                             'snackbar-error',
                         ]);
                         this.isLoading = false;

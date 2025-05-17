@@ -11,7 +11,10 @@ export const authRoutes = (passport: PassportStatic): Router => {
             'local',
             (authError: string | null, userId: string) => {
                 if (authError) {
-                    res.status(500).send(authError);
+                    res.status(500).send({
+                        success: false,
+                        result: authError,
+                    });
                 } else {
                     if (!userId) {
                         res.status(400).send({

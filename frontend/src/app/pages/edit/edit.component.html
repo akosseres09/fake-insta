@@ -27,6 +27,14 @@
                 <h3 class="username-display">
                     {{ profileForm?.get("username")?.value || "username" }}
                 </h3>
+                <button
+                    mat-stroked-button
+                    color="warn"
+                    class="delete-account-button"
+                    (click)="deleteAccount()"
+                >
+                    Delete Account
+                </button>
             </div>
 
             <!-- Main form content -->

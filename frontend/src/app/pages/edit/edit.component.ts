@@ -23,6 +23,7 @@ import { IResponse } from '../../shared/model/Response';
 import { UserService } from '../../shared/services/user/user.service';
 import { Subscription } from 'rxjs';
 import { MatSelectModule } from '@angular/material/select';
+import { AuthService } from '../../shared/services/auth/auth.service';
 
 @Component({
     selector: 'app-edit',
@@ -55,6 +56,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
     constructor(
         private userService: UserService,
+        private authService: AuthService,
         private fb: FormBuilder,
         private router: Router,
         private snackBar: SnackbarService
@@ -141,6 +143,32 @@ export class EditComponent implements OnInit, OnDestroy {
 
     cancel(): void {
         this.router.navigateByUrl('/profile/' + this.user?._id);
+    }
+
+    deleteAccount(): void {
+        this.userService.deleteUser(this.user?._id as string).subscribe({
+            next: (res) => {
+                this.snackBar.openSnackBar('Account deleted successfully!');
+                this.authService.logout().subscribe({
+                    next: () => {
+                        this.router.navigateByUrl('/auth/login');
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        this.snackBar.openSnackBar(
+                            'Failed to logout after account deletion',
+                            ['snackbar-error']
+                        );
+                    },
+                });
+            },
+            error: (error) => {
+                console.error(error);
+                this.snackBar.openSnackBar('Failed to delete account', [
+                    'snackbar-error',
+                ]);
+            },
+        });
     }
 
     ngOnDestroy(): void {
