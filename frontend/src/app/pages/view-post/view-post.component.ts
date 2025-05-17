@@ -42,7 +42,7 @@ export class ViewPostComponent implements OnInit, OnDestroy {
                     this.post = res.result as Post;
                 },
                 error: (err) => {
-                    console.log(err);
+                    console.error(err);
                     this.snackbar.openSnackBar('Error while fetching post', [
                         'snackbar-error',
                     ]);

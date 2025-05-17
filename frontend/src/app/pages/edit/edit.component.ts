@@ -117,7 +117,6 @@ export class EditComponent implements OnInit, OnDestroy {
                 form.append('last', this.profileForm?.get('name.last')?.value);
             }
             form.append(key, this.profileForm?.get(key)?.value);
-            console.log(key, this.profileForm?.get(key)?.value);
         }
         form.append('media', this.selectedProfilePicture as Blob);
         form.append('userId', this.user?._id as string);
@@ -133,7 +132,7 @@ export class EditComponent implements OnInit, OnDestroy {
                     this.router.navigateByUrl('/profile/' + user._id);
                 },
                 error: (error) => {
-                    console.log(error);
+                    console.error(error);
                     this.isSubmitting = false;
                     this.snackBar.openSnackBar(error.error, ['snackbar-error']);
                 },

@@ -102,7 +102,7 @@ export class SignupComponent implements OnDestroy {
                         );
                     },
                     error: (error) => {
-                        console.log(error);
+                        console.error(error);
                         this.isLoading = false;
                         this.snackBar.openSnackBar('Error creating account', [
                             'snackbar-error',

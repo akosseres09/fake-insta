@@ -159,13 +159,12 @@ export class CreateComponent implements OnInit, OnDestroy {
                 .subscribe({
                     next: (response) => {
                         this.isSubmitting = false;
-                        console.log(response);
                         this.snackBar.openSnackBar(
                             'Your post has been shared!'
                         );
                     },
                     error: (error) => {
-                        console.log(error);
+                        console.error(error);
                         this.isSubmitting = false;
                         this.snackBar.openSnackBar('Failed to share post', [
                             'snackbar-error',

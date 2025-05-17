@@ -178,7 +178,7 @@ export class CreateNotificationComponent implements OnDestroy {
                     }
                 },
                 error: (error) => {
-                    console.log(error);
+                    console.error(error);
                     this.snackBar.openSnackBar(
                         'Failed to create notification',
                         ['snackbar-error']

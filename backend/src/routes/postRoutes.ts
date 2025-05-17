@@ -93,7 +93,7 @@ export const postRoutes = (): Router => {
                 });
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             res.status(500).send({
                 success: false,
                 result: 'Internal server error',
@@ -168,7 +168,7 @@ export const postRoutes = (): Router => {
                     });
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 res.status(500).send({
                     success: false,
                     result: 'Internal server error',
@@ -284,7 +284,7 @@ export const postRoutes = (): Router => {
         } catch (error) {
             await session.abortTransaction();
             await session.endSession();
-            console.log(error);
+            console.error(error);
             res.status(500).send({
                 success: false,
                 result: 'Internal server error',

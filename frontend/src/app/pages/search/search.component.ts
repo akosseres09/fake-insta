@@ -37,11 +37,12 @@ export class SearchComponent implements OnInit, OnDestroy {
     @Input() text: string = 'Find people to follow and connect with';
     @Input() currentUserIsAdmin: boolean = false;
     @Input() users: Array<User> = [];
-    searchControl = new FormControl('');
+
     user?: User;
     filteredUsers: Array<User> = [];
-    usersSubscription?: Subscription;
     isLoading = false;
+    searchControl = new FormControl('');
+    usersSubscription?: Subscription;
 
     constructor(private userService: UserService) {}
 

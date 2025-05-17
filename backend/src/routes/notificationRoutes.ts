@@ -129,6 +129,7 @@ export const notificationRoutes = (): Router => {
                     result: notifications,
                 });
             } catch (error) {
+                console.error(error);
                 res.status(500).send({
                     success: false,
                     result: 'Internal server error',
@@ -219,6 +220,7 @@ export const notificationRoutes = (): Router => {
                 });
             }
         } catch (error) {
+            console.error(error);
             res.status(500).send({
                 success: false,
                 result: 'Internal server error',

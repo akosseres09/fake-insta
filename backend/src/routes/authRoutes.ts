@@ -69,7 +69,7 @@ export const authRoutes = (passport: PassportStatic): Router => {
                 res.status(400).send(false);
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             res.status(500).send(false);
         }
     });

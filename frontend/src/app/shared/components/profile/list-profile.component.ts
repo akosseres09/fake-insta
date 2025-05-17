@@ -73,7 +73,7 @@ export class ListProfileComponent implements OnInit {
                             this.router.navigateByUrl('/auth/login');
                         },
                         error: (error) => {
-                            console.log(error);
+                            console.error(error);
                         },
                     });
                 } else {

@@ -74,7 +74,7 @@ export class LoginComponent implements OnDestroy {
                         this.router.navigateByUrl('/feed');
                     },
                     error: (error) => {
-                        console.log(error);
+                        console.error(error);
                         this.snackBar.openSnackBar(error.error, [
                             'snackbar-error',
                         ]);

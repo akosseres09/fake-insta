@@ -62,7 +62,6 @@ export class ProfileHeaderComponent implements OnInit, OnDestroy {
             .subscribe({
                 next: (data) => {
                     this.notifications = data.result;
-                    console.log(this.notifications);
                 },
                 error: (err) => {
                     console.error(err.result);

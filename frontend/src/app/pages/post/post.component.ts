@@ -56,6 +56,7 @@ export class PostComponent implements OnInit, OnDestroy {
     comments?: Array<PostCommentWithUser>;
     likes?: Array<LikeWithUser>;
     isLiked?: boolean;
+    
     commentSubscription?: Subscription;
     createCommentsSubscription?: Subscription;
     createLikesSubscription?: Subscription;
@@ -142,13 +143,10 @@ export class PostComponent implements OnInit, OnDestroy {
         this.likeSubscription = this.likeService.getLikes(data).subscribe({
             next: (response) => {
                 this.likes = response.result as Array<LikeWithUser>;
-                console.log(this.likes);
-                console.log(this.post?.likes);
-
                 this.openListDialog('Likes', [], this.likes);
             },
             error: (error) => {
-                console.log(error);
+                console.error(error);
                 this.snackbar.openSnackBar('Error fetching likes', [
                     'snackbar-error',
                 ]);

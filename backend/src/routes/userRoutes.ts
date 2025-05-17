@@ -66,7 +66,7 @@ export const userRoutes = (): Router => {
                 });
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             res.status(500).send({
                 success: false,
                 result: 'Internal server error!',
@@ -164,7 +164,7 @@ export const userRoutes = (): Router => {
                     });
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 res.status(500).send({
                     success: false,
                     result: 'Internal server error',
@@ -218,9 +218,8 @@ export const userRoutes = (): Router => {
         try {
             const posts = await Post.find({ userId: userId });
 
+            // deletes all posts made by the user, including media, likes and comments
             for (const post of posts) {
-                console.log(post);
-
                 const cloudRes = await cloudinary.uploader.destroy(
                     post.mediaPublicId,
                     {
@@ -240,6 +239,84 @@ export const userRoutes = (): Router => {
                 await Like.deleteMany({ postId: post._id });
                 await PostComment.deleteMany({ postId: post._id });
             }
+
+            // deletes follows and followings of the user
+            for (const followingId of user.following) {
+                const followingUser = await User.findById(followingId);
+                if (followingUser) {
+                    followingUser.followers = followingUser.followers.filter(
+                        (id) => id.toString() !== userId
+                    );
+
+                    if (followingUser.following.includes(userId)) {
+                        followingUser.following =
+                            followingUser.following.filter(
+                                (id) => id.toString() !== userId
+                            );
+                    }
+
+                    const updateRes = await followingUser.updateOne(
+                        followingUser
+                    );
+
+                    if (!updateRes) {
+                        await session.abortTransaction();
+                        await session.endSession();
+                        res.status(400).send({
+                            success: false,
+                            result: 'Error updating following user',
+                        });
+                        return;
+                    }
+                }
+            }
+
+            const likes = await Like.find({ userId: userId });
+            const comments = await PostComment.find({ userId: userId });
+
+            // deletes all likes made by the user
+            for (const like of likes) {
+                const p = await Post.findById(like.postId);
+                if (p) {
+                    p.likes = p.likes.filter((id) => {
+                        return id.toString() !== userId;
+                    });
+
+                    const updateRes = await p.updateOne(p);
+                    if (!updateRes) {
+                        await session.abortTransaction();
+                        await session.endSession();
+                        res.status(400).send({
+                            success: false,
+                            result: 'Error updating post',
+                        });
+                        return;
+                    }
+                }
+                await Like.deleteOne({ _id: like.id });
+            }
+
+            // deletes all comments made by the user
+            for (const comment of comments) {
+                const p = await Post.findById(comment.postId);
+                if (p) {
+                    p.comments = p.comments.filter((id) => {
+                        return id.toString() !== userId;
+                    });
+                    const updateRes = await p.updateOne(p);
+                    if (!updateRes) {
+                        await session.abortTransaction();
+                        await session.endSession();
+                        res.status(400).send({
+                            success: false,
+                            result: 'Error updating post',
+                        });
+                        return;
+                    }
+                }
+                await PostComment.deleteOne({ _id: comment.id });
+            }
+
             const response =
                 (await Post.deleteMany({ userId: userId })) &&
                 (await User.deleteOne({ _id: userId }));
@@ -263,7 +340,7 @@ export const userRoutes = (): Router => {
         } catch (error) {
             await session.abortTransaction();
             await session.endSession();
-            console.log(error);
+            console.error(error);
             res.status(500).send({
                 success: false,
                 result: 'Internal server error',
@@ -370,7 +447,7 @@ export const userRoutes = (): Router => {
                 });
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             res.status(500).send({
                 success: false,
                 result: 'Internal server error!',
