@@ -7,11 +7,13 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import { configurePassport } from './passport/passport';
 import { configureRoutes } from './routes/routes';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const PORT = 3000;
-const mongoConnectionUrl =
-    'mongodb+srv://akosseres75:HNHPkhYavxnQxe9X@cluster0.f3wai.mongodb.net/fake-insta?retryWrites=true&w=majority&appName=Cluster0';
+const mongoConnectionUrl = process.env.mongodb_connection_url || '';
 
 mongoose
     .connect(mongoConnectionUrl)
@@ -38,7 +40,7 @@ const corsOptions = {
             callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: true,
+    credentials: true
 };
 
 app.use(cors(corsOptions));
@@ -51,7 +53,7 @@ app.use(cookieParser());
 const sessionOptions: expressSession.SessionOptions = {
     secret: 'testsecret',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: false
 };
 
 app.use(expressSession(sessionOptions));
