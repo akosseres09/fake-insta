@@ -5,16 +5,25 @@ services:
     build:
       context: ..
       dockerfile: docker/frontend/prod/Dockerfile.frontend
-    ports:
-      - "80:80"
     restart: unless-stopped
+    depends_on:
+      - backend
 
   backend:
     build:
       context: ..
       dockerfile: docker/backend/prod/Dockerfile.backend
-    ports:
-      - "3000:3000"
     environment:
       - NODE_ENV=production
+    restart: unless-stopped
+
+  proxy:
+    build:
+      context: ..
+      dockerfile: docker/nginx/Dockerfile.nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
     restart: unless-stopped
