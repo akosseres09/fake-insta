@@ -4,7 +4,7 @@ import { Post } from '../model/Post';
 import upload from '../middlewares/multer';
 import {
     POST_POPOPULATE_FIELDS,
-    USER_PUBLIC_FIELDS,
+    USER_PUBLIC_FIELDS
 } from '../constants/constants';
 import { Like } from '../model/Like';
 import cloudinary from '../utils/cloudinary';
@@ -17,7 +17,7 @@ export const postRoutes = (): Router => {
         if (!req.isAuthenticated()) {
             res.status(400).send({
                 success: false,
-                result: 'User not authenticated',
+                result: 'User not authenticated'
             });
             return;
         }
@@ -33,7 +33,7 @@ export const postRoutes = (): Router => {
             if (!user) {
                 res.status(404).send({
                     success: false,
-                    result: 'User not found',
+                    result: 'User not found'
                 });
                 return;
             }
@@ -45,7 +45,7 @@ export const postRoutes = (): Router => {
                 }
 
                 postFilter.userId = {
-                    $in: following,
+                    $in: following
                 };
             }
 
@@ -58,7 +58,7 @@ export const postRoutes = (): Router => {
                     if (!POST_POPOPULATE_FIELDS.includes(field)) {
                         res.status(400).send({
                             success: false,
-                            result: 'Invalid populate field',
+                            result: 'Invalid populate field'
                         });
                         return;
                     }
@@ -84,19 +84,19 @@ export const postRoutes = (): Router => {
             if (posts) {
                 res.status(200).send({
                     success: true,
-                    result: posts,
+                    result: posts
                 });
             } else {
                 res.status(404).send({
                     success: false,
-                    result: null,
+                    result: null
                 });
             }
         } catch (error) {
             console.error(error);
             res.status(500).send({
                 success: false,
-                result: 'Internal server error',
+                result: 'Internal server error'
             });
         }
     });
@@ -108,72 +108,72 @@ export const postRoutes = (): Router => {
             if (!req.isAuthenticated()) {
                 res.status(400).send({
                     success: false,
-                    result: 'User not authenticated',
+                    result: 'User not authenticated'
                 });
                 return;
             }
 
-            try {
-                const { caption, altText, userId } = req.body;
+            //try {
+            const { caption, altText, userId } = req.body;
 
-                if (userId !== req.user) {
-                    res.status(400).send({
-                        success: false,
-                        result: 'User not authorized',
-                    });
-                    return;
-                }
-
-                if (!req.file || !req.file.path) {
-                    res.status(400).send('No file uploaded');
-                    return;
-                }
-
-                const user = await User.findById(userId);
-
-                if (!user) {
-                    res.status(404).send({
-                        success: false,
-                        result: 'User not found',
-                    });
-                    return;
-                }
-
-                const newPost = new Post({
-                    userId: userId,
-                    caption: caption,
-                    altText: altText,
-                    mediaUrl: req.file.path,
-                    mediaType: req.file.mimetype.startsWith('video')
-                        ? 'video'
-                        : 'image',
-                    mediaPublicId: req.file.filename,
-                    likes: [],
-                    comments: [],
+            if (userId !== req.user) {
+                res.status(400).send({
+                    success: false,
+                    result: 'User not authorized'
                 });
+                return;
+            }
 
-                const response = await newPost.save();
+            if (!req.file || !req.file.path) {
+                res.status(400).send('No file uploaded');
+                return;
+            }
 
-                if (response) {
-                    user.posts.push(response.id);
-                    await user.updateOne(user);
-                    res.status(200).send({
-                        success: true,
-                        result: newPost,
-                    });
-                } else {
-                    res.status(400).send({
-                        success: false,
-                        result: 'Error creating post',
-                    });
-                }
-            } catch (error) {
+            const user = await User.findById(userId);
+
+            if (!user) {
+                res.status(404).send({
+                    success: false,
+                    result: 'User not found'
+                });
+                return;
+            }
+
+            const newPost = new Post({
+                userId: userId,
+                caption: caption,
+                altText: altText,
+                mediaUrl: req.file.path,
+                mediaType: req.file.mimetype.startsWith('video')
+                    ? 'video'
+                    : 'image',
+                mediaPublicId: req.file.filename,
+                likes: [],
+                comments: []
+            });
+
+            const response = await newPost.save();
+
+            if (response) {
+                user.posts.push(response.id);
+                await user.updateOne(user);
+                res.status(200).send({
+                    success: true,
+                    result: newPost
+                });
+            } else {
+                res.status(400).send({
+                    success: false,
+                    result: 'Error creating post'
+                });
+            }
+            /*} catch (error) {
                 console.error(error);
                 res.status(500).send({
                     success: false,
                     result: 'Internal server error',
                 });
-            }
+            }*/
         }
     );
 
@@ -181,7 +181,7 @@ export const postRoutes = (): Router => {
         if (!req.isAuthenticated()) {
             res.status(400).send({
                 success: false,
-                result: 'User not authenticated',
+                result: 'User not authenticated'
             });
             return;
         }
@@ -198,7 +198,7 @@ export const postRoutes = (): Router => {
                 await session.endSession();
                 res.status(404).send({
                     success: false,
-                    result: 'User not found',
+                    result: 'User not found'
                 });
                 return;
             }
@@ -211,7 +211,7 @@ export const postRoutes = (): Router => {
                 await session.endSession();
                 res.status(404).send({
                     success: false,
-                    result: 'Post not found',
+                    result: 'Post not found'
                 });
                 return;
             }
@@ -221,7 +221,7 @@ export const postRoutes = (): Router => {
                 await session.endSession();
                 res.status(403).send({
                     success: false,
-                    result: 'Not authorized to delete this post',
+                    result: 'Not authorized to delete this post'
                 });
                 return;
             }
@@ -236,7 +236,7 @@ export const postRoutes = (): Router => {
                 await session.endSession();
                 res.status(404).send({
                     success: false,
-                    result: 'Post creator not found',
+                    result: 'Post creator not found'
                 });
                 return;
             }
@@ -250,7 +250,7 @@ export const postRoutes = (): Router => {
                 await session.endSession();
                 res.status(400).send({
                     success: false,
-                    result: 'Error deleting media from cloud',
+                    result: 'Error deleting media from cloud'
                 });
                 return;
             }
@@ -270,7 +270,7 @@ export const postRoutes = (): Router => {
                 await session.endSession();
                 res.status(400).send({
                     success: false,
-                    result: 'Error deleting post',
+                    result: 'Error deleting post'
                 });
                 return;
             }
@@ -279,7 +279,7 @@ export const postRoutes = (): Router => {
             await session.endSession();
             res.status(200).send({
                 success: true,
-                result: 'Post deleted successfully',
+                result: 'Post deleted successfully'
             });
         } catch (error) {
             await session.abortTransaction();
@@ -287,7 +287,7 @@ export const postRoutes = (): Router => {
             console.error(error);
             res.status(500).send({
                 success: false,
-                result: 'Internal server error',
+                result: 'Internal server error'
             });
         }
     });

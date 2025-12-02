@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { PostComment, PostCommentWithUser } from '../../model/Comment';
 import { IResponse } from '../../model/Response';
 import { Post } from '../../model/Post';
+import { environment } from '../../../../environments/environment';
 
 export interface PostData {
     postId: string;
@@ -11,10 +12,11 @@ export interface PostData {
 }
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class CommentService {
-    private COMMENT_URL = 'http://localhost:3000/comment';
+    private apiUrl = environment.apiUrl;
+    private COMMENT_URL = `${this.apiUrl}comment`;
     constructor(private http: HttpClient) {}
 
     getCommentsToPost(postId: string) {
@@ -22,14 +24,14 @@ export class CommentService {
             this.COMMENT_URL,
             {
                 params: { postId: postId, populate: 'userId' },
-                withCredentials: true,
+                withCredentials: true
             }
         );
     }
 
     createComment(data: PostData) {
         return this.http.post<IResponse<Post>>(this.COMMENT_URL, data, {
-            withCredentials: true,
+            withCredentials: true
         });
     }
 }

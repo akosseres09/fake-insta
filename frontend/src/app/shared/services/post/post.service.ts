@@ -2,12 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Post, IBodyPost } from '../../model/Post';
 import { IResponse } from '../../model/Response';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class PostService {
-    private POST_URL = 'http://localhost:3000/post';
+    private apiUrl = environment.apiUrl;
+    private POST_URL = `${this.apiUrl}post`;
 
     constructor(private http: HttpClient) {}
 
@@ -22,7 +24,7 @@ export class PostService {
             this.POST_URL,
             formData,
             {
-                withCredentials: true,
+                withCredentials: true
             }
         );
     }
@@ -30,9 +32,9 @@ export class PostService {
     getPosts() {
         return this.http.get<IResponse<Array<Post>>>(this.POST_URL, {
             params: {
-                populate: 'userId',
+                populate: 'userId'
             },
-            withCredentials: true,
+            withCredentials: true
         });
     }
 
@@ -42,25 +44,25 @@ export class PostService {
                 inArray: 'false',
                 postId: id,
                 populate: 'userId',
-                follow: 'false',
+                follow: 'false'
             },
-            withCredentials: true,
+            withCredentials: true
         });
     }
 
     updatePost(id: string) {
         const data = {
-            postId: id,
+            postId: id
         };
 
         return this.http.post<IResponse<string>>(this.POST_URL, data, {
-            withCredentials: true,
+            withCredentials: true
         });
     }
 
     deletePost(id: string) {
         return this.http.delete<IResponse<string>>(this.POST_URL + `/${id}`, {
-            withCredentials: true,
+            withCredentials: true
         });
     }
 }

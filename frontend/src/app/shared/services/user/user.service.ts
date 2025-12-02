@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { IResponse } from '../../model/Response';
 import { User } from '../../model/User';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 interface FRes<T> {
     user: T;
@@ -17,13 +18,15 @@ type PostResponse = IResponse<User>;
 export type FollowResponse = IResponse<FRes<User>>;
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class UserService {
     private userSubject: BehaviorSubject<User | null> =
         new BehaviorSubject<User | null>(null);
-    private USER_URL = 'http://localhost:3000/user';
-    private FOLLOW_URL = 'http://localhost:3000/follow';
+
+    private apiUrl = environment.apiUrl;
+    private USER_URL = `${this.apiUrl}user`;
+    private FOLLOW_URL = `${this.apiUrl}follow`;
 
     constructor(private http: HttpClient) {}
 
@@ -39,20 +42,20 @@ export class UserService {
         const inArray = 'false';
         return this.http.get<IResponse<User>>(this.USER_URL, {
             params: { id: id, inArray: inArray },
-            withCredentials: true,
+            withCredentials: true
         });
     }
 
     getAllUsers() {
         return this.http.get<IResponse<Array<User>>>(this.USER_URL, {
-            withCredentials: true,
+            withCredentials: true
         });
     }
 
     getUsersBySearch(data: any) {
         return this.http.get<IResponse<Array<User>>>(this.USER_URL, {
             params: data,
-            withCredentials: true,
+            withCredentials: true
         });
     }
 
@@ -61,21 +64,21 @@ export class UserService {
             params: {
                 id: id,
                 populate: 'post',
-                inArray: 'false',
+                inArray: 'false'
             },
-            withCredentials: true,
+            withCredentials: true
         });
     }
 
     updateUser(data: FormData) {
         return this.http.post<IResponse<User | string>>(this.USER_URL, data, {
-            withCredentials: true,
+            withCredentials: true
         });
     }
 
     deleteUser(id: string) {
         return this.http.delete<DeleteResponse>(this.USER_URL + `/${id}`, {
-            withCredentials: true,
+            withCredentials: true
         });
     }
 
@@ -86,7 +89,7 @@ export class UserService {
         });
 
         return this.http.post<FollowResponse>(this.FOLLOW_URL, data, {
-            withCredentials: true,
+            withCredentials: true
         });
     }
 }

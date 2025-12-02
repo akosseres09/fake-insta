@@ -2,14 +2,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from '../../model/User';
 import { IResponse } from '../../model/Response';
-
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class AuthService {
     constructor(private http: HttpClient) {}
-
+    private apiUrl = environment.apiUrl;
 
     login(username: string, password: string) {
         const body = new URLSearchParams();
@@ -17,15 +17,15 @@ export class AuthService {
         body.set('password', password);
 
         const headers = new HttpHeaders({
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/x-www-form-urlencoded'
         });
 
         return this.http.post<IResponse<User | string>>(
-            'http://localhost:3000/login',
+            `${this.apiUrl}login`,
             body,
             {
                 headers: headers,
-                withCredentials: true,
+                withCredentials: true
             }
         );
     }
@@ -39,38 +39,38 @@ export class AuthService {
         body.set('password', user.password);
 
         const headers = new HttpHeaders({
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/x-www-form-urlencoded'
         });
 
-        return this.http.post('http://localhost:3000/register', body, {
-            headers: headers,
+        return this.http.post(`${this.apiUrl}register`, body, {
+            headers: headers
         });
     }
 
     logout() {
         return this.http.post(
-            'http://localhost:3000/logout',
+            `${this.apiUrl}logout`,
             {},
             { withCredentials: true, responseType: 'text' }
         );
     }
 
     checkId() {
-        return this.http.get('http://localhost:3000/checkId', {
+        return this.http.get(`${this.apiUrl}checkId`, {
             withCredentials: true,
-            responseType: 'text',
+            responseType: 'text'
         });
     }
 
     checkauth() {
-        return this.http.get<boolean>('http://localhost:3000/checkauth', {
-            withCredentials: true,
+        return this.http.get<boolean>(`${this.apiUrl}checkauth`, {
+            withCredentials: true
         });
     }
 
     checkAdmin() {
-        return this.http.get<boolean>('http://localhost:3000/checkAdmin', {
-            withCredentials: true,
+        return this.http.get<boolean>(`${this.apiUrl}checkAdmin`, {
+            withCredentials: true
         });
     }
 }

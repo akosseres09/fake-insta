@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Notification, NotificationWithPost } from '../../model/Notification';
 import { IResponse } from '../../model/Response';
 import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 interface NotiData {
     userId: string;
@@ -12,10 +13,11 @@ interface NotiData {
 }
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class NotificationService {
-    private NOTIFICATION_URL = 'http://localhost:3000/notification';
+    private apiUrl = environment.apiUrl;
+    private NOTIFICATION_URL = `${this.apiUrl}notification`;
     constructor(private http: HttpClient) {}
 
     getUnseenNotifications(
@@ -27,9 +29,9 @@ export class NotificationService {
                 params: {
                     userId: id,
                     populate: 'postId',
-                    seen: 'false',
+                    seen: 'false'
                 },
-                withCredentials: true,
+                withCredentials: true
             }
         );
     }
@@ -39,7 +41,7 @@ export class NotificationService {
             this.NOTIFICATION_URL + `/${userId}`,
             {},
             {
-                withCredentials: true,
+                withCredentials: true
             }
         );
     }
@@ -49,7 +51,7 @@ export class NotificationService {
             this.NOTIFICATION_URL,
             data,
             {
-                withCredentials: true,
+                withCredentials: true
             }
         );
     }
