@@ -63,6 +63,11 @@ app.use(passport.session());
 
 configurePassport(passport);
 
+// Healthcheck endpoint
+app.get('/health', (req: Request, res: Response) => {
+    res.status(200).json({ status: 'ok' });
+});
+
 app.use(configureRoutes(passport, express.Router()));
 
 app.listen(PORT, () => {

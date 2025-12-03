@@ -5,9 +5,12 @@ services:
     build:
       context: ..
       dockerfile: docker/frontend/prod/Dockerfile.frontend
-    restart: unless-stopped
     depends_on:
       - backend
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost" ]
+      start_period: 30s
+    restart: unless-stopped
 
   backend:
     build:
@@ -15,15 +18,36 @@ services:
       dockerfile: docker/backend/prod/Dockerfile.backend
     environment:
       - NODE_ENV=production
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health" ]
+      start_period: 30s
     restart: unless-stopped
 
   proxy:
-    build:
-      context: ..
-      dockerfile: docker/nginx/Dockerfile.nginx
+    image: nginx:alpine
     ports:
       - "80:80"
     depends_on:
       - frontend
       - backend
+      - jenkins
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost" ]
+      start_period: 30s
+    restart: unless-stopped
+
+  jenkins:
+    build:
+      context: ./jenkins
+      dockerfile: Dockerfile.jenkins
+    environment:
+      - JENKINS_OPTS=--prefix=/jenkins
+    volumes:
+      - ../jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/jenkins" ]
+      start_period: 30s
     restart: unless-stopped
