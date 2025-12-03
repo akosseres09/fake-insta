@@ -44,8 +44,29 @@ the frontend angular environment has to get started.
 
 ### Step 1.2: Running the containers in production mode
 
-There is also a "production ready" state for Dockerfiles and compose.yaml. To
-run it, use
+There is also a "production ready" state for Dockerfiles. The preferred way of
+running the application in production mode is by using terraform, but docker
+compose can be used as well.
+
+### 1.2.1 Using Terraform
+
+If you do not have terraform installed, you can add this line to your
+`~/.bashrc` file (if you have docker installed):
+
+```
+alias terraform='docker run -it --rm -v "$PWD":/workspace -v /var/run/docker.sock:/var/run/docker.sock -w /workspace hashicorp/terraform:light'
+```
+
+Then you can use these commands to start and stop the application:
+
+-   `terraform apply`. This runs `terraform plan` as well, so one could see the
+    infrastructure that will be created.
+-   `terraform destroy`. This will stop the application and remove all docker
+    images and containers.
+
+### 1.2.2 Using docker compose
+
+To start the app using docker compose run:
 
     docker compose -f compose.prod.yaml up -d [--build]
 
@@ -57,3 +78,4 @@ When the containers are built, the apps are available:
 
 -   **Frontend** at `localhost`
 -   **Backend** at `localhost/api`
+-   **Jenkins** at `localhost/jenkins`
