@@ -33,3 +33,9 @@ variable "container_index_offset" {
     type        = number
     default     = 3
 }
+
+variable "network_name" {
+    description = "Name of the Docker network"
+    type        = string
+    default     = "fake-insta-prod-terraform-default"
+}

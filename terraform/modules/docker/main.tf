@@ -46,14 +46,16 @@ resource "docker_image" "jenkins" {
 resource "docker_container" "backend" {
     count = var.backend_container_count
     name  = "${var.backend_container_name}-${count.index + 3}"
+    hostname = "${var.backend_container_name}-${count.index + 3}"
     image = docker_image.backend.image_id
     
     env = [
+        "NODE_ENV=production",
         "NODE_ENV=production"
     ]
     
     networks_advanced {
-        name = docker_network.fake_insta_network.name
+        name = var.network_name
         aliases = ["backend-${count.index + 3}"]
     }
     
@@ -71,7 +73,7 @@ resource "docker_container" "frontend" {
     image = docker_image.frontend.image_id
     
     networks_advanced {
-        name = docker_network.fake_insta_network.name
+        name = var.network_name
         aliases = ["frontend-${count.index + var.container_index_offset}"]
     }
     
@@ -94,7 +96,7 @@ resource "docker_container" "jenkins" {
     ]
     
     networks_advanced {
-        name = docker_network.fake_insta_network.name
+        name = var.network_name
         aliases = ["jenkins"]
     }
     
@@ -126,7 +128,7 @@ resource "docker_container" "proxy" {
     }
     
     networks_advanced {
-        name = docker_network.fake_insta_network.name
+        name = var.network_name
         aliases = ["proxy"]
     }
     
@@ -151,8 +153,4 @@ resource "docker_container" "proxy" {
         docker_container.backend,
         docker_container.jenkins
     ]
-}
-
-resource "docker_network" "fake_insta_network" {
-    name = "fake-insta-prod-terraform-default"
 }
