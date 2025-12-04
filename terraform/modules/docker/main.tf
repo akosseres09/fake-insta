@@ -70,6 +70,7 @@ resource "docker_container" "backend" {
 resource "docker_container" "frontend" {
     count = var.frontend_container_count
     name  = "${var.frontend_container_name}-${count.index + var.container_index_offset}"
+    hostname = "${var.frontend_container_name}-${count.index + var.container_index_offset}"
     image = docker_image.frontend.image_id
     
     networks_advanced {

@@ -10,7 +10,19 @@ RUN npm run prod
 
 FROM nginx:alpine
 
+RUN apk add --no-cache rsyslog pcre zabbix-agent2
+
+COPY docker/frontend/prod/rsyslog.conf /etc/rsyslog.conf
+COPY docker/frontend/prod/zabbix_agent2.conf /etc/zabbix/zabbix_agent2.conf
+
+RUN mkdir -p /var/spool/rsyslog
+
 COPY --from=builder /usr/src/app/dist/frontend/browser/ /usr/share/nginx/html
 COPY /docker/frontend/prod/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/frontend/prod/start.sh ./
+
+RUN chmod +x ./start.sh
 
 EXPOSE 80
+
+CMD [ "./start.sh" ]
