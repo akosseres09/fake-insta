@@ -58,6 +58,10 @@ resource "docker_container" "backend" {
         "NODE_ENV=production",
         "NODE_ENV=production"
     ]
+
+    capabilities {
+        add  = ["NET_ADMIN"]
+    }
     
     networks_advanced {
         name = var.network_name
@@ -78,6 +82,10 @@ resource "docker_container" "frontend" {
     hostname = "${var.frontend_container_name}-${count.index + var.container_index_offset}"
     image = docker_image.frontend.image_id
     
+    capabilities {
+        add  = ["NET_ADMIN"]
+    }
+
     networks_advanced {
         name = var.network_name
         aliases = ["frontend-${count.index + var.container_index_offset}"]
@@ -132,6 +140,10 @@ resource "docker_container" "proxy" {
     ports {
         internal = 80
         external = 80
+    }
+
+    capabilities {
+        add  = ["NET_ADMIN"]
     }
     
     networks_advanced {

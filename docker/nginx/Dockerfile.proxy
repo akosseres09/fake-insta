@@ -1,6 +1,6 @@
 FROM nginx:alpine
 
-RUN apk add --no-cache rsyslog pcre zabbix-agent2
+RUN apk add --no-cache rsyslog pcre zabbix-agent2 iptables
 
 COPY docker/nginx/rsyslog.conf /etc/rsyslog.conf
 COPY docker/nginx/zabbix_agent2.conf /etc/zabbix/zabbix_agent2.conf

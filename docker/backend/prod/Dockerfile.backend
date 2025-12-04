@@ -10,7 +10,7 @@ RUN npm run build
 # Production stage
 FROM node:18.20.6-alpine
 RUN npm install -g pm2
-RUN apk add --no-cache rsyslog pcre zabbix-agent2
+RUN apk add --no-cache rsyslog pcre zabbix-agent2 iptables
 
 COPY docker/backend/prod/rsyslog.conf /etc/rsyslog.conf
 COPY docker/backend/prod/zabbix_agent2.conf /etc/zabbix/zabbix_agent2.conf
