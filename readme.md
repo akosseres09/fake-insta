@@ -42,13 +42,10 @@ When the containers are built, the apps are available:
 Be sure to wait a little as the frontend waits for the backend to be built and
 the frontend angular environment has to get started.
 
-### Step 1.2: Running the containers in production mode
+### Step 1.2: Running the containers in production mode using terraform
 
 There is also a "production ready" state for Dockerfiles. The preferred way of
-running the application in production mode is by using terraform, but docker
-compose can be used as well.
-
-### 1.2.1 Using Terraform
+running the application in production mode is by using terraform.
 
 If you do not have terraform installed, you can add this line to your
 `~/.bashrc` file (if you have docker installed):
@@ -57,25 +54,23 @@ If you do not have terraform installed, you can add this line to your
 alias terraform='docker run -it --rm -v "$PWD":/workspace -v /var/run/docker.sock:/var/run/docker.sock -w /workspace hashicorp/terraform:light'
 ```
 
-Then you can use these commands to start and stop the application:
+Then you can use these commands to start and stop the application from the root
+of the project (you should have docker installed):
 
+-   `chmod +x volumes.sh`. This way the volumes.sh is runnable
+-   `./volumes.sh [--remove]`. This creates the desired named docker volumes.
+    Add --remove to remove these volumes
+-   `terraform init`. This initializes terraform
 -   `terraform apply`. This runs `terraform plan` as well, so one could see the
-    infrastructure that will be created.
+    infrastructure that will be created. Type `yes` to create infrastructure.
 -   `terraform destroy`. This will stop the application and remove all docker
-    images and containers.
+    images and containers. Type `yes` to destroy infrastructure
 
-### 1.2.2 Using docker compose
+After using `terraform apply` the infrastructure is being set up. This should
+take some time. After this the pages should be available:
 
-To start the app using docker compose run:
-
-    docker compose -f compose.prod.yaml up -d [--build]
-
-If you have already used these containers, you can just use
-
-    docker compose restart
-
-When the containers are built, the apps are available:
-
--   **Frontend** at `localhost`
--   **Backend** at `localhost/api`
--   **Jenkins** at `localhost/jenkins`
+-   **Frontend** at [`http://localhost`](http://localhost)
+-   **Backend** at [`http://localhost/api`](http://localhost/api/health)
+-   **Jenkins** at [`http://localhost/jenkins`](http://localhost/jenkins)
+-   **Zabbix** at [`http://localhost/zabbix`](http://localhost/zabbix)
+-   **Graylog** at [`http://localhost/graylog`](http://localhost/graylog)
