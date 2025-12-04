@@ -29,8 +29,13 @@ resource "docker_image" "backend" {
 }
 
 resource "docker_image" "proxy" {
-    name = "nginx:alpine"
+    name = "fake-insta-prod-proxy:latest"
     keep_locally = true
+    build {
+        context = "${path.root}"
+        dockerfile = "docker/nginx/Dockerfile.proxy"
+        tag = ["fake-insta-prod-proxy:latest"]
+    }
 }
 
 resource "docker_image" "jenkins" {
@@ -122,6 +127,7 @@ resource "docker_container" "jenkins" {
 resource "docker_container" "proxy" {
     name  = "fake-insta-prod-proxy"
     image = docker_image.proxy.image_id
+    hostname = "proxy"
     
     ports {
         internal = 80
