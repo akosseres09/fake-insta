@@ -83,4 +83,5 @@ take some time. After this the pages should be available:
 -   **Zabbix** - System Monitoring
 -   **Graylog** - Collect logs from Proxy, Frontend and Backend
 -   **Terraform** - Managing "production" infrastructure
+-   **Jest** - Testing the backend code
 -   **Git & Docker**
