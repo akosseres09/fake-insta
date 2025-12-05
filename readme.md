@@ -74,3 +74,13 @@ take some time. After this the pages should be available:
 -   **Jenkins** at [`http://localhost/jenkins`](http://localhost/jenkins)
 -   **Zabbix** at [`http://localhost/zabbix`](http://localhost/zabbix)
 -   **Graylog** at [`http://localhost/graylog`](http://localhost/graylog)
+
+## Technologies Used
+
+-   **Nginx** - Reverse Proxy, serves frontend
+-   **Iptables** - Proxy, Frontend and Backend firewall configuration
+-   **Jenkins** - CI/CD (Pipeline)
+-   **Zabbix** - System Monitoring
+-   **Graylog** - Collect logs from Proxy, Frontend and Backend
+-   **Terraform** - Managing "production" infrastructure
+-   **Git & Docker**
